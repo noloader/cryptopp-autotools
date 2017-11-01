@@ -1,5 +1,5 @@
 ## Makefile.am for Crypto++ based on Debian Makefile.am by László Böszörményi.
-## Generate the list of files with `make sources | awk '{print "   " $0 " \\"}' RS=' '`
+## Generate the list of files using GNUmakefile with `make sources | awk '{print "   " $0 " \\"}' RS=' '`
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
@@ -305,8 +305,9 @@ pkginclude_HEADERS = \
 
 noinst_HEADERS = \
 	local.h \
+	bench.h \
+	factory.h \
 	resource.h \
-	serpentp.h
 	validate.h
 
 bin_PROGRAMS = cryptest cryptestcwd

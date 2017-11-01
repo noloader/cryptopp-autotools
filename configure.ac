@@ -14,3 +14,11 @@ AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 
 AC_OUTPUT(Makefile)
+
+AC_CONFIG_COMMANDS(['C++ is not C! WTF?'],
+    [sed -e "/CC =/d" Makefile > Makefile.fixed],
+    [mv Makefile.fixed Makefile],
+    [sed -e "/CFLAGS =/d" Makefile > Makefile.fixed],
+    [mv Makefile.fixed Makefile],
+    [sed -e "/ac_ct_CC =/d" Makefile > Makefile.fixed],
+    [mv Makefile.fixed Makefile])
