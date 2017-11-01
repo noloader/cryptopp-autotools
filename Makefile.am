@@ -6,8 +6,8 @@ ACLOCAL_AMFLAGS = -I m4
 AM_DEFAULT_SOURCE_EXT = .cpp
 
 lib_LTLIBRARIES = libcryptopp.la
-libcryptopp_la_LIBADD = -lpthread
-libcryptopp_la_LDFLAGS = -version-info 6:0:0
+## libcryptopp_la_LIBADD = -lpthread
+## libcryptopp_la_LDFLAGS = -version-info 6:0:0
 libcryptopp_la_SOURCES =  \
    cryptlib.cpp \
    cpu.cpp \
@@ -149,7 +149,7 @@ libcryptopp_la_SOURCES =  \
    zinflate.cpp \
    zlib.cpp
 
-pkginclude_HEADERS = \
+include_HEADERS = \
    3way.h \
    adler32.h \
    aes.h \
@@ -310,7 +310,9 @@ noinst_HEADERS = \
 	resource.h \
 	validate.h
 
-bin_PROGRAMS = cryptest cryptestcwd
+bin_PROGRAMS = cryptest.exe
+nodist_bin_PROGRAMS = cryptestcwd
+
 cryptest_CXXFLAGS = $(CXXFLAGS) -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
 cryptest_SOURCES = \
    test.cpp \
@@ -346,6 +348,7 @@ cryptestcwd_SOURCES = \
    fipsalgt.cpp
 
 nodist_cryptestcwd_SOURCES = adhoc.cpp
+
 CLEANFILES = adhoc.cpp
 cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
