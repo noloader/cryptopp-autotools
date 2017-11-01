@@ -1,0 +1,13 @@
+AC_INIT(Crypto++, 6.0, http://www.cryptopp.com/wiki/Bug_Report)
+AM_INIT_AUTOMAKE
+AM_MAINTAINER_MODE
+
+AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_SRCDIR(configure.ac)
+AC_CONFIG_HEADER([local.h])
+
+AC_PROG_CXX
+AC_PROG_LIBTOOL
+AC_PROG_INSTALL
+
+AC_OUTPUT(Makefile)
