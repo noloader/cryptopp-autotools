@@ -1,6 +1,7 @@
 AC_INIT(Crypto++, 6.0, http://www.cryptopp.com/wiki/Bug_Report)
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
+AM_DEFAULT_SOURCE_EXT=.cpp
 
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_SRCDIR(configure.ac)
