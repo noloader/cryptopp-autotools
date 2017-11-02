@@ -94,18 +94,18 @@ libshacal2_simd_a_CXXFLAGS = $(CXXFLAGS) -msse4.2 -msha
 ## libcryptopp_la_LDFLAGS = -version-info 6:0:0
 
 lib_LTLIBRARIES = \
-   libcryptlib.o \
-   libcpu.o \
-   libinteger.o \
-   libaria-simd.o \
-   libblake2-simd.o \
-   libcrc-simd.o \
-   libgcm-simd.o \
-   libneon-simd.o \
-   libppc-simd.o \
-   librijndael-simd.o \
-   libsha-simd.o \
-   libshacal2-simd.o \
+   libcryptlib.a \
+   libcpu.a \
+   libinteger.a \
+   libaria-simd.a \
+   libblake2-simd.a \
+   libcrc-simd.a \
+   libgcm-simd.a \
+   libneon-simd.a \
+   libppc-simd.a \
+   librijndael-simd.a \
+   libsha-simd.a \
+   libshacal2-simd.a \
    libcryptopp.la
 
 libcryptopp_la_SOURCES = \
@@ -410,9 +410,9 @@ noinst_HEADERS = \
 	resource.h \
 	validate.h
 
-## bin_PROGRAMS = cryptest
-## nodist_bin_PROGRAMS = cryptestcwd
-bin_PROGRAMS = cryptest cryptestcwd
+## bin_PROGRAMS = cryptest cryptestcwd
+bin_PROGRAMS = cryptest
+noinst_bin_PROGRAMS = cryptestcwd
 
 cryptest_CXXFLAGS = $(CXXFLAGS) -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
 cryptest_SOURCES = \
