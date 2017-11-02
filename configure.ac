@@ -5,9 +5,11 @@
 
 ## TODO
 ##
-## - Figure out how to make Autotools to stop using the fucking C compiler for tasks.
+## - Figure out how to make Autoconf stop using the fucking C compiler for tasks.
 ##   The damn tool does not honor AC_PROG_CXX or observe the absence of AC_PROG_CC. It also fails
-##   to provide a AC_PROG_NO_CC macro. The tool is no better than Cmake.
+##   to provide a AC_PROG_NO_CC macro. The damn tool is no better than Cmake.
+##
+## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X.
 ##
 ## - Figure out how to use AC_OUTPUT and AC_CONFIG_COMMANDS_POST. The commands we execute do not
 ##   perform the work we expect, and the docs do not explain what we should be doing. Also see
