@@ -1,6 +1,6 @@
 ## Makefile.am - Autotools configuration file for Crypto++.
 ##               written and placed in public domain by Jeffrey Walton.
-##               based on Debian configure.ac by László Böszörményi.
+##               based on Debian Makefile.am by László Böszörményi.
 ##
 ##    The GNUmakefile can generate the list of lib headers, lib sources,
 ##    test headers and test sources. Generate the list of files with:
