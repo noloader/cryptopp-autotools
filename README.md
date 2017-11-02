@@ -6,7 +6,7 @@ The purpose of Crypto++ Autotools is (1) better support Linux distributions, lik
 
 The initial `Makefile.am` and `configure.ac` were shamelessly ripped from Debian. Many thanks to László Böszörményi for his work on the files and allowing us to use them as a starting point.
 
-The Autotools files are currently a work in progress. Please feel free to make pull requests to fix problems.
+The Autotools files are currently a work in progress. The head notes in `configure.ac` and `makefile.am` list some outstanding items. Please feel free to make pull requests to fix problems.
 
 # Workflow
 The general workflow is clone Wei Dai's crypto++, add Autotools as a submodule, and then copy the files of interest into the Crypto++ directory:

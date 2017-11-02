@@ -13,6 +13,10 @@
 ##   perform the work we expect, and the docs do not explain what we should be doing. Also see
 ##   https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Configuration-Commands.html
 ##
+## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's not
+##   much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
+##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc.
+##
 
 AC_INIT(Crypto++, 6.0, http://www.cryptopp.com/wiki/Bug_Report)
 LT_INIT

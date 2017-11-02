@@ -26,6 +26,8 @@
 ##    Unfortunately, Automake does not support the pattern natively, so we have to hack it. Also see
 ##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html
 ##
+##  - Fix hard-coded path for PREFIX and CRYPTOPP_DATA_DIR.
+##
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
