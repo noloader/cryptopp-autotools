@@ -57,55 +57,67 @@ noinst_LIBRARIES = \
 libcryptlib_a_SOURCES = cryptlib.cpp
 libcryptlib_a_CXXFLAGS = $(CXXFLAGS)
 
+CPU_FLAG = -msse2
 libcpu_a_SOURCES = cpu.cpp
-libcpu_a_CXXFLAGS = $(CXXFLAGS) -msse2
+libcpu_a_CXXFLAGS = $(CXXFLAGS) $(CPU_FLAG)
 
 libinteger_a_SOURCES = integer.cpp
 libinteger_a_CXXFLAGS = $(CXXFLAGS)
 
+ARIA_FLAG = -mssse3
 libaria_simd_a_SOURCES = aria-simd.cpp
-libaria_simd_a_CXXFLAGS = $(CXXFLAGS) -mssse3
+libaria_simd_a_CXXFLAGS = $(CXXFLAGS) $(ARIA_FLAG)
 
+BLAKE2_FLAG = -msse4.2
 libblake2_simd_a_SOURCES = blake2-simd.cpp
-libblake2_simd_a_CXXFLAGS = $(CXXFLAGS) -msse4.2
+libblake2_simd_a_CXXFLAGS = $(CXXFLAGS) $(BLAKE2_FLAG)
 
+CRC_FLAG = -msse4.2
 libcrc_simd_a_SOURCES = crc-simd.cpp
-libcrc_simd_a_CXXFLAGS = $(CXXFLAGS) -msse4.2
+libcrc_simd_a_CXXFLAGS = $(CXXFLAGS) $(CRC_FLAG)
 
+GCM_FLAG = -mssse3 -mpclmul
 libgcm_simd_a_SOURCES = gcm-simd.cpp
-libgcm_simd_a_CXXFLAGS = $(CXXFLAGS) -mssse3 -mpclmul
+libgcm_simd_a_CXXFLAGS = $(CXXFLAGS) $(GCM_FLAG)
 
+NEON_FLAG =
 libneon_simd_a_SOURCES = neon-simd.cpp
-libneon_simd_a_CXXFLAGS = $(CXXFLAGS)
+libneon_simd_a_CXXFLAGS = $(CXXFLAGS) $(NEON_FLAG)
 
+PPC_FLAG = 
 libppc_simd_a_SOURCES = ppc-simd.cpp
-libppc_simd_a_CXXFLAGS = $(CXXFLAGS)
+libppc_simd_a_CXXFLAGS = $(CXXFLAGS) $(PPC_FLAG)
 
+AES_FLAG = -msse4.1 -maes
 librijndael_simd_a_SOURCES = rijndael-simd.cpp
-librijndael_simd_a_CXXFLAGS = $(CXXFLAGS) -msse4.1 -maes
+librijndael_simd_a_CXXFLAGS = $(CXXFLAGS) $(AES_FLAG)
 
+SHA_FLAG = -msse4.2 -msha
 libsha_simd_a_SOURCES = sha-simd.cpp
-libsha_simd_a_CXXFLAGS = $(CXXFLAGS) -msse4.2 -msha
+libsha_simd_a_CXXFLAGS = $(CXXFLAGS) $(SHA_FLAG)
 
 libshacal2_simd_a_SOURCES = shacal2-simd.cpp
-libshacal2_simd_a_CXXFLAGS = $(CXXFLAGS) -msse4.2 -msha
+libshacal2_simd_a_CXXFLAGS = $(CXXFLAGS) $(SHA_FLAG)
 
 ## libcryptopp_la_LIBADD = -lpthread
 ## libcryptopp_la_LDFLAGS = -version-info 6:0:0
 
+# lib_LTLIBRARIES = \
+#   libcryptlib.a \
+#   libcpu.a \
+#   libinteger.a \
+#   libaria-simd.a \
+#   libblake2-simd.a \
+#   libcrc-simd.a \
+#   libgcm-simd.a \
+#   libneon-simd.a \
+#   libppc-simd.a \
+#   librijndael-simd.a \
+#   libsha-simd.a \
+#   libshacal2-simd.a \
+#   libcryptopp.la
+
 lib_LTLIBRARIES = \
-   libcryptlib.a \
-   libcpu.a \
-   libinteger.a \
-   libaria-simd.a \
-   libblake2-simd.a \
-   libcrc-simd.a \
-   libgcm-simd.a \
-   libneon-simd.a \
-   libppc-simd.a \
-   librijndael-simd.a \
-   libsha-simd.a \
-   libshacal2-simd.a \
    libcryptopp.la
 
 libcryptopp_la_SOURCES = \
@@ -410,9 +422,9 @@ noinst_HEADERS = \
 	resource.h \
 	validate.h
 
-## bin_PROGRAMS = cryptest cryptestcwd
-bin_PROGRAMS = cryptest
-noinst_bin_PROGRAMS = cryptestcwd
+bin_PROGRAMS = cryptest cryptestcwd
+## bin_PROGRAMS = cryptest
+## noinst_bin_PROGRAMS = cryptestcwd
 
 cryptest_CXXFLAGS = $(CXXFLAGS) -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
 cryptest_SOURCES = \

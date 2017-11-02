@@ -21,6 +21,8 @@
 ##
 
 AC_INIT(Crypto++, 6.0, http://www.cryptopp.com/wiki/Bug_Report)
+AC_LANG([C++])
+
 LT_INIT
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
