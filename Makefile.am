@@ -38,8 +38,8 @@ AM_DEFAULT_SOURCE_EXT = .cpp
 
 # Automake has officially made it to the list of fucked up programs. We have to jump
 # through hoops so we can add -mssse3 to aria-simd.cpp, -msse4.2 to blake2-simd.cpp,
-# etc. Adding architectural flags is a basic operation in make recipes. It seems
-# a lot like forgetting to provide the addition operation in mathematics.
+# etc. Adding architectural flags is a basic operation in makefiles. It seems a lot
+# like forgetting to provide the addition operation in mathematics.
 noinst_LIBRARIES = \
    libcryptlib.a \
    libcpu.a \
@@ -84,7 +84,7 @@ NEON_FLAG =
 libneon_simd_a_SOURCES = neon-simd.cpp
 libneon_simd_a_CXXFLAGS = $(CXXFLAGS) $(NEON_FLAG)
 
-PPC_FLAG = 
+PPC_FLAG =
 libppc_simd_a_SOURCES = ppc-simd.cpp
 libppc_simd_a_CXXFLAGS = $(CXXFLAGS) $(PPC_FLAG)
 
@@ -117,19 +117,18 @@ libshacal2_simd_a_CXXFLAGS = $(CXXFLAGS) $(SHA_FLAG)
 #   libshacal2-simd.a \
 #   libcryptopp.la
 
-lib_LTLIBRARIES = \
-   libcryptopp.la
+lib_LTLIBRARIES = libcryptopp.la
 
 libcryptopp_la_SOURCES = \
-   \ # cryptlib.cpp \
-   \ # cpu.cpp \
-   \ # integer.cpp \
+   `# cryptlib.cpp` \
+   `# cpu.cpp` \
+   `# integer.cpp` \
    3way.cpp \
    adler32.cpp \
    algebra.cpp \
    algparam.cpp \
    arc4.cpp \
-   \ # aria-simd.cpp \
+   `# aria-simd.cpp` \
    aria.cpp \
    ariatab.cpp \
    asn.cpp \
@@ -138,7 +137,7 @@ libcryptopp_la_SOURCES = \
    base64.cpp \
    basecode.cpp \
    bfinit.cpp \
-   \ # blake2-simd.cpp \
+   `# blake2-simd.cpp` \
    blake2.cpp \
    blowfish.cpp \
    blumshub.cpp \
@@ -150,7 +149,7 @@ libcryptopp_la_SOURCES = \
    chacha.cpp \
    channels.cpp \
    cmac.cpp \
-   \ # crc-simd.cpp \
+   `# crc-simd.cpp` \
    crc.cpp \
    default.cpp \
    des.cpp \
@@ -171,7 +170,7 @@ libcryptopp_la_SOURCES = \
    filters.cpp \
    fips140.cpp \
    fipstest.cpp \
-   \ # gcm-simd.cpp \
+   `# gcm-simd.cpp` \
    gcm.cpp \
    gf256.cpp \
    gf2_32.cpp \
@@ -199,7 +198,7 @@ libcryptopp_la_SOURCES = \
    mqueue.cpp \
    mqv.cpp \
    nbtheory.cpp \
-   \ # neon-simd.cpp \
+   `# neon-simd.cpp` \
    network.cpp \
    oaep.cpp \
    osrng.cpp \
@@ -208,7 +207,7 @@ libcryptopp_la_SOURCES = \
    pkcspad.cpp \
    poly1305.cpp \
    polynomi.cpp \
-   \ # ppc-simd.cpp \
+   `# ppc-simd.cpp` \
    pssr.cpp \
    pubkey.cpp \
    queue.cpp \
@@ -219,7 +218,7 @@ libcryptopp_la_SOURCES = \
    rc6.cpp \
    rdrand.cpp \
    rdtables.cpp \
-   \ # rijndael-simd.cpp \
+   `# rijndael-simd.cpp` \
    rijndael.cpp \
    ripemd.cpp \
    rng.cpp \
@@ -230,10 +229,10 @@ libcryptopp_la_SOURCES = \
    seal.cpp \
    seed.cpp \
    serpent.cpp \
-   \ # sha-simd.cpp \
+   `# sha-simd.cpp` \
    sha.cpp \
    sha3.cpp \
-   \ # shacal2-simd.cpp \
+   `# shacal2-simd.cpp` \
    shacal2.cpp \
    shark.cpp \
    sharkbox.cpp \
