@@ -384,7 +384,7 @@ cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 ## We are attempting to add the required architectural flags below, but its not working well at the moment
 ## https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html
 
-ARIA_FLAG = -msse4.2
+ARIA_FLAG = -mssse3
 BLAKE2_FLAG = -msse4.2
 CPU_FLAG = -msse2
 CRC_FLAG = -msse4.2
