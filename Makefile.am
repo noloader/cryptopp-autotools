@@ -394,43 +394,43 @@ SHA_FLAG = -msse4.2 -msha
 
 # SSE4.2 or NEON available
 .libs/aria-simd.o : aria-simd.cpp
-	$(CXX) $(CXXFLAGS) $(ARIA_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(ARIA_FLAG) -c $< -o $@
 
 # SSE4.2 or ARMv8a available
 .libs/blake2-simd.o : blake2-simd.cpp
-	$(CXX) $(CXXFLAGS) $(BLAKE2_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(BLAKE2_FLAG) -c $< -o $@
 
 # SSE2 on i586
 .libs/cpu.o : cpu.cpp
-	$(CXX) $(CXXFLAGS) $(CPU_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(CPU_FLAG) -c $< -o $@
 
 # SSE4.2 or ARMv8a available
 .libs/crc-simd.o : crc-simd.cpp
-	$(CXX) $(CXXFLAGS) $(CRC_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(CRC_FLAG) -c $< -o $@
 
 # PCLMUL or ARMv7a/ARMv8a available
 .libs/gcm-simd.o : gcm-simd.cpp
-	$(CXX) $(CXXFLAGS) $(GCM_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(GCM_FLAG) -c $< -o $@
 
 # NEON available
 .libs/neon-simd.o : neon-simd.cpp
-	$(CXX) $(CXXFLAGS) $(NEON_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(NEON_FLAG) -c $< -o $@
 
 # AltiVec, Power7, Power8 available
 .libs/ppc-simd.o : ppc-simd.cpp
-	$(CXX) $(CXXFLAGS) $(ALTIVEC_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(ALTIVEC_FLAG) -c $< -o $@
 
 # AESNI or ARMv7a/ARMv8a available
 .libs/rijndael-simd.o : rijndael-simd.cpp
-	$(CXX) $(CXXFLAGS) $(AES_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(AES_FLAG) -c $< -o $@
 
 # SSE4.2/SHA-NI or ARMv8a available
 .libs/sha-simd.o : sha-simd.cpp
-	$(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $< -o $@
 
 # SSE4.2/SHA-NI or ARMv8a available
 .libs/shacal2-simd.o : shacal2-simd.cpp
-	$(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $<
+	$(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $< -o $@
 
 adhoc.cpp: Makefile
 	if test -f adhoc.cpp; then      \
