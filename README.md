@@ -39,7 +39,7 @@ Once the submodule is added or updated, then run:
 Despite our efforts we have not been able to add the submodule to Crypto++ for seamless integration. If anyone knows how to add the submodule directly to the Crypto++ directory, then please provide the instructions.
 
 # Integration
-The Autotools submodule integrates with the Crypto++ library. The submodule overwrites the library's `config.h`. The submodule also removes the library's `GNUmakefile` and `GNUmakefile-cross`.
+The Autotools submodule integrates with the Crypto++ library. The submodule removes the library's `GNUmakefile` and `GNUmakefile-cross`. In the future we plan to overwrite the library's `config.h` and produce a n installation specific `config.h`.
 
 The library's `GNUmakefile` and `GNUmakefile-cross` were modified to clean the artifacts produced by Autotools. To clean the directory after running Autotools perform a `git checkout GNUmakefile` followed by a `make -f GNUmakefile distclean`.
 
