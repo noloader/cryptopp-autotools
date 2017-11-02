@@ -14,10 +14,11 @@
 
 ## TODO:
 ##
-##  - Add architecture specific flags to certain source files
-##    E.g., sha-simd.cpp needs "-msse4.2 -msha" on IA-32, it needs "-march=armv8-a+crypto" on Aarch64,
-##    and it needs "-mcpu=power8 -maltivec" on PowerPC. And we have not gotten into IBM's xlC and
-##    Sun's CC compilers, which get similar (but different) flags. In our GNUmakefile it looks like:
+##  - Add architecture specific flags to certain source files. This is partially implemented, but
+##    ordering of the object files and linking appears broken. For example, sha-simd.cpp needs
+#     "-msse4.2 -msha" on IA-32, it needs "-march=armv8-a+crypto" on Aarch64, and it needs
+##    "-mcpu=power8 -maltivec" on PowerPC. And we have not gotten into IBM's xlC and Sun's CC
+##    compilers, which get similar (but different) flags. In our GNUmakefile the flags looks like:
 ##
 ##      # SSE4.2/SHA-NI or ARMv8a available
 ##      sha-simd.o : sha-simd.cpp
@@ -26,10 +27,10 @@
 ##    Unfortunately, Automake does not support the pattern natively, so we have to hack it. Also see
 ##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html
 ##
-##  - Fix hard-coded path for PREFIX and CRYPTOPP_DATA_DIR.
-##
 ##  - Stop Automake from alphabetizing our object files when building lib_LTLIBRARIES. The source
 ##    files and object files are listed in a specific order due to Static Initialization Order Fiasco.
+##
+##  - Fix hard-coded path for PREFIX and CRYPTOPP_DATA_DIR.
 ##
 
 AUTOMAKE_OPTIONS = foreign
