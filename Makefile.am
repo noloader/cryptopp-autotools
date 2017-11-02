@@ -37,7 +37,7 @@ ACLOCAL_AMFLAGS = -I m4
 AM_DEFAULT_SOURCE_EXT = .cpp
 
 # Automake has officially made it to the list of fucked up programs. We have to jump
-# through hoops so we can add -mssse3 to aria-simd.cpp, -msse4.2 to libblake2-simd.a,
+# through hoops so we can add -mssse3 to aria-simd.cpp, -msse4.2 to blake2-simd.cpp,
 # etc. Adding architectural flags is a basic operation in make recipes. It seems
 # a lot like forgetting to provide the addition operation in mathematics.
 noinst_LIBRARIES = \
@@ -171,7 +171,7 @@ libcryptopp_la_SOURCES = \
    filters.cpp \
    fips140.cpp \
    fipstest.cpp \
-   gcm-simd.cpp \
+   \ # gcm-simd.cpp \
    gcm.cpp \
    gf256.cpp \
    gf2_32.cpp \
