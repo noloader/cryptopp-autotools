@@ -117,18 +117,15 @@ libshacal2_simd_a_CXXFLAGS = $(CXXFLAGS) $(SHA_FLAG)
 #   libshacal2-simd.a \
 #   libcryptopp.la
 
-lib_LTLIBRARIES = libcryptopp.la
+lib_LTLIBRARIES = \
+   libcryptopp.la
 
 libcryptopp_la_SOURCES = \
-   `# cryptlib.cpp` \
-   `# cpu.cpp` \
-   `# integer.cpp` \
    3way.cpp \
    adler32.cpp \
    algebra.cpp \
    algparam.cpp \
    arc4.cpp \
-   `# aria-simd.cpp` \
    aria.cpp \
    ariatab.cpp \
    asn.cpp \
@@ -137,7 +134,6 @@ libcryptopp_la_SOURCES = \
    base64.cpp \
    basecode.cpp \
    bfinit.cpp \
-   `# blake2-simd.cpp` \
    blake2.cpp \
    blowfish.cpp \
    blumshub.cpp \
@@ -149,7 +145,6 @@ libcryptopp_la_SOURCES = \
    chacha.cpp \
    channels.cpp \
    cmac.cpp \
-   `# crc-simd.cpp` \
    crc.cpp \
    default.cpp \
    des.cpp \
@@ -170,7 +165,6 @@ libcryptopp_la_SOURCES = \
    filters.cpp \
    fips140.cpp \
    fipstest.cpp \
-   `# gcm-simd.cpp` \
    gcm.cpp \
    gf256.cpp \
    gf2_32.cpp \
@@ -198,7 +192,6 @@ libcryptopp_la_SOURCES = \
    mqueue.cpp \
    mqv.cpp \
    nbtheory.cpp \
-   `# neon-simd.cpp` \
    network.cpp \
    oaep.cpp \
    osrng.cpp \
@@ -207,7 +200,6 @@ libcryptopp_la_SOURCES = \
    pkcspad.cpp \
    poly1305.cpp \
    polynomi.cpp \
-   `# ppc-simd.cpp` \
    pssr.cpp \
    pubkey.cpp \
    queue.cpp \
@@ -218,7 +210,6 @@ libcryptopp_la_SOURCES = \
    rc6.cpp \
    rdrand.cpp \
    rdtables.cpp \
-   `# rijndael-simd.cpp` \
    rijndael.cpp \
    ripemd.cpp \
    rng.cpp \
@@ -229,10 +220,8 @@ libcryptopp_la_SOURCES = \
    seal.cpp \
    seed.cpp \
    serpent.cpp \
-   `# sha-simd.cpp` \
    sha.cpp \
    sha3.cpp \
-   `# shacal2-simd.cpp` \
    shacal2.cpp \
    shark.cpp \
    sharkbox.cpp \
