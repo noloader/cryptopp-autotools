@@ -2,14 +2,14 @@
 ##               written and placed in public domain by Jeffrey Walton.
 ##               based on Debian configure.ac by László Böszörményi.
 ##
-##               The GNUmakefile can generate the list of lib headers, lib sources,
-##               test headers and test sources. Generate the list of files with:
+##    The GNUmakefile can generate the list of lib headers, lib sources,
+##    test headers and test sources. Generate the list of files with:
 ##
-##                   make sources | awk '{print "    " $0 " \\"}' RS=' '
+##        make sources | awk '{print "    " $0 " \\"}' RS=' '
 ##
-##               Note: configure.ac deletes GNUmakefile. You can get it back with:
+##    Note: configure.ac deletes GNUmakefile. You can get it back with:
 ##
-##                   git checkout GNUmakefile
+##        git checkout GNUmakefile
 ##
 
 ## TODO:

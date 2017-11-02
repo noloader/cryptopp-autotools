@@ -36,28 +36,31 @@ AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 
+## Squash this useless warning
+AC_CONFIG_COMMANDS_PRE([[mkdir -p m4/ 2>/dev/null]])
+
 ## Remove existing makefiles
-AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile])
-AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross])
+AC_CONFIG_COMMANDS_PRE([[rm -f GNUmakefile 2>/dev/null]])
+AC_CONFIG_COMMANDS_PRE([[rm -f GNUmakefile-cross 2>/dev/null]])
 
 AC_OUTPUT(Makefile)
 
 ## Avoid C compiler. It creates a lot of problems on AIX and Solaris using IBM's xlc and Sun's cc
-AC_CONFIG_COMMANDS_POST([ \
+AC_CONFIG_COMMANDS_POST([[ \
     sed -e '/S["CC"]/d' config.status > config.status.xxx; \
     mv config.status.xxx config.status; \
     sed -e '/S["FLAGS"]/d' config.status > config.status.xxx; \
     mv config.status.xxx config.status; \
     sed -e '/S["ac_ct_CC"]/d' config.status > config.status.xxx; \
     mv config.status.xxx config.status;
-])
+]])
 
 ## Avoid C compiler. It creates a lot of problems on AIX and Solaris using IBM's xlc and Sun's cc
-AC_CONFIG_COMMANDS_POST([ \
+AC_CONFIG_COMMANDS_POST([[ \
     sed -e '/CC =/d' Makefile > Makefile.xxx; \
     mv Makefile.xxx Makefile; \
     sed -e '/CFLAGS =/d' Makefile > Makefile.xxx; \
     mv Makefile.xxx Makefile; \
     sed -e '/ac_ct_CC =/d' Makefile > Makefile.xxx; \
     mv Makefile.xxx Makefile; \
-])
+]])
