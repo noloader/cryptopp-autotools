@@ -62,5 +62,5 @@ AC_CONFIG_COMMANDS_POST([[ \
     sed -e '/CFLAGS =/d' Makefile > Makefile.xxx; \
     mv Makefile.xxx Makefile; \
     sed -e '/ac_ct_CC =/d' Makefile > Makefile.xxx; \
-    mv Makefile.xxx Makefile; \
+    mv Makefile.xxx Makefile;
 ]])

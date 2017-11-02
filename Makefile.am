@@ -21,7 +21,7 @@
 ##
 ##      # SSE4.2/SHA-NI or ARMv8a available
 ##      sha-simd.o : sha-simd.cpp
-##          $(CXX) $(strip $(CXXFLAGS) $(SHA_FLAG) -c) $<
+##          $(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $<
 ##
 ##    Unfortunately, Automake does not support the pattern natively, so we have to hack it. Also see
 ##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html
@@ -380,6 +380,57 @@ nodist_cryptestcwd_SOURCES = adhoc.cpp
 
 CLEANFILES = adhoc.cpp
 cryptestcwd_LDADD = $(lib_LTLIBRARIES)
+
+## We are attempting to add the required architectural flags below, but its not working well at the moment
+## https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html
+
+ARIA_FLAG = -msse4.2
+BLAKE2_FLAG = -msse4.2
+CPU_FLAG = -msse2
+CRC_FLAG = -msse4.2
+GCM_FLAG = -mssse3 -mpclmul
+AES_FLAG = -msse4.1 -maes
+SHA_FLAG = -msse4.2 -msha
+
+# SSE4.2 or NEON available
+.libs/aria-simd.o : aria-simd.cpp
+	$(CXX) $(CXXFLAGS) $(ARIA_FLAG) -c $<
+
+# SSE4.2 or ARMv8a available
+.libs/blake2-simd.o : blake2-simd.cpp
+	$(CXX) $(CXXFLAGS) $(BLAKE2_FLAG) -c $<
+
+# SSE2 on i586
+.libs/cpu.o : cpu.cpp
+	$(CXX) $(CXXFLAGS) $(CPU_FLAG) -c $<
+
+# SSE4.2 or ARMv8a available
+.libs/crc-simd.o : crc-simd.cpp
+	$(CXX) $(CXXFLAGS) $(CRC_FLAG) -c $<
+
+# PCLMUL or ARMv7a/ARMv8a available
+.libs/gcm-simd.o : gcm-simd.cpp
+	$(CXX) $(CXXFLAGS) $(GCM_FLAG) -c $<
+
+# NEON available
+.libs/neon-simd.o : neon-simd.cpp
+	$(CXX) $(CXXFLAGS) $(NEON_FLAG) -c $<
+
+# AltiVec, Power7, Power8 available
+.libs/ppc-simd.o : ppc-simd.cpp
+	$(CXX) $(CXXFLAGS) $(ALTIVEC_FLAG) -c $<
+
+# AESNI or ARMv7a/ARMv8a available
+.libs/rijndael-simd.o : rijndael-simd.cpp
+	$(CXX) $(CXXFLAGS) $(AES_FLAG) -c $<
+
+# SSE4.2/SHA-NI or ARMv8a available
+.libs/sha-simd.o : sha-simd.cpp
+	$(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $<
+
+# SSE4.2/SHA-NI or ARMv8a available
+.libs/shacal2-simd.o : shacal2-simd.cpp
+	$(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $<
 
 adhoc.cpp: Makefile
 	if test -f adhoc.cpp; then      \
