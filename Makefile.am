@@ -1,5 +1,31 @@
-## Makefile.am for Crypto++ based on Debian Makefile.am by László Böszörményi.
-## Generate the list of files using GNUmakefile with `make sources | awk '{print "   " $0 " \\"}' RS=' '`
+## Makefile.am - Autotools configuration file for Crypto++.
+##               written and placed in public domain by Jeffrey Walton.
+##               based on Debian configure.ac by László Böszörményi.
+##
+##               The GNUmakefile can generate the list of lib headers, lib sources,
+##               test headers and test sources. Generate the list of files with:
+##
+##                   make sources | awk '{print "    " $0 " \\"}' RS=' '
+##
+##               Note: configure.ac deletes GNUmakefile. You can get it back with:
+##
+##                   git checkout GNUmakefile
+##
+
+## TODO:
+##
+##  - Add architecture specific flags to certain source files
+##    E.g., sha-simd.cpp needs "-msse4.2 -msha" on IA-32, it needs "-march=armv8-a+crypto" on Aarch64,
+##    and it needs "-mcpu=power8 -maltivec" on PowerPC. And we have not gotten into IBM's xlC and
+##    Sun's CC compilers, which get similar (but different) flags. In our GNUmakefile it looks like:
+##
+##      # SSE4.2/SHA-NI or ARMv8a available
+##      sha-simd.o : sha-simd.cpp
+##          $(CXX) $(strip $(CXXFLAGS) $(SHA_FLAG) -c) $<
+##
+##    Unfortunately, Automake does not support the pattern natively, so we have to hack it. Also see
+##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html
+##
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
@@ -8,7 +34,7 @@ AM_DEFAULT_SOURCE_EXT = .cpp
 lib_LTLIBRARIES = libcryptopp.la
 ## libcryptopp_la_LIBADD = -lpthread
 ## libcryptopp_la_LDFLAGS = -version-info 6:0:0
-libcryptopp_la_SOURCES =  \
+libcryptopp_la_SOURCES = \
    cryptlib.cpp \
    cpu.cpp \
    integer.cpp \
@@ -310,8 +336,9 @@ noinst_HEADERS = \
 	resource.h \
 	validate.h
 
-bin_PROGRAMS = cryptest.exe
-nodist_bin_PROGRAMS = cryptestcwd
+## bin_PROGRAMS = cryptest
+## nodist_bin_PROGRAMS = cryptestcwd
+bin_PROGRAMS = cryptest cryptestcwd
 
 cryptest_CXXFLAGS = $(CXXFLAGS) -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
 cryptest_SOURCES = \
