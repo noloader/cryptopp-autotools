@@ -19,7 +19,16 @@ The general workflow is clone Wei Dai's crypto++, add Autotools as a submodule, 
     cp "$PWD/autotools/Makefile.am" "$PWD"
     cp "$PWD/autotools/configure.ac" "$PWD"
 
-To update the library and the submodule perform the following.
+Once the submodule is added or updated, then run the following.
+
+    autoreconf --force --install
+	./configure <options>
+
+    make
+	make test
+	sudo make install <options>
+
+To update the library and the submodule perform the following. The `make clean` is needed because reconfigure'ing does not invalidate the previously built objects or artifacts.
 
     cd cryptopp
 	git pull
@@ -28,13 +37,7 @@ To update the library and the submodule perform the following.
     cp "$PWD/autotools/Makefile.am" "$PWD"
     cp "$PWD/autotools/configure.ac" "$PWD"
 
-Once the submodule is added or updated, then run:
-
-    autoreconf --force --install
-	./configure <options>
-	make
-	make test
-	sudo make install <options>
+	make clean
 
 Despite our efforts we have not been able to add the submodule to Crypto++ for seamless integration. If anyone knows how to add the submodule directly to the Crypto++ directory, then please provide the instructions.
 
