@@ -87,6 +87,21 @@ libcryptopp_la_LIBADD = \
    $(libshacal2_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
+EXTRA_libcryptopp_la_DEPENDENCIES = \
+   $(libcryptlib_la_OBJECTS) \
+   $(libcpu_la_OBJECTS) \
+   $(libinteger_la_OBJECTS) \
+   $(libaria_simd_la_OBJECTS) \
+   $(libblake2_simd_la_OBJECTS) \
+   $(libcrc_simd_la_OBJECTS) \
+   $(libgcm_simd_la_OBJECTS) \
+   $(libneon_simd_la_OBJECTS) \
+   $(libppc_simd_la_OBJECTS) \
+   $(librijndael_simd_la_OBJECTS) \
+   $(libsha_simd_la_OBJECTS) \
+   $(libshacal2_simd_la_OBJECTS) \
+   $(libothers_la_OBJECTS)
+
 CRYPTLIBFLAG =
 libcryptlib_la_SOURCES = cryptlib.cpp
 libcryptlib_la_CXXFLAGS = $(CRYPTLIBFLAG)
