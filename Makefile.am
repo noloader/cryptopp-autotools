@@ -28,7 +28,7 @@
 ##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html and
 ##    https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 ##
-##  - Stop Automake from alphabetizing our object files when building libcryptopp_LTLIBRARIES. The source
+##  - Stop Automake from alphabetizing our object files when building lib_LTLIBRARIES. The source
 ##    files and object files are listed in a specific order due to Static Initialization Order Fiasco.
 ##
 ##  - Fix hard-coded path for PREFIX and CRYPTOPP_DATA_DIR.
@@ -461,7 +461,7 @@ cryptest_SOURCES = \
    fipsalgt.cpp
 
 nodist_cryptest_SOURCES = adhoc.cpp
-cryptest_LDADD = $(libcryptopp_LTLIBRARIES)
+cryptest_LDADD = $(lib_LTLIBRARIES)
 cryptestcwd_CXXFLAGS = $(CXXFLAGS)
 cryptestcwd_SOURCES = \
    test.cpp \
@@ -481,7 +481,7 @@ cryptestcwd_SOURCES = \
 nodist_cryptestcwd_SOURCES = adhoc.cpp
 
 CLEANFILES = adhoc.cpp
-cryptestcwd_LDADD = $(libcryptopp_LTLIBRARIES)
+cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
 adhoc.cpp: Makefile
 	if test -f adhoc.cpp; then      \
