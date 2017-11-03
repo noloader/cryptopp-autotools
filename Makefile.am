@@ -41,46 +41,50 @@ AM_DEFAULT_SOURCE_EXT = .cpp
 ## libcryptopp_la_LIBADD = -lpthread
 ## libcryptopp_la_LDFLAGS = -version-info 6:0:0
 
-# libcryptopp_la_SOURCES is empty because we need to create the library artifacts from
-# disjoint libraries due to object file ordering and per-object file flags. Also see 
+# libcryptopp.la is created from disjoint libraries due to object file ordering and
+# per-object file flags requirements. libcryptopp.la is named as the primarly library,
+# and the object files with special needs are listed as EXTRA_LTLIBRARIES. Also see
 # https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 
 lib_LTLIBRARIES = \
    libcryptopp.la
-   
+
 EXTRA_LTLIBRARIES = \
    libcryptlib.la \
    libcpu.la \
    libinteger.la \
-   libaria-simd.la \
-   libblake2-simd.la \
-   libcrc-simd.la \
-   libgcm-simd.la \
-   libneon-simd.la \
-   libppc-simd.la \
-   librijndael-simd.la \
-   libsha-simd.la \
-   libshacal2-simd.la \
+   libaria_simd.la \
+   libblake2_simd.la \
+   libcrc_simd.la \
+   libgcm_simd.la \
+   libneon_simd.la \
+   libppc_simd.la \
+   librijndael_simd.la \
+   libsha_simd.la \
+   libshacal2_simd.la \
    libothers.la
 
+# libcryptopp_la_SOURCES is empty because we need to create the library artifacts from disjoint
+# libraries due to object file ordering and per-object file flags requriements. Also see
+# https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
+
+libcryptopp_la_SOURCES =
 libcryptopp_la_LIBADD = \
    $(libcryptlib_la_OBJECTS) \
    $(libcpu_la_OBJECTS) \
    $(libinteger_la_OBJECTS) \
-   $(libaria-simd_la_OBJECTS) \
-   $(libblake2-simd_la_OBJECTS) \
-   $(libcrc-simd_la_OBJECTS) \
-   $(libgcm-simd_la_OBJECTS) \
-   $(libneon-simd_la_OBJECTS) \
-   $(libppc-simd_la_OBJECTS) \
-   $(librijndael-simd_la_OBJECTS) \
-   $(libsha-simd_la_OBJECTS) \
-   $(libshacal2-simd_la_OBJECTS) \
+   $(libaria_simd_la_OBJECTS) \
+   $(libblake2_simd_la_OBJECTS) \
+   $(libcrc_simd_la_OBJECTS) \
+   $(libgcm_simd_la_OBJECTS) \
+   $(libneon_simd_la_OBJECTS) \
+   $(libppc_simd_la_OBJECTS) \
+   $(librijndael_simd_la_OBJECTS) \
+   $(libsha_simd_la_OBJECTS) \
+   $(libshacal2_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
-libcryptopp_la_SOURCES = 
-
-CRYPTLIBFLAG = 
+CRYPTLIBFLAG =
 libcryptlib_la_SOURCES = cryptlib.cpp
 libcryptlib_la_CXXFLAGS = $(CRYPTLIBFLAG)
 
@@ -88,7 +92,7 @@ CPUFLAG = -msse2
 libcpu_la_SOURCES = cpu.cpp
 libcpu_la_CXXFLAGS = $(CPUFLAG)
 
-INTEGER_FLAG = 
+INTEGER_FLAG =
 libinteger_la_SOURCES = integer.cpp
 libinteger_la_CXXFLAGS = $(INTEGERFLAG)
 
@@ -264,15 +268,15 @@ libothers_la_SOURCES = \
 #   libcryptlib.a \
 #   libcpu.a \
 #   libinteger.a \
-#   libaria-simd.a \
-#   libblake2-simd.a \
-#   libcrc-simd.a \
-#   libgcm-simd.a \
-#   libneon-simd.a \
-#   libppc-simd.a \
-#   librijndael-simd.a \
-#   libsha-simd.a \
-#   libshacal2-simd.a \
+#   libaria_simd.a \
+#   libblake2_simd.a \
+#   libcrc_simd.a \
+#   libgcm_simd.a \
+#   libneon_simd.a \
+#   libppc_simd.a \
+#   librijndael_simd.a \
+#   libsha_simd.a \
+#   libshacal2_simd.a \
 #   libothers_la.a
 
 include_HEADERS = \
