@@ -99,50 +99,51 @@ EXTRA_libcryptopp_la_DEPENDENCIES = \
    $(libshacal2_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
-CRYPTLIBFLAG =
+## CRYPTLIB_FLAG set in configure.ac
 libcryptlib_la_SOURCES = cryptlib.cpp
-libcryptlib_la_CXXFLAGS = $(CRYPTLIBFLAG)
+libcryptlib_la_CXXFLAGS = $(CRYPTLIB_FLAG)
 
-CPUFLAG = -msse2
+## CPU_FLAG set in configure.ac
 libcpu_la_SOURCES = cpu.cpp
-libcpu_la_CXXFLAGS = $(CPUFLAG)
+libcpu_la_CXXFLAGS = $(CPU_FLAG)
 
-INTEGER_FLAG =
+## INTEGER_FLAG set in configure.ac
 libinteger_la_SOURCES = integer.cpp
-libinteger_la_CXXFLAGS = $(INTEGERFLAG)
+libinteger_la_CXXFLAGS = $(INTEGER_FLAG)
 
-ARIAFLAG = -mssse3
+## ARIA_FLAG set in configure.ac
 libaria_simd_la_SOURCES = aria-simd.cpp
-libaria_simd_la_CXXFLAGS = $(ARIAFLAG)
+libaria_simd_la_CXXFLAGS = $(ARIA_FLAG)
 
-BLAKE2_FLAG = -msse4.2
+## BLAKE2_FLAG set in configure.ac
 libblake2_simd_la_SOURCES = blake2-simd.cpp
 libblake2_simd_la_CXXFLAGS = $(BLAKE2_FLAG)
 
-CRC_FLAG = -msse4.2
+## CRC_FLAG set in configure.ac
 libcrc_simd_la_SOURCES = crc-simd.cpp
 libcrc_simd_la_CXXFLAGS = $(CRC_FLAG)
 
-GCM_FLAG = -mssse3 -mpclmul
+## GCM_FLAG set in configure.ac
 libgcm_simd_la_SOURCES = gcm-simd.cpp
 libgcm_simd_la_CXXFLAGS = $(GCM_FLAG)
 
-NEON_FLAG =
+## NEON_FLAG set in configure.ac
 libneon_simd_la_SOURCES = neon-simd.cpp
 libneon_simd_la_CXXFLAGS = $(NEON_FLAG)
 
-PPC_FLAG =
+## PPC_FLAG set in configure.ac
 libppc_simd_la_SOURCES = ppc-simd.cpp
 libppc_simd_la_CXXFLAGS = $(PPC_FLAG)
 
-AES_FLAG = -msse4.1 -maes
+## AES_FLAG set in configure.ac
 librijndael_simd_la_SOURCES = rijndael-simd.cpp
 librijndael_simd_la_CXXFLAGS = $(AES_FLAG)
 
-SHA_FLAG = -msse4.2 -msha
+## SHA_FLAG set in configure.ac
 libsha_simd_la_SOURCES = sha-simd.cpp
 libsha_simd_la_CXXFLAGS = $(SHA_FLAG)
 
+## SHA_FLAG set in configure.ac
 libshacal2_simd_la_SOURCES = shacal2-simd.cpp
 libshacal2_simd_la_CXXFLAGS = $(SHA_FLAG)
 

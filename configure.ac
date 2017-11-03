@@ -20,8 +20,7 @@
 ##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc.
 ##
 
-AC_INIT(Crypto++, 6.0, http://www.cryptopp.com/wiki/Bug_Report)
-AC_LANG([C++])
+AC_INIT([Crypto++], [6.0], [http://www.cryptopp.com/wiki/Bug_Report])
 
 LT_INIT
 AM_INIT_AUTOMAKE
@@ -31,17 +30,30 @@ AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_SRCDIR(configure.ac)
 AC_CONFIG_HEADER([local.h])
 
-AC_ENABLE_SHARED
-AC_ENABLE_STATIC
-
 AC_PROG_CXX
+AC_LANG([C++])
 AC_PROG_CXXCPP
 
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 
-## Squash this useless warning
-AC_CONFIG_COMMANDS_PRE([[mkdir -p m4/ 2>/dev/null]])
+AC_ENABLE_SHARED
+AC_ENABLE_STATIC
+
+AC_SUBST([AM_CXXFLAGS])
+AC_SUBST([AM_LDFLAGS])
+
+AC_SUBST([CRYPTLIB_FLAG])
+AC_SUBST([CPU_FLAG], ["-msse2"])
+AC_SUBST([INTEGER_FLAG])
+AC_SUBST([ARIA_FLAG], ["-mssse3"])
+AC_SUBST([BLAKE2_FLAG], ["-msse4.2"])
+AC_SUBST([CRC_FLAG], ["-msse4.2"])
+AC_SUBST([GCM_FLAG], ["-mssse3 -mpclmul"])
+AC_SUBST([NEON_FLAG])
+AC_SUBST([PPC_FLAG])
+AC_SUBST([AES_FLAG], ["-msse4.1 -maes"])
+AC_SUBST([SHA_FLAG], ["-msse4.2 -msha"])
 
 ## Remove existing makefiles
 AC_CONFIG_COMMANDS_PRE([[rm -f GNUmakefile 2>/dev/null]])
