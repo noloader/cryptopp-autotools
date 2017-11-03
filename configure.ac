@@ -68,3 +68,7 @@ AC_CONFIG_COMMANDS_POST([[ \
     sed -e '/ac_ct_CC =/d' Makefile > Makefile.xxx; \
     mv Makefile.xxx Makefile;
 ]])
+
+## Automake bug workaround. If XXX is an empty list, it assumes C source files and drive link
+## through the C compiler. We provide the empty adhoc.cpp to get things back on course.
+AC_CONFIG_COMMANDS_POST([[cp adhoc.cpp.proto adhoc.cpp]])

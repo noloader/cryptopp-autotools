@@ -65,10 +65,13 @@ EXTRA_LTLIBRARIES = \
    libothers.la
 
 # libcryptopp_la_SOURCES is empty because we need to create the library artifacts from disjoint
-# libraries due to object file ordering and per-object file flags requriements. Also see
+# libraries due to object file ordering and per-object file flags requriements. Actually, the 
+# adhoc.cpp file is due to an automake issue of assuming C sources when the list is empty. Also
 # https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 
-libcryptopp_la_SOURCES =
+libcryptopp_la_SOURCES = \
+   adhoc.cpp
+
 libcryptopp_la_LIBADD = \
    $(libcryptlib_la_OBJECTS) \
    $(libcpu_la_OBJECTS) \
@@ -484,9 +487,6 @@ nodist_cryptestcwd_SOURCES = adhoc.cpp
 CLEANFILES = adhoc.cpp
 cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
-adhoc.cpp: Makefile
-	if test -f adhoc.cpp; then      \
-	  touch adhoc.cpp;              \
-	else                            \
-	  cp adhoc.cpp.proto adhoc.cpp; \
-	fi
+## See the comments in configure.ac. adhoc.cpp is now copied uncoditionally.
+adhoc.cpp:
+	cp adhoc.cpp.proto adhoc.cpp
