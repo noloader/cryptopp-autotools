@@ -2,7 +2,11 @@
 
 This repository contains Autotools files for Wei Dai's Crypto++ (https://github.com/weidai11/cryptopp). It supplies `configure.ac` and `makefile.am` for Crypto++ for those who want to use Autotools. Autotools is officialy unsupported, so use it at your own risk.
 
-The purpose of Crypto++ Autotools is (1) better support Linux distributions, like Debain, Fedora and openSUSE, (2) supplement the GNUmakefile which is reaching its limits with repsect to GNUmake-based configuration, and (3) utilize compiler feature probes that produce better results on ARM, MIPS and Power8 architectures.
+The purpose of Crypto++ Autotools is three-fold:
+
+1. better support Linux distributions, like Debain, Fedora and openSUSE
+2. supplement the GNUmakefile which is reaching its limits with repsect to GNUmake-based configuration
+3. utilize compiler feature probes that produce better results on ARM, MIPS and Power8 architectures
 
 The initial `Makefile.am` and `configure.ac` were shamelessly ripped from Debian. Many thanks to László Böszörményi for his work on the files and allowing us to use them as a starting point. Nick Bowler and Mathieu Lirzin from the Automake mailing list were extremely helpful in porting our requirements to Automake.
 
