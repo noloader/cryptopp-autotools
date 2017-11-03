@@ -42,7 +42,7 @@ AM_DEFAULT_SOURCE_EXT = .cpp
 ## libcryptopp_la_LDFLAGS = -version-info 6:0:0
 
 # libcryptopp.la is created from disjoint libraries due to object file ordering and
-# per-object file flags requirements. libcryptopp.la is named as the primarly library,
+# per-object file flags requirements. libcryptopp.la is named as the primary library,
 # and the object files with special needs are listed as EXTRA_LTLIBRARIES. Also see
 # https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 
@@ -131,9 +131,9 @@ libsha_simd_la_CXXFLAGS = $(SHA_FLAG)
 libshacal2_simd_la_SOURCES = shacal2-simd.cpp
 libshacal2_simd_la_CXXFLAGS = $(SHA_FLAG)
 
-# This is the list remaining sources files that don't need special order and don't need
+# This is the list of remaining sources files that don't need special order and don't need
 # special flags. It is formed by removing cryptlib.cpp, cpu.cpp, integer.cpp and other
-# source files with special architectural flags. Its is sorted in alphabetical order for
+# source files with special architectural flags. It is sorted in alphabetical order for
 # deterministic builds.
 libothers_la_SOURCES = \
    3way.cpp \
@@ -265,19 +265,19 @@ libothers_la_SOURCES = \
    zlib.cpp
 
 #noinst_LIBRARIES = \
-#   libcryptlib.a \
-#   libcpu.a \
-#   libinteger.a \
-#   libaria_simd.a \
-#   libblake2_simd.a \
-#   libcrc_simd.a \
-#   libgcm_simd.a \
-#   libneon_simd.a \
-#   libppc_simd.a \
-#   librijndael_simd.a \
-#   libsha_simd.a \
-#   libshacal2_simd.a \
-#   libothers_la.a
+#   libcryptlib.la \
+#   libcpu.la \
+#   libinteger.la \
+#   libaria_simd.la \
+#   libblake2_simd.la \
+#   libcrc_simd.la \
+#   libgcm_simd.la \
+#   libneon_simd.la \
+#   libppc_simd.la \
+#   librijndael_simd.la \
+#   libsha_simd.la \
+#   libshacal2_simd.la \
+#   libothers.la
 
 include_HEADERS = \
    3way.h \
