@@ -25,9 +25,10 @@
 ##          $(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $<
 ##
 ##    Unfortunately, Automake does not support the pattern natively, so we have to hack it. Also see
-##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html
+##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html and
+##    https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 ##
-##  - Stop Automake from alphabetizing our object files when building lib_LTLIBRARIES. The source
+##  - Stop Automake from alphabetizing our object files when building libcryptopp_LTLIBRARIES. The source
 ##    files and object files are listed in a specific order due to Static Initialization Order Fiasco.
 ##
 ##  - Fix hard-coded path for PREFIX and CRYPTOPP_DATA_DIR.
@@ -37,91 +38,100 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 AM_DEFAULT_SOURCE_EXT = .cpp
 
-# Automake has officially made it to the list of fucked up programs. We have to jump
-# through hoops so we can add -mssse3 to aria-simd.cpp, -msse4.2 to blake2-simd.cpp,
-# etc. Adding architectural flags is a basic operation in makefiles. It seems a lot
-# like forgetting to provide the addition operation in mathematics.
-noinst_LIBRARIES = \
-   libcryptlib.a \
-   libcpu.a \
-   libinteger.a \
-   libaria-simd.a \
-   libblake2-simd.a \
-   libcrc-simd.a \
-   libgcm-simd.a \
-   libneon-simd.a \
-   libppc-simd.a \
-   librijndael-simd.a \
-   libsha-simd.a \
-   libshacal2-simd.a
-
-libcryptlib_a_SOURCES = cryptlib.cpp
-libcryptlib_a_CXXFLAGS = $(CXXFLAGS)
-
-CPU_FLAG = -msse2
-libcpu_a_SOURCES = cpu.cpp
-libcpu_a_CXXFLAGS = $(CXXFLAGS) $(CPU_FLAG)
-
-libinteger_a_SOURCES = integer.cpp
-libinteger_a_CXXFLAGS = $(CXXFLAGS)
-
-ARIA_FLAG = -mssse3
-libaria_simd_a_SOURCES = aria-simd.cpp
-libaria_simd_a_CXXFLAGS = $(CXXFLAGS) $(ARIA_FLAG)
-
-BLAKE2_FLAG = -msse4.2
-libblake2_simd_a_SOURCES = blake2-simd.cpp
-libblake2_simd_a_CXXFLAGS = $(CXXFLAGS) $(BLAKE2_FLAG)
-
-CRC_FLAG = -msse4.2
-libcrc_simd_a_SOURCES = crc-simd.cpp
-libcrc_simd_a_CXXFLAGS = $(CXXFLAGS) $(CRC_FLAG)
-
-GCM_FLAG = -mssse3 -mpclmul
-libgcm_simd_a_SOURCES = gcm-simd.cpp
-libgcm_simd_a_CXXFLAGS = $(CXXFLAGS) $(GCM_FLAG)
-
-NEON_FLAG =
-libneon_simd_a_SOURCES = neon-simd.cpp
-libneon_simd_a_CXXFLAGS = $(CXXFLAGS) $(NEON_FLAG)
-
-PPC_FLAG =
-libppc_simd_a_SOURCES = ppc-simd.cpp
-libppc_simd_a_CXXFLAGS = $(CXXFLAGS) $(PPC_FLAG)
-
-AES_FLAG = -msse4.1 -maes
-librijndael_simd_a_SOURCES = rijndael-simd.cpp
-librijndael_simd_a_CXXFLAGS = $(CXXFLAGS) $(AES_FLAG)
-
-SHA_FLAG = -msse4.2 -msha
-libsha_simd_a_SOURCES = sha-simd.cpp
-libsha_simd_a_CXXFLAGS = $(CXXFLAGS) $(SHA_FLAG)
-
-libshacal2_simd_a_SOURCES = shacal2-simd.cpp
-libshacal2_simd_a_CXXFLAGS = $(CXXFLAGS) $(SHA_FLAG)
-
 ## libcryptopp_la_LIBADD = -lpthread
 ## libcryptopp_la_LDFLAGS = -version-info 6:0:0
 
-# lib_LTLIBRARIES = \
-#   libcryptlib.a \
-#   libcpu.a \
-#   libinteger.a \
-#   libaria-simd.a \
-#   libblake2-simd.a \
-#   libcrc-simd.a \
-#   libgcm-simd.a \
-#   libneon-simd.a \
-#   libppc-simd.a \
-#   librijndael-simd.a \
-#   libsha-simd.a \
-#   libshacal2-simd.a \
-#   libcryptopp.la
+# libcryptopp_la_SOURCES is empty because we need to create the library artifacts from
+# disjoint libraries due to object file ordering and per-object file flags. Also see 
+# https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 
 lib_LTLIBRARIES = \
    libcryptopp.la
+   
+EXTRA_LTLIBRARIES = \
+   libcryptlib.la \
+   libcpu.la \
+   libinteger.la \
+   libaria-simd.la \
+   libblake2-simd.la \
+   libcrc-simd.la \
+   libgcm-simd.la \
+   libneon-simd.la \
+   libppc-simd.la \
+   librijndael-simd.la \
+   libsha-simd.la \
+   libshacal2-simd.la \
+   libothers.la
 
-libcryptopp_la_SOURCES = \
+libcryptopp_la_LIBADD = \
+   $(libcryptlib_la_OBJECTS) \
+   $(libcpu_la_OBJECTS) \
+   $(libinteger_la_OBJECTS) \
+   $(libaria-simd_la_OBJECTS) \
+   $(libblake2-simd_la_OBJECTS) \
+   $(libcrc-simd_la_OBJECTS) \
+   $(libgcm-simd_la_OBJECTS) \
+   $(libneon-simd_la_OBJECTS) \
+   $(libppc-simd_la_OBJECTS) \
+   $(librijndael-simd_la_OBJECTS) \
+   $(libsha-simd_la_OBJECTS) \
+   $(libshacal2-simd_la_OBJECTS) \
+   $(libothers_la_OBJECTS)
+
+libcryptopp_la_SOURCES = 
+
+CRYPTLIBFLAG = 
+libcryptlib_la_SOURCES = cryptlib.cpp
+libcryptlib_la_CXXFLAGS = $(CRYPTLIBFLAG)
+
+CPUFLAG = -msse2
+libcpu_la_SOURCES = cpu.cpp
+libcpu_la_CXXFLAGS = $(CPUFLAG)
+
+INTEGER_FLAG = 
+libinteger_la_SOURCES = integer.cpp
+libinteger_la_CXXFLAGS = $(INTEGERFLAG)
+
+ARIAFLAG = -mssse3
+libaria_simd_la_SOURCES = aria-simd.cpp
+libaria_simd_la_CXXFLAGS = $(ARIAFLAG)
+
+BLAKE2_FLAG = -msse4.2
+libblake2_simd_la_SOURCES = blake2-simd.cpp
+libblake2_simd_la_CXXFLAGS = $(BLAKE2_FLAG)
+
+CRC_FLAG = -msse4.2
+libcrc_simd_la_SOURCES = crc-simd.cpp
+libcrc_simd_la_CXXFLAGS = $(CRC_FLAG)
+
+GCM_FLAG = -mssse3 -mpclmul
+libgcm_simd_la_SOURCES = gcm-simd.cpp
+libgcm_simd_la_CXXFLAGS = $(GCM_FLAG)
+
+NEON_FLAG =
+libneon_simd_la_SOURCES = neon-simd.cpp
+libneon_simd_la_CXXFLAGS = $(NEON_FLAG)
+
+PPC_FLAG =
+libppc_simd_la_SOURCES = ppc-simd.cpp
+libppc_simd_la_CXXFLAGS = $(PPC_FLAG)
+
+AES_FLAG = -msse4.1 -maes
+librijndael_simd_la_SOURCES = rijndael-simd.cpp
+librijndael_simd_la_CXXFLAGS = $(AES_FLAG)
+
+SHA_FLAG = -msse4.2 -msha
+libsha_simd_la_SOURCES = sha-simd.cpp
+libsha_simd_la_CXXFLAGS = $(SHA_FLAG)
+
+libshacal2_simd_la_SOURCES = shacal2-simd.cpp
+libshacal2_simd_la_CXXFLAGS = $(SHA_FLAG)
+
+# This is the list remaining sources files that don't need special order and don't need
+# special flags. It is formed by removing cryptlib.cpp, cpu.cpp, integer.cpp and other
+# source files with special architectural flags. Its is sorted in alphabetical order for
+# deterministic builds.
+libothers_la_SOURCES = \
    3way.cpp \
    adler32.cpp \
    algebra.cpp \
@@ -249,6 +259,21 @@ libcryptopp_la_SOURCES = \
    zdeflate.cpp \
    zinflate.cpp \
    zlib.cpp
+
+#noinst_LIBRARIES = \
+#   libcryptlib.a \
+#   libcpu.a \
+#   libinteger.a \
+#   libaria-simd.a \
+#   libblake2-simd.a \
+#   libcrc-simd.a \
+#   libgcm-simd.a \
+#   libneon-simd.a \
+#   libppc-simd.a \
+#   librijndael-simd.a \
+#   libsha-simd.a \
+#   libshacal2-simd.a \
+#   libothers_la.a
 
 include_HEADERS = \
    3way.h \
@@ -415,7 +440,7 @@ bin_PROGRAMS = cryptest cryptestcwd
 ## bin_PROGRAMS = cryptest
 ## noinst_bin_PROGRAMS = cryptestcwd
 
-cryptest_CXXFLAGS = $(CXXFLAGS) -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
+cryptest_CXXFLAGS = -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
 cryptest_SOURCES = \
    test.cpp \
    bench1.cpp \
@@ -432,7 +457,7 @@ cryptest_SOURCES = \
    fipsalgt.cpp
 
 nodist_cryptest_SOURCES = adhoc.cpp
-cryptest_LDADD = $(lib_LTLIBRARIES)
+cryptest_LDADD = $(libcryptopp_LTLIBRARIES)
 cryptestcwd_CXXFLAGS = $(CXXFLAGS)
 cryptestcwd_SOURCES = \
    test.cpp \
@@ -452,7 +477,7 @@ cryptestcwd_SOURCES = \
 nodist_cryptestcwd_SOURCES = adhoc.cpp
 
 CLEANFILES = adhoc.cpp
-cryptestcwd_LDADD = $(lib_LTLIBRARIES)
+cryptestcwd_LDADD = $(libcryptopp_LTLIBRARIES)
 
 adhoc.cpp: Makefile
 	if test -f adhoc.cpp; then      \
