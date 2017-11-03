@@ -43,6 +43,14 @@ AC_ENABLE_STATIC
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
+######################################
+## pthreads for thread local storage
+AC_ARG_ENABLE(tls,
+   AC_HELP_STRING([--enable-tls], [enable thread storage (default is yes)]),
+   ac_enable_tls=$enableval,
+   ac_enable_tls=yes)
+AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
+
 AC_SUBST([CRYPTLIB_FLAG])
 AC_SUBST([CPU_FLAG], ["-msse2"])
 AC_SUBST([INTEGER_FLAG])
