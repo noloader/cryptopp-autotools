@@ -16,7 +16,7 @@
 ##
 ##  - Add architecture specific flags to certain source files. This is partially implemented, but
 ##    ordering of the object files and linking appears broken. For example, sha-simd.cpp needs
-#     "-msse4.2 -msha" on IA-32, it needs "-march=armv8-a+crypto" on Aarch64, and it needs
+##    "-msse4.2 -msha" on IA-32, it needs "-march=armv8-a+crypto" on Aarch64, and it needs
 ##    "-mcpu=power8 -maltivec" on PowerPC. And we have not gotten into IBM's xlC and Sun's CC
 ##    compilers, which get similar (but different) flags. In our GNUmakefile the flags looks like:
 ##
@@ -135,6 +135,7 @@ libshacal2_simd_la_CXXFLAGS = $(SHA_FLAG)
 # special flags. It is formed by removing cryptlib.cpp, cpu.cpp, integer.cpp and other
 # source files with special architectural flags. It is sorted in alphabetical order for
 # deterministic builds.
+
 libothers_la_SOURCES = \
    3way.cpp \
    adler32.cpp \
