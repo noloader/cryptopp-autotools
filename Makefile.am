@@ -18,11 +18,7 @@
 ##    we only have IA-32 hard-coded arch flags at the moment. For example, sha-simd.cpp needs
 ##    "-msse4.2 -msha" on IA-32, it needs "-march=armv8-a+crypto" on Aarch64, and it needs
 ##    "-mcpu=power8 -maltivec" on PowerPC. And we have not gotten into IBM's xlC and Sun's CC
-##    compilers, which get similar (but different) flags. In our GNUmakefile the flags looks like:
-##
-##      # SSE4.2/SHA-NI or ARMv8a available
-##      sha-simd.o : sha-simd.cpp
-##          $(CXX) $(CXXFLAGS) $(SHA_FLAG) -c $<
+##    compilers, which get similar (but different) flags.
 ##
 ##    Unfortunately, Automake does not support the pattern natively, so we have to hack it. Also see
 ##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html and
@@ -30,12 +26,14 @@
 ##
 ##  - Fix hard-coded path for PREFIX and CRYPTOPP_DATA_DIR.
 ##
+##  - Fix Automake dependencies on Solaris. Effectively no dependency information is wired-up so
+##    `make` and `make all` don't build any sources and move onto linking.
+##
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 AM_DEFAULT_SOURCE_EXT = .cpp
 
-## libcryptopp_la_LIBADD = -lpthread
 ## libcryptopp_la_LDFLAGS = -version-info 6:0:0
 
 # libcryptopp.la is created from disjoint libraries due to object file ordering and
@@ -84,21 +82,36 @@ libcryptopp_la_LIBADD = \
    $(libshacal2_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
-EXTRA_libcryptopp_la_DEPENDENCIES = \
-   $(libcryptlib_la_OBJECTS) \
-   $(libcpu_la_OBJECTS) \
-   $(libinteger_la_OBJECTS) \
-   $(libaria_simd_la_OBJECTS) \
-   $(libblake2_simd_la_OBJECTS) \
-   $(libcrc_simd_la_OBJECTS) \
-   $(libgcm_simd_la_OBJECTS) \
-   $(libneon_simd_la_OBJECTS) \
-   $(libppc_simd_la_OBJECTS) \
-   $(librijndael_simd_la_OBJECTS) \
-   $(libsha_simd_la_OBJECTS) \
-   $(libshacal2_simd_la_OBJECTS) \
-   $(libothers_la_OBJECTS)
+#EXTRA_libcryptopp_la_DEPENDENCIES = \
+#   $(libcryptlib_la_OBJECTS) \
+#   $(libcpu_la_OBJECTS) \
+#   $(libinteger_la_OBJECTS) \
+#   $(libaria_simd_la_OBJECTS) \
+#   $(libblake2_simd_la_OBJECTS) \
+#   $(libcrc_simd_la_OBJECTS) \
+#   $(libgcm_simd_la_OBJECTS) \
+#   $(libneon_simd_la_OBJECTS) \
+#   $(libppc_simd_la_OBJECTS) \
+#   $(librijndael_simd_la_OBJECTS) \
+#   $(libsha_simd_la_OBJECTS) \
+#   $(libshacal2_simd_la_OBJECTS) \
+#   $(libothers_la_OBJECTS)
 
+EXTRA_libcryptopp_la_DEPENDENCIES = \
+   libcryptlib.la \
+   libcpu.la \
+   libinteger.la \
+   libaria_simd.la \
+   libblake2_simd.la \
+   libcrc_simd.la \
+   libgcm_simd.la \
+   libneon_simd.la \
+   libppc_simd.la \
+   librijndael_simd.la \
+   libsha_simd.la \
+   libshacal2_simd.la \
+   libothers.la
+ 
 ## CRYPTLIB_FLAG set in configure.ac
 libcryptlib_la_SOURCES = cryptlib.cpp
 libcryptlib_la_CXXFLAGS = $(CRYPTLIB_FLAG)

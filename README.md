@@ -22,6 +22,7 @@ The general workflow is clone Wei Dai's crypto++, add Autotools as a submodule, 
 
     cp "$PWD/autotools/Makefile.am" "$PWD"
     cp "$PWD/autotools/configure.ac" "$PWD"
+    mkdir -p "$PWD/m4/"
 
 Once the submodule is added or updated, then run the following.
 
