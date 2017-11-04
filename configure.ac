@@ -10,10 +10,7 @@
 ##   fails to provide a AC_PROG_NO_CC macro. The damn tool is no better than Cmake.
 ##
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X.
-##
-## - Figure out how to use AC_OUTPUT and AC_CONFIG_COMMANDS_POST. The commands we execute do not
-##   perform the work we expect, and the docs do not explain what we should be doing. Also see
-##   https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Configuration-Commands.html
+##   Also see https://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
 ##
 ## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's not
 ##   much to "Crypto++ compatible config.h". We need test and write preprocessor macros like

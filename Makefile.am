@@ -26,9 +26,6 @@
 ##
 ##  - Fix hard-coded path for PREFIX and CRYPTOPP_DATA_DIR.
 ##
-##  - Fix Automake dependencies on Solaris. Effectively no dependency information is wired-up so
-##    `make` and `make all` don't build any sources and move onto linking.
-##
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
