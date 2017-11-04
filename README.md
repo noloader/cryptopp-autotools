@@ -25,7 +25,8 @@ The general workflow is clone Wei Dai's crypto++, add Autotools as a submodule, 
 
 Once the submodule is added or updated, then run the following.
 
-    autoreconf --force --install
+    autoupdate
+    autoreconf --force --install --warnings=all
 	./configure <options>
 
     make
