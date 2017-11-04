@@ -82,83 +82,68 @@ libcryptopp_la_LIBADD = \
    $(libshacal2_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
-#EXTRA_libcryptopp_la_DEPENDENCIES = \
-#   $(libcryptlib_la_OBJECTS) \
-#   $(libcpu_la_OBJECTS) \
-#   $(libinteger_la_OBJECTS) \
-#   $(libaria_simd_la_OBJECTS) \
-#   $(libblake2_simd_la_OBJECTS) \
-#   $(libcrc_simd_la_OBJECTS) \
-#   $(libgcm_simd_la_OBJECTS) \
-#   $(libneon_simd_la_OBJECTS) \
-#   $(libppc_simd_la_OBJECTS) \
-#   $(librijndael_simd_la_OBJECTS) \
-#   $(libsha_simd_la_OBJECTS) \
-#   $(libshacal2_simd_la_OBJECTS) \
-#   $(libothers_la_OBJECTS)
+libcryptopp_la_DEPENDENCIES = \
+   $(libcryptlib_la_OBJECTS) \
+   $(libcpu_la_OBJECTS) \
+   $(libinteger_la_OBJECTS) \
+   $(libaria_simd_la_OBJECTS) \
+   $(libblake2_simd_la_OBJECTS) \
+   $(libcrc_simd_la_OBJECTS) \
+   $(libgcm_simd_la_OBJECTS) \
+   $(libneon_simd_la_OBJECTS) \
+   $(libppc_simd_la_OBJECTS) \
+   $(librijndael_simd_la_OBJECTS) \
+   $(libsha_simd_la_OBJECTS) \
+   $(libshacal2_simd_la_OBJECTS) \
+   $(libothers_la_OBJECTS)
 
-EXTRA_libcryptopp_la_DEPENDENCIES = \
-   libcryptlib.la \
-   libcpu.la \
-   libinteger.la \
-   libaria_simd.la \
-   libblake2_simd.la \
-   libcrc_simd.la \
-   libgcm_simd.la \
-   libneon_simd.la \
-   libppc_simd.la \
-   librijndael_simd.la \
-   libsha_simd.la \
-   libshacal2_simd.la \
-   libothers.la
- 
-## CRYPTLIB_FLAG set in configure.ac
+## CRYPTOPP_CRYPTLIB_FLAG set in configure.ac
 libcryptlib_la_SOURCES = cryptlib.cpp
-libcryptlib_la_CXXFLAGS = $(CRYPTLIB_FLAG)
+libcryptlib_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CRYPTLIB_FLAG)
 
-## CPU_FLAG set in configure.ac
+## CRYPTOPP_CPU_FLAG set in configure.ac
 libcpu_la_SOURCES = cpu.cpp
-libcpu_la_CXXFLAGS = $(CPU_FLAG)
+libcpu_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CPU_FLAG)
 
 ## INTEGER_FLAG set in configure.ac
 libinteger_la_SOURCES = integer.cpp
-libinteger_la_CXXFLAGS = $(INTEGER_FLAG)
+libinteger_la_CXXFLAGS = $(AM_CXXFLAGS) $(INTEGER_FLAG)
 
-## ARIA_FLAG set in configure.ac
+## CRYPTOPP_ARIA_FLAG set in configure.ac
 libaria_simd_la_SOURCES = aria-simd.cpp
-libaria_simd_la_CXXFLAGS = $(ARIA_FLAG)
+libaria_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_ARIA_FLAG)
 
-## BLAKE2_FLAG set in configure.ac
+## CRYPTOPP_BLAKE2_FLAG set in configure.ac
 libblake2_simd_la_SOURCES = blake2-simd.cpp
-libblake2_simd_la_CXXFLAGS = $(BLAKE2_FLAG)
+libblake2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2_FLAG)
 
-## CRC_FLAG set in configure.ac
+## CRYPTOPP_CRC_FLAG set in configure.ac
 libcrc_simd_la_SOURCES = crc-simd.cpp
-libcrc_simd_la_CXXFLAGS = $(CRC_FLAG)
+libcrc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CRC_FLAG)
 
-## GCM_FLAG set in configure.ac
+## CRYPTOPP_GCM_FLAG set in configure.ac
 libgcm_simd_la_SOURCES = gcm-simd.cpp
-libgcm_simd_la_CXXFLAGS = $(GCM_FLAG)
+libgcm_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GCM_FLAG)
 
 ## NEON_FLAG set in configure.ac
 libneon_simd_la_SOURCES = neon-simd.cpp
-libneon_simd_la_CXXFLAGS = $(NEON_FLAG)
+libneon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(NEON_FLAG)
 
 ## PPC_FLAG set in configure.ac
 libppc_simd_la_SOURCES = ppc-simd.cpp
-libppc_simd_la_CXXFLAGS = $(PPC_FLAG)
+libppc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(PPC_FLAG)
 
-## AES_FLAG set in configure.ac
+## CRYPTOPP_AES_FLAG set in configure.ac
 librijndael_simd_la_SOURCES = rijndael-simd.cpp
-librijndael_simd_la_CXXFLAGS = $(AES_FLAG)
+librijndael_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_AES_FLAG)
 
-## SHA_FLAG set in configure.ac
+## CRYPTOPP_SHA_FLAG set in configure.ac
 libsha_simd_la_SOURCES = sha-simd.cpp
-libsha_simd_la_CXXFLAGS = $(SHA_FLAG)
+libsha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
-## SHA_FLAG set in configure.ac
+## CRYPTOPP_SHA_FLAG set in configure.ac
 libshacal2_simd_la_SOURCES = shacal2-simd.cpp
-libshacal2_simd_la_CXXFLAGS = $(SHA_FLAG)
+libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
 # This is the list of remaining sources files that don't need special order and don't need
 # special flags. It is formed by removing cryptlib.cpp, cpu.cpp, integer.cpp and other
@@ -474,7 +459,7 @@ bin_PROGRAMS = cryptest cryptestcwd
 ## bin_PROGRAMS = cryptest
 ## noinst_bin_PROGRAMS = cryptestcwd
 
-cryptest_CXXFLAGS = -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
+cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
 cryptest_SOURCES = \
    test.cpp \
    bench1.cpp \
@@ -492,7 +477,7 @@ cryptest_SOURCES = \
 
 nodist_cryptest_SOURCES = adhoc.cpp
 cryptest_LDADD = $(lib_LTLIBRARIES)
-cryptestcwd_CXXFLAGS = $(CXXFLAGS)
+cryptestcwd_CXXFLAGS = $(AM_CXXFLAGS)
 cryptestcwd_SOURCES = \
    test.cpp \
    bench1.cpp \
@@ -522,8 +507,8 @@ else
    tls_LIB =
    tls_CXXFLAGS =
 endif
-LDADD = $(tls_LIB)
-CXXFLAGS = $(tls_CXXFLAGS)
+LDADD = "$(LDADD) $(tls_LIB)"
+AM_CXXFLAGS = "$(AM_CXXFLAGS) $(tls_CXXFLAGS)"
 
 ##########
 ## See the comments in configure.ac. adhoc.cpp is now copied uncoditionally.
