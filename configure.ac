@@ -54,6 +54,19 @@ AC_ARG_ENABLE(tls,
    ac_enable_tls=yes)
 AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
 
+if test "$ac_enable_tls" = "yes"; then
+   SAVED_CXXFLAGS="$CXXFLAGS"
+   CXXFLAGS="-pthread"
+   AC_MSG_CHECKING([for pthread support])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([-pthread])],
+      [AC_MSG_FAILURE(["--enable-tls=yes but pthreads are not available"])]
+   )
+   AM_CXXFLAGS="$AM_CXXFLAGS -pthread"
+   AM_LDFLAGS="$AM_LDFLAGS -pthread"
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
 ######################################
 ## Fix AR on iOS and OS X
 

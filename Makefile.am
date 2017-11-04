@@ -455,9 +455,9 @@ noinst_HEADERS = \
 	resource.h \
 	validate.h
 
-bin_PROGRAMS = cryptest cryptestcwd
-## bin_PROGRAMS = cryptest
-## noinst_bin_PROGRAMS = cryptestcwd
+## bin_PROGRAMS = cryptest cryptestcwd
+bin_PROGRAMS = cryptest
+noinst_PROGRAMS = cryptestcwd
 
 cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"/usr/share/cryptopp/"'
 cryptest_SOURCES = \
@@ -477,6 +477,7 @@ cryptest_SOURCES = \
 
 nodist_cryptest_SOURCES = adhoc.cpp
 cryptest_LDADD = $(lib_LTLIBRARIES)
+
 cryptestcwd_CXXFLAGS = $(AM_CXXFLAGS)
 cryptestcwd_SOURCES = \
    test.cpp \
@@ -494,21 +495,9 @@ cryptestcwd_SOURCES = \
    fipsalgt.cpp
 
 nodist_cryptestcwd_SOURCES = adhoc.cpp
-
-CLEANFILES = adhoc.cpp
 cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
-##########
-## pthreads for thread local storage
-if HAS_PTHREADS
-   tls_LIB = -lpthread
-   tls_CXXFLAGS = -pthread
-else
-   tls_LIB =
-   tls_CXXFLAGS =
-endif
-LDADD = "$(LDADD) $(tls_LIB)"
-AM_CXXFLAGS = "$(AM_CXXFLAGS) $(tls_CXXFLAGS)"
+CLEANFILES = adhoc.cpp
 
 ##########
 ## See the comments in configure.ac. adhoc.cpp is now copied uncoditionally.
