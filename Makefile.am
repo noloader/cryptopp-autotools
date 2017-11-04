@@ -105,9 +105,9 @@ libcryptlib_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CRYPTLIB_FLAG)
 libcpu_la_SOURCES = cpu.cpp
 libcpu_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CPU_FLAG)
 
-## INTEGER_FLAG set in configure.ac
+## CRYPTOPP_INTEGER_FLAG set in configure.ac
 libinteger_la_SOURCES = integer.cpp
-libinteger_la_CXXFLAGS = $(AM_CXXFLAGS) $(INTEGER_FLAG)
+libinteger_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_INTEGER_FLAG)
 
 ## CRYPTOPP_ARIA_FLAG set in configure.ac
 libaria_simd_la_SOURCES = aria-simd.cpp

@@ -101,7 +101,7 @@ if test "$IS_IA32" -ne "0"; then
    )
 
    ## integer.cpp
-   AC_SUBST([INTEGER_FLAG])
+   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
 
    ## aria-simd.cpp
    CXXFLAGS="-mssse3"
