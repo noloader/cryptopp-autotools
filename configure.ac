@@ -83,6 +83,9 @@ fi
 #############################################################################
 ## Fix AR on iOS and OS X
 
+## AR and ARFLAGS usage is currently broke under Autotools. Also see
+## https://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html
+
 #IS_APPLE=`echo "$build" | $EGREP -i -c 'apple'`
 #if test "$IS_APPLE" -ne "0"; then
 #   AC_SUBST([AR], ["/usr/bin/libtool"])
@@ -371,26 +374,8 @@ AC_SUBST([AM_LDFLAGS])
 
 AC_OUTPUT
 
-## Avoid C compiler. It creates a lot of problems on AIX and Solaris using IBM's xlc and Sun's cc
-AC_CONFIG_COMMANDS_POST([[ \
-    sed -e '/S["CC"]/d' config.status > config.status.xxx; \
-    mv config.status.xxx config.status; \
-    sed -e '/S["FLAGS"]/d' config.status > config.status.xxx; \
-    mv config.status.xxx config.status; \
-    sed -e '/S["ac_ct_CC"]/d' config.status > config.status.xxx; \
-    mv config.status.xxx config.status;
-]])
+## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
+## C source files and drive link through the C compiler. We provide the empty adhoc.cpp
+## to get things back on course, so adhoc.cpp must always be copied.
 
-## Avoid C compiler. It creates a lot of problems on AIX and Solaris using IBM's xlc and Sun's cc
-AC_CONFIG_COMMANDS_POST([[ \
-    sed -e '/CC =/d' Makefile > Makefile.xxx; \
-    mv Makefile.xxx Makefile; \
-    sed -e '/CFLAGS =/d' Makefile > Makefile.xxx; \
-    mv Makefile.xxx Makefile; \
-    sed -e '/ac_ct_CC =/d' Makefile > Makefile.xxx; \
-    mv Makefile.xxx Makefile;
-]])
-
-## Automake bug workaround. If XXX is an empty list, it assumes C source files and drive link
-## through the C compiler. We provide the empty adhoc.cpp to get things back on course.
 AC_CONFIG_COMMANDS_POST([[cp adhoc.cpp.proto adhoc.cpp]])

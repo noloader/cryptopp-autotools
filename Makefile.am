@@ -14,13 +14,10 @@
 
 ## TODO:
 ##
-##  - Add architecture specific flags to certain source files. This is partially implemented, but
-##    we only have IA-32 hard-coded arch flags at the moment. For example, sha-simd.cpp needs
-##    "-msse4.2 -msha" on IA-32, it needs "-march=armv8-a+crypto" on Aarch64, and it needs
-##    "-mcpu=power8 -maltivec" on PowerPC. And we have not gotten into IBM's xlC and Sun's CC
-##    compilers, which get similar (but different) flags.
+##  - Add architecture specific flags to certain source files. This is partially implemented for most
+##    Linux, but we still need Altivec and Power8. We also need IBM's xlC on AIX and Sun's CC on Solaris.
 ##
-##    Unfortunately, Automake does not support the pattern natively, so we have to hack it. Also see
+##    Automake does not support "specific flags for certain source files" natively, so we have to hack it.
 ##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html and
 ##    https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 ##
@@ -31,12 +28,10 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 AM_DEFAULT_SOURCE_EXT = .cpp
 
-## libcryptopp_la_LDFLAGS = -version-info 6:0:0
-
-# libcryptopp.la is created from disjoint libraries due to object file ordering and
-# per-object file flags requirements. libcryptopp.la is named as the primary library,
-# and the object files with special needs are listed as EXTRA_LTLIBRARIES. Also see
-# https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
+## libcryptopp.la is created from disjoint libraries due to object file ordering and
+## per-object file flags requirements. libcryptopp.la is named as the primary library,
+## and the object files with special needs are listed as EXTRA_LTLIBRARIES. Also see
+## https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 
 lib_LTLIBRARIES = \
    libcryptopp.la
@@ -56,13 +51,15 @@ EXTRA_LTLIBRARIES = \
    libshacal2_simd.la \
    libothers.la
 
-# libcryptopp_la_SOURCES is empty because we need to create the library artifacts from disjoint
-# libraries due to object file ordering and per-object file flags requriements. Actually, the
-# adhoc.cpp file is due to an automake issue of assuming C sources when the list is empty. Also
-# https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
+## libcryptopp_la_SOURCES is empty because we need to create the library artifact from disjoint
+## libraries due to object file ordering and per-object file flags requriements. Actually, the
+## adhoc.cpp file is due to an automake issue of assuming C sources when the list is empty. Also
+## https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 
 libcryptopp_la_SOURCES = \
    adhoc.cpp
+
+## Don't use EXTRA_ prefix for libcryptopp_la_LIBADD. It breaks Solaris.
 
 libcryptopp_la_LIBADD = \
    $(libcryptlib_la_OBJECTS) \
@@ -79,6 +76,8 @@ libcryptopp_la_LIBADD = \
    $(libshacal2_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
+## Don't use EXTRA_ prefix for libcryptopp_la_DEPENDENCIES. It breaks Solaris.
+
 libcryptopp_la_DEPENDENCIES = \
    $(libcryptlib_la_OBJECTS) \
    $(libcpu_la_OBJECTS) \
@@ -93,6 +92,9 @@ libcryptopp_la_DEPENDENCIES = \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
+
+## Very important... Version number of the library
+libcryptopp_la_LDFLAGS = -version-info 6:0:0
 
 ## CRYPTOPP_CRYPTLIB_FLAG set in configure.ac
 libcryptlib_la_SOURCES = cryptlib.cpp
@@ -144,7 +146,7 @@ libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
 # This is the list of remaining sources files that don't need special order and don't need
 # special flags. It is formed by removing cryptlib.cpp, cpu.cpp, integer.cpp and other
-# source files with special architectural flags. It is sorted in alphabetical order for
+# source files with architectural specific flags. It is sorted in alphabetical order for
 # deterministic builds.
 
 libothers_la_SOURCES = \
@@ -452,7 +454,6 @@ noinst_HEADERS = \
 	resource.h \
 	validate.h
 
-## bin_PROGRAMS = cryptest cryptestcwd
 bin_PROGRAMS = cryptest
 noinst_PROGRAMS = cryptestcwd
 
@@ -496,7 +497,9 @@ cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
 CLEANFILES = adhoc.cpp
 
-##########
-## See the comments in configure.ac. adhoc.cpp is now copied uncoditionally.
+## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
+## C source files and drive link through the C compiler. We provide the empty adhoc.cpp
+## to get things back on course, so adhoc.cpp must always be copied.
+
 adhoc.cpp:
 	cp adhoc.cpp.proto adhoc.cpp
