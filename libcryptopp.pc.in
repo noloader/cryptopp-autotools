@@ -1,0 +1,16 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE_NAME@
+Description: free C++ class library of cryptographic schemes
+Author: originally written by Wei Dai
+Maintainers: the Crypto++ community
+URL: @PACKAGE_URL@
+Version: @PACKAGE_VERSION@
+Bug-Report: @PACKAGE_BUGREPORT@
+Requires:
+
+Cflags: -I${includedir}
+Libs: -L${libdir} -lcryptopp
