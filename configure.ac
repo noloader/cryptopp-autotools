@@ -472,7 +472,7 @@ if test "$IS_IA32$IS_AARCH64$IS_PPC" -ne "000"; then
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_PIPE], [$CXXFLAGS])]
    )
 
-   if test "$CRYPTOPP_WA_DIVIDE" = "$CXXFLAGS"; then
+   if test "$CRYPTOPP_PIPE" = "$CXXFLAGS"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
