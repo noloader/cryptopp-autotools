@@ -22,28 +22,29 @@ The general workflow is clone Wei Dai's crypto++, add Autotools as a submodule, 
 
     cp "$PWD/autotools/Makefile.am" "$PWD"
     cp "$PWD/autotools/configure.ac" "$PWD"
+    cp "$PWD/autotools/libcryptopp.pc.in" "$PWD"
     mkdir -p "$PWD/m4/"
 
-Once the submodule is added or updated, then run the following.
+Once the submodule is added or updated, then run the following. Our testing showed `autoupdate` produced bad results on some versions of Autotools, so be careful of running it before `autoreconf`.
 
-    autoupdate
     autoreconf --force --install --warnings=all
-	./configure <options>
+    ./configure <options>
 
     make
-	make test
-	sudo make install <options>
+    make test
+    sudo make install <options>
 
 To update the library and the submodule perform the following. The `make clean` is needed because reconfigure'ing does not invalidate the previously built objects or artifacts.
 
     cd cryptopp
-	git pull
-	git submodule update --remote
+    git pull
+    git submodule update --remote
 
     cp "$PWD/autotools/Makefile.am" "$PWD"
     cp "$PWD/autotools/configure.ac" "$PWD"
+    cp "$PWD/autotools/libcryptopp.pc.in" "$PWD"
 
-	make clean
+    make clean
 
 Despite our efforts we have not been able to add the submodule to Crypto++ for seamless integration. If anyone knows how to add the submodule directly to the Crypto++ directory, then please provide the instructions.
 
@@ -51,6 +52,15 @@ Despite our efforts we have not been able to add the submodule to Crypto++ for s
 The Autotools submodule integrates with the Crypto++ library. The submodule removes the library's `GNUmakefile` and `GNUmakefile-cross`. In the future we plan to overwrite the library's `config.h` and produce a n installation specific `config.h`.
 
 The library's `GNUmakefile` and `GNUmakefile-cross` were modified to clean the artifacts produced by Autotools. To clean the directory after running Autotools perform a `git checkout GNUmakefile` followed by a `make -f GNUmakefile distclean`.
+
+# Collaboration
+We would like all distro maintainers to be collaborators on this repo. If you are a distro maintainer then please contact us so we can send you an invite.
+
+If you are a collaborator then make changes as you see fit. You don't need to ask for permission to make a change. Noloader is not an Autotools expert so there are probably lots of opportunities for improvement.
+
+Keep in mind other distros may be using the files, so try not to break things for the other guy. We have to be mindful of lesser-used platforms and compilers, like AIX, Solaris, IBM xlC and Oracle's SunCC.
+
+Everything in this repo is release under Public Domain code. If the license or terms is unpalatable for you, then don't feel obligated to commit.
 
 # Future
 The Autotools project files are separate at the moment for several reason, like avoiding Git log pollution with Autotool branch experiments. We also need to keep a logical separation because GNUmake is the official build system, and not the Autotools project files.
