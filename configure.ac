@@ -76,6 +76,7 @@ fi
 
 ######################################
 ## Solaris, GCC and -Wa,--divide
+
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
 if test "$IS_SUN_OS" -ne "0"; then
 
@@ -97,7 +98,26 @@ if test "$IS_SUN_OS" -ne "0"; then
 fi
 
 ######################################
-## Solaris, GCC and -Wa,--divide
+## Solaris and libraries
+
+if test "$IS_SUN_OS" -ne "0"; then
+
+   ## Save LDFLAGS
+   SAVED_LDFLAGS="$LDFLAGS"
+
+   LDFLAGS="-lnsl -lsocket"
+   AC_MSG_CHECKING([$LD supports $LDFLAGS])
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_NSL_SOCKET], ["-lnsl -lsocket"])]
+   )
+
+   if test "$CRYPTOPP_NSL_SOCKET" = "-lnsl -lsocket"; then
+      AM_LDFLAGS="$AM_LDFLAGS -lnsl -lsocket"
+   fi
+
+   # Restore LDFLAGS
+   LDFLAGS="$SAVED_LDFLAGS"
+fi
 
 ######################################
 ## IA-32, i386, i586, i686, x86_64, etc.
@@ -116,7 +136,7 @@ if test "$IS_IA32" -ne "0"; then
 
    ## cpu.cpp
    CXXFLAGS="-msse2"
-   AC_MSG_CHECKING([$CXX support $CXXFLAGS for cpu.cpp])
+   AC_MSG_CHECKING([$CXX supports $CXXFLAGS for SSE])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
@@ -131,7 +151,7 @@ if test "$IS_IA32" -ne "0"; then
 
    ## aria-simd.cpp
    CXXFLAGS="-mssse3"
-   AC_MSG_CHECKING([$CXX support $CXXFLAGS for ARIA])
+   AC_MSG_CHECKING([$CXX supports $CXXFLAGS for ARIA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
@@ -143,7 +163,7 @@ if test "$IS_IA32" -ne "0"; then
 
    ## blake2-simd.cpp
    CXXFLAGS="-msse4.2"
-   AC_MSG_CHECKING([$CXX support $CXXFLAGS for BLAKE2])
+   AC_MSG_CHECKING([$CXX supports $CXXFLAGS for BLAKE2])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
@@ -152,7 +172,7 @@ if test "$IS_IA32" -ne "0"; then
 
    ## crc-simd.cpp
    CXXFLAGS="-msse4.2"
-   AC_MSG_CHECKING([$CXX support $CXXFLAGS for CRC32])
+   AC_MSG_CHECKING([$CXX supports $CXXFLAGS for CRC32])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
@@ -164,7 +184,7 @@ if test "$IS_IA32" -ne "0"; then
 
    ## gcm-simd.cpp
    CXXFLAGS="-mssse3 -mpclmul"
-   AC_MSG_CHECKING([$CXX support $CXXFLAGS for GCM])
+   AC_MSG_CHECKING([$CXX supports $CXXFLAGS for GCM])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
@@ -182,7 +202,7 @@ if test "$IS_IA32" -ne "0"; then
 
    ## rijndael-simd.cpp
    CXXFLAGS="-msse4.1 -maes"
-   AC_MSG_CHECKING([$CXX support $CXXFLAGS for AES])
+   AC_MSG_CHECKING([$CXX supports $CXXFLAGS for AES])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
@@ -194,7 +214,7 @@ if test "$IS_IA32" -ne "0"; then
 
    ## sha-simd.cpp
    CXXFLAGS="-msse4.2 -msha"
-   AC_MSG_CHECKING([$CXX support $CXXFLAGS for SHA])
+   AC_MSG_CHECKING([$CXX supports $CXXFLAGS for SHA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
