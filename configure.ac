@@ -458,10 +458,33 @@ fi
 #############################################################################
 ## Other fodder
 
+## Add -pipe for non-IoT gadgets to speedup the compile. IoT gadgets, like
+## BeagleBoards and CubieTrucks, don't have swap files and run out of memory.
+
+if test "$IS_IA32" -ne "0" || "$IS_AARCH64" -ne "0" || "$IS_PPC" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   CXXFLAGS="-pipe"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_PIPE], [$CXXFLAGS])]
+   )
+
+   if test "$CRYPTOPP_WA_DIVIDE" = "$CXXFLAGS"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   # Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
 ## Remove existing makefiles
 AC_CONFIG_COMMANDS_PRE([[rm -f GNUmakefile 2>/dev/null]])
 AC_CONFIG_COMMANDS_PRE([[rm -f GNUmakefile-cross 2>/dev/null]])
 
+## Write the Automake flags we set
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
