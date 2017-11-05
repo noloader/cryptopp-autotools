@@ -34,6 +34,10 @@ Once the submodule is added or updated, then run the following. Our testing show
     make test
     sudo make install <options>
 
+Best performance is obtained with `-O3` because GCC (and other compiler) apply vectorization optimizations. If you are not forced to `-O2` by policy (like Debian or Fedora), then you should configure with a higher optimization enabled:
+
+    CXXFLAGS="-DNDEBUG -g2 -O3" ./configure <other options>
+
 To update the library and the submodule perform the following. The `make clean` is needed because reconfigure'ing does not invalidate the previously built objects or artifacts.
 
     cd cryptopp
