@@ -51,11 +51,11 @@ AC_ENABLE_STATIC
 AC_CANONICAL_HOST
 
 ## Determine the compiler's target. We add '2>/dev/null' because IBM's xlC
-## dumps the manpage because '-dumpmachine' is not a valid option.
+## dumps the man page since '-dumpmachine' is not a valid option.
 COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
 
-echo "  Build triplet: $build"
-echo "Compiler target: $COMPILER_TARGET"
+## echo "    Build triplet: $build"
+## echo "  Compiler target: $COMPILER_TARGET"
 
 #############################################################################
 ## pthreads for thread local storage
@@ -110,7 +110,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    CXXFLAGS="-Wa,--divide"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_WA_DIVIDE], ["-Wa,--divide"])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_WA_DIVIDE], ["-Wa,--divide"])]
    )
 
    if test "$CRYPTOPP_WA_DIVIDE" = "-Wa,--divide"; then
@@ -132,7 +132,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    LDFLAGS="-lnsl -lsocket"
    AC_MSG_CHECKING([if $LD supports $LDFLAGS])
    AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_NSL_SOCKET], ["-lnsl -lsocket"])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_NSL_SOCKET], ["-lnsl -lsocket"])]
    )
 
    if test "$CRYPTOPP_NSL_SOCKET" = "-lnsl -lsocket"; then
@@ -163,7 +163,7 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="-msse2"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SSE])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -179,7 +179,7 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="-mssse3"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ARIA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -192,7 +192,7 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="-msse4.2"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for BLAKE2])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -205,7 +205,7 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="-msse4.2"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for CRC32])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
    ## BLAKE2 set -DDCRYPTOPP_DISABLE_SSE4
@@ -214,7 +214,7 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="-mssse3 -mpclmul"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for GCM])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -233,7 +233,7 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="-msse4.1 -maes"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -246,7 +246,7 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="-msse4.2 -msha"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -262,13 +262,72 @@ fi
 #############################################################################
 ## ARM A-32, including NEON, soft floats and hard floats
 
-IS_ARM32=`echo $build | $EGREP -i -c -E 'arm'`
-IS_ARMHF=`echo $build | $EGREP -i -c -E 'armhf|arm7l|eabihf'`
-if test "$IS_ARM32" -ne "0"; then
-   echo 'ARM A-32'
+IS_ARM32=`echo $build | $EGREP -i -c 'arm'`
+IS_ANDROID=`echo $build | $EGREP -i -c -E 'android'`
+
+if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID" -ne "0"; then
+   AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
+fi
+
+if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID" -eq "0"; then
+
+   ## Most Linux are hard-float systems.
+   IS_ARMHF=`echo $build | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
    if test "$IS_ARMHF" -ne "0"; then
-      echo "ARM hard floats"
+      AC_MSG_NOTICE([ARM hard-floats detected, using -mfloat-abi=hard.])
+      FP_FLAG="hard"
+   else
+      AC_MSG_NOTICE([ARM soft-floats detected, using -mfloat-abi=softfp.])
+      FP_FLAG="softfp"
    fi
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## cryptlib.cpp
+   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
+
+   ## cpu.cpp
+   AC_SUBST([CRYPTOPP_CPU_FLAG])
+
+   ## integer.cpp
+   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
+
+   ## crc-simd.cpp
+   AC_SUBST([CRYPTOPP_CRC_FLAG])
+
+   ## ppc-simd.cpp
+   AC_SUBST([CRYPTOPP_PPC_FLAG])
+
+   ## rijndael-simd.cpp
+   AC_SUBST([CRYPTOPP_AES_FLAG])
+
+   ## rijndael-simd.cpp
+   AC_SUBST([CRYPTOPP_SHA_FLAG])
+
+   CXXFLAGS="-march=armv7-a -mfloat-abi=$FP_FLAG -mfpu=neon"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([ARM_FLAG], [1])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$ARM_FLAG" -eq "1"; then
+      AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
+   else
+      AC_SUBST([CRYPTOPP_ARIA_FLAG])
+      AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
+      AC_SUBST([CRYPTOPP_GCM_FLAG])
+      AC_SUBST([CRYPTOPP_NEON_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_NEON], [1], [XXX])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_NEON"
+   fi
+
+   # Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
 #############################################################################
@@ -293,7 +352,7 @@ if test "$IS_AARCH64" -ne "0"; then
    CXXFLAGS="-march=armv8-a"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ARIA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -306,7 +365,7 @@ if test "$IS_AARCH64" -ne "0"; then
    CXXFLAGS="-march=armv8-a"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for BLAKE2])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
    ## ARIA set -DCRYPTOPP_DISABLE_ASIMD
@@ -315,7 +374,7 @@ if test "$IS_AARCH64" -ne "0"; then
    CXXFLAGS="-march=armv8-a+crc"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for CRC32])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -328,7 +387,7 @@ if test "$IS_AARCH64" -ne "0"; then
    CXXFLAGS="-march=armv8-a+crypto"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for GCM])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -341,7 +400,7 @@ if test "$IS_AARCH64" -ne "0"; then
    CXXFLAGS="-march=armv8-a"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ASIMD])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
    ## ARIA set -DCRYPTOPP_DISABLE_ASIMD
@@ -353,7 +412,7 @@ if test "$IS_AARCH64" -ne "0"; then
    CXXFLAGS="-march=armv8-a+crypto"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -366,7 +425,7 @@ if test "$IS_AARCH64" -ne "0"; then
    CXXFLAGS="-march=armv8-a+crypto"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -416,7 +475,7 @@ if test "$IS_PPC" -ne "0"; then
    CXXFLAGS="-maltivec -mcpu=power8"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for PPC])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -429,7 +488,7 @@ if test "$IS_PPC" -ne "0"; then
    CXXFLAGS="-maltivec -mcpu=power8"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -442,7 +501,7 @@ if test "$IS_PPC" -ne "0"; then
    CXXFLAGS="-maltivec -mcpu=power8"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
 
@@ -461,7 +520,7 @@ fi
 ## Add -pipe for non-IoT gadgets to speedup the compile. IoT gadgets, like
 ## BeagleBoards and CubieTrucks, don't have swap files and run out of memory.
 
-if test "$IS_IA32$IS_AARCH64$IS_PPC" -ne "000"; then
+if test "$IS_IA32" -ne "0" || test "$IS_AARCH64" -ne "0" || test "$IS_PPC" -ne "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -469,7 +528,7 @@ if test "$IS_IA32$IS_AARCH64$IS_PPC" -ne "000"; then
    CXXFLAGS="-pipe"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_PIPE], [$CXXFLAGS])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_PIPE], [$CXXFLAGS])]
    )
 
    if test "$CRYPTOPP_PIPE" = "$CXXFLAGS"; then
