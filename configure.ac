@@ -24,7 +24,7 @@ AC_INIT([Crypto++], [6.0], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp]
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([local.h])
 
@@ -49,8 +49,8 @@ AC_CANONICAL_HOST
 ## dumps the manpage because '-dumpmachine' is not a valid option.
 COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
 
-echo "Build: $build"
-echo "Target: $COMPILER_TARGET"
+echo "  Build triplet: $build"
+echo "Compiler target: $COMPILER_TARGET"
 
 #############################################################################
 ## pthreads for thread local storage
@@ -163,6 +163,7 @@ if test "$IS_IA32" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_CPU_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
@@ -178,6 +179,7 @@ if test "$IS_IA32" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_ARIA_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
@@ -190,6 +192,7 @@ if test "$IS_IA32" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_BLAKE2_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
@@ -211,6 +214,7 @@ if test "$IS_IA32" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_GCM_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
    fi
 
@@ -229,7 +233,8 @@ if test "$IS_IA32" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_AES_FLAG" = "x"; then
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
+      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], [XXX])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
    ## sha-simd.cpp
@@ -241,6 +246,7 @@ if test "$IS_IA32" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_SHA_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
    fi
 
@@ -251,11 +257,13 @@ fi
 #############################################################################
 ## ARM A-32, including NEON, soft floats and hard floats
 
-IS_ARM32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
+IS_ARM32=`echo $build | $EGREP -i -c -E 'arm'`
+IS_ARMHF=`echo $build | $EGREP -i -c -E 'armhf|arm7l|eabihf'`
 if test "$IS_ARM32" -ne "0"; then
-
    echo 'ARM A-32'
-
+   if test "$IS_ARMHF" -ne "0"; then
+      echo "ARM hard floats"
+   fi
 fi
 
 #############################################################################
@@ -285,6 +293,7 @@ if test "$IS_AARCH64" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_ARIA_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_ASIMD], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASIMD"
    fi
 
@@ -306,6 +315,7 @@ if test "$IS_AARCH64" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_CRC_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_CRC32], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CRC32"
    fi
 
@@ -318,6 +328,7 @@ if test "$IS_AARCH64" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_GCM_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_PMULL], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_PMULL"
    fi
 
@@ -342,6 +353,7 @@ if test "$IS_AARCH64" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_AES_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
    fi
 
@@ -354,6 +366,7 @@ if test "$IS_AARCH64" -ne "0"; then
    )
 
    if test x"$CRYPTOPP_SHA_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [XXX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
    fi
 
