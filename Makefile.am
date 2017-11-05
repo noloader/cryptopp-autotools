@@ -23,6 +23,8 @@
 ##
 ##  - Fix hard-coded path for PREFIX and CRYPTOPP_DATA_DIR.
 ##
+##  - Add -ffunction-sections, -fdata-sections, -Wl,--gc-sections, and -Wl,-dead_strip for IoT gadgets
+##
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4

@@ -18,6 +18,10 @@
 ##
 ## - Add architectural flags for Aarch32/64 and Power7/8.
 ##
+## - Add -ffunction-sections, -fdata-sections, -Wl,--gc-sections, and -Wl,-dead_strip for IoT gadgets.
+##
+## - Add ubsan and asan targets for testing.
+##
 
 #############################################################################
 AC_INIT([Crypto++], [6.0], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
