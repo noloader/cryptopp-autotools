@@ -22,6 +22,7 @@
 ##
 ## - Add ubsan and asan targets for testing.
 ##
+##
 
 #############################################################################
 AC_INIT([Crypto++], [6.0], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
@@ -376,7 +377,82 @@ if test "$IS_AARCH64" -ne "0"; then
 
    # Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
 
+#############################################################################
+## PowerPC and PowerPC-64
+
+IS_PPC=`echo $build | $EGREP -i -c -E 'ppc|powerpc|powermac'`
+if test "$IS_PPC" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## cryptlib.cpp
+   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
+
+   ## cpu.cpp
+   AC_SUBST([CRYPTOPP_CPU_FLAG])
+
+   ## integer.cpp
+   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
+
+   ## aria-simd.cpp
+   AC_SUBST([CRYPTOPP_ARIA_FLAG])
+
+   ## blake2-simd.cpp
+   AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
+
+   ## crc-simd.cpp
+   AC_SUBST([CRYPTOPP_CRC_FLAG])
+
+   ## gcm-simd.cpp
+   AC_SUBST([CRYPTOPP_GCM_FLAG])
+
+   ## neon-simd.cpp
+   AC_SUBST([CRYPTOPP_NEON_FLAG])
+
+   ## ppc-simd.cpp. Altivec needs Power4, but the VSX loads and stores needs Power7.
+   CXXFLAGS="-maltivec -mcpu=power8"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for PPC])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test x"$CRYPTOPP_PPC_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_PPC], [1], [XXX])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+   fi
+
+   ## rijndael-simd.cpp
+   CXXFLAGS="-maltivec -mcpu=power8"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test x"$CRYPTOPP_AES_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [XXX])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
+   fi
+
+   ## sha-simd.cpp
+   CXXFLAGS="-maltivec -mcpu=power8"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test x"$CRYPTOPP_SHA_FLAG" = "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [XXX])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
+   fi
+
+   # Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
 #############################################################################
