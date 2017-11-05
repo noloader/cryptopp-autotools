@@ -461,7 +461,7 @@ fi
 ## Add -pipe for non-IoT gadgets to speedup the compile. IoT gadgets, like
 ## BeagleBoards and CubieTrucks, don't have swap files and run out of memory.
 
-if test "$IS_IA32" -ne "0" || "$IS_AARCH64" -ne "0" || "$IS_PPC" -ne "0"; then
+if test "$IS_IA32$IS_AARCH64$IS_PPC" -ne "000"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
