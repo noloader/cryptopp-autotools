@@ -122,13 +122,13 @@ libcrc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CRC_FLAG)
 libgcm_simd_la_SOURCES = gcm-simd.cpp
 libgcm_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GCM_FLAG)
 
-## NEON_FLAG set in configure.ac
+## CRYPTOPP_NEON_FLAG set in configure.ac
 libneon_simd_la_SOURCES = neon-simd.cpp
-libneon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(NEON_FLAG)
+libneon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_NEON_FLAG)
 
-## PPC_FLAG set in configure.ac
+## CRYPTOPP_PPC_FLAG set in configure.ac
 libppc_simd_la_SOURCES = ppc-simd.cpp
-libppc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(PPC_FLAG)
+libppc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_PPC_FLAG)
 
 ## CRYPTOPP_AES_FLAG set in configure.ac
 librijndael_simd_la_SOURCES = rijndael-simd.cpp

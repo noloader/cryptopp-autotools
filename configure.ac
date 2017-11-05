@@ -19,6 +19,7 @@
 ## - Add architectural flags for Aarch32/64 and Power7/8.
 ##
 
+#############################################################################
 AC_INIT([Crypto++], [6.0], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
 AM_INIT_AUTOMAKE
 
@@ -38,11 +39,20 @@ AC_PROG_GREP
 AC_ENABLE_SHARED
 AC_ENABLE_STATIC
 
-# Determine the CPU and OS of the machine we are building for.
+#############################################################################
+
+## Determine the CPU and OS of the machine we are building for.
 ## Most people call this the target machine, but not Autotools.
 AC_CANONICAL_HOST
 
-######################################
+## Determine the compiler's target. We add '2>/dev/null' because IBM's xlC
+## dumps the manpage because '-dumpmachine' is not a valid option.
+COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
+
+echo "Build: $build"
+echo "Target: $COMPILER_TARGET"
+
+#############################################################################
 ## pthreads for thread local storage
 
 AC_ARG_ENABLE(tls,
@@ -70,17 +80,17 @@ if test "$ac_enable_tls" = "yes"; then
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
-######################################
+#############################################################################
 ## Fix AR on iOS and OS X
 
-#IS_APPLE=`echo $build | $EGREP -i -c 'apple'`
+#IS_APPLE=`echo "$build" | $EGREP -i -c 'apple'`
 #if test "$IS_APPLE" -ne "0"; then
 #   AC_SUBST([AR], ["/usr/bin/libtool"])
 #   AC_SUBST([ARFLAGS], ["-static -o"])
 #   AC_SUBST([ac_ct_AR], ["/usr/bin/libtool"])
 #fi
 
-######################################
+#############################################################################
 ## Solaris, GCC and -Wa,--divide
 
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
@@ -103,7 +113,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
-######################################
+#############################################################################
 ## Solaris and libraries
 
 if test "$IS_SUN_OS" -ne "0"; then
@@ -125,8 +135,9 @@ if test "$IS_SUN_OS" -ne "0"; then
    LDFLAGS="$SAVED_LDFLAGS"
 fi
 
-######################################
+#############################################################################
 ## IA-32, i386, i586, i686, x86_64, etc.
+
 ## We are kind of screwed on some platforms because AC_COMPILE_IFELSE fails to
 ## detect "illegal option". The SunCC compiler literally generates and prints
 ## the message, but Autoconf ignores it and reports the option is valid.
@@ -174,7 +185,10 @@ if test "$IS_IA32" -ne "0"; then
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
-   ## CRC will set -DDCRYPTOPP_DISABLE_SSE4
+
+   if test x"$CRYPTOPP_BLAKE2_FLAG" = "x"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+   fi
 
    ## crc-simd.cpp
    CXXFLAGS="-msse4.2"
@@ -183,10 +197,7 @@ if test "$IS_IA32" -ne "0"; then
       [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
       [AC_MSG_RESULT([no])]
    )
-
-   if test x"$CRYPTOPP_CRC_FLAG" = "x"; then
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
-   fi
+   ## BLAKE2 set -DDCRYPTOPP_DISABLE_SSE4
 
    ## gcm-simd.cpp
    CXXFLAGS="-mssse3 -mpclmul"
@@ -201,10 +212,10 @@ if test "$IS_IA32" -ne "0"; then
    fi
 
    ## neon-simd.cpp
-   AC_SUBST([NEON_FLAG])
+   AC_SUBST([CRYPTOPP_NEON_SIMD])
 
    ## ppc-simd.cpp
-   AC_SUBST([PPC_FLAG])
+   AC_SUBST([CRYPTOPP_PPC_FLAG])
 
    ## rijndael-simd.cpp
    CXXFLAGS="-msse4.1 -maes"
@@ -233,6 +244,123 @@ if test "$IS_IA32" -ne "0"; then
    # Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
+
+#############################################################################
+## ARM A-32, including NEON, soft floats and hard floats
+
+IS_ARM32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
+if test "$IS_ARM32" -ne "0"; then
+
+   echo 'ARM A-32'
+
+fi
+
+#############################################################################
+## ARM Aarch32 and Aarch64
+
+IS_AARCH64=`echo $build | $EGREP -i -c -E 'aarch32|aarch64'`
+if test "$IS_AARCH64" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## cryptlib.cpp
+   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
+
+   ## cpu.cpp
+   AC_SUBST([CRYPTOPP_CPU_FLAG])
+
+   ## integer.cpp
+   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
+
+   ## aria-simd.cpp
+   CXXFLAGS="-march=armv8-a"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ARIA])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test x"$CRYPTOPP_ARIA_FLAG" = "x"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASIMD"
+   fi
+
+   ## blake2-simd.cpp
+   CXXFLAGS="-march=armv8-a"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for BLAKE2])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+   ## ARIA set -DCRYPTOPP_DISABLE_ASIMD
+
+   ## crc-simd.cpp
+   CXXFLAGS="-march=armv8-a+crc"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for CRC32])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test x"$CRYPTOPP_CRC_FLAG" = "x"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CRC32"
+   fi
+
+   ## gcm-simd.cpp
+   CXXFLAGS="-march=armv8-a+crypto"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for GCM])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test x"$CRYPTOPP_GCM_FLAG" = "x"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_PMULL"
+   fi
+
+   ## neon-simd.cpp
+   CXXFLAGS="-march=armv8-a"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ASIMD])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+   ## ARIA set -DCRYPTOPP_DISABLE_ASIMD
+
+   ## ppc-simd.cpp
+   AC_SUBST([CRYPTOPP_PPC_FLAG])
+
+   ## rijndael-simd.cpp
+   CXXFLAGS="-march=armv8-a+crypto"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test x"$CRYPTOPP_AES_FLAG" = "x"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
+   fi
+
+   ## sha-simd.cpp
+   CXXFLAGS="-march=armv8-a+crypto"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]) && AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test x"$CRYPTOPP_SHA_FLAG" = "x"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
+   fi
+
+   # Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+
+fi
+
+#############################################################################
+## Other fodder
 
 ## Remove existing makefiles
 AC_CONFIG_COMMANDS_PRE([[rm -f GNUmakefile 2>/dev/null]])
