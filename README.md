@@ -4,7 +4,7 @@ This repository contains Autotools files for Wei Dai's Crypto++ (https://github.
 
 The purpose of Crypto++ Autotools is three-fold:
 
-1. better support Linux distributions, like Debain, Fedora, Gentoo and openSUSE
+1. better support Linux distributions, like Debain, Fedora and openSUSE
 2. supplement the GNUmakefile which is reaching its limits with repsect to GNUmake-based configuration
 3. utilize compiler feature probes that produce better results on ARM, MIPS and Power8 architectures
 
