@@ -161,7 +161,6 @@ if test "$IS_IA32" -ne "0"; then
    ## Flags not conditionally set below
    AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
    AC_SUBST([CRYPTOPP_INTEGER_FLAG])
-   AC_SUBST([CRYPTOPP_NEON_SIMD])
    AC_SUBST([CRYPTOPP_PPC_FLAG])
 
    ## cpu.cpp
