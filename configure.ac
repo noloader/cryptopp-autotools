@@ -110,11 +110,12 @@ if test "$IS_SUN_OS" -ne "0"; then
    CXXFLAGS="-Wa,--divide"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_WA_DIVIDE], ["-Wa,--divide"])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test "$CRYPTOPP_WA_DIVIDE" = "-Wa,--divide"; then
-      AM_CXXFLAGS="$AM_CXXFLAGS -Wa,--divide"
+   if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
    # Restore CXXFLAGS
@@ -132,11 +133,12 @@ if test "$IS_SUN_OS" -ne "0"; then
    LDFLAGS="-lnsl -lsocket"
    AC_MSG_CHECKING([if $LD supports $LDFLAGS])
    AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_NSL_SOCKET], ["-lnsl -lsocket"])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test "$CRYPTOPP_NSL_SOCKET" = "-lnsl -lsocket"; then
-      AM_LDFLAGS="$AM_LDFLAGS -lnsl -lsocket"
+   if test "$tr_RESULT" -eq "1"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
    # Restore LDFLAGS
@@ -156,89 +158,105 @@ if test "$IS_IA32" -ne "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## cryptlib.cpp
+   ## Flags not conditionally set below
    AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
+   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
+   AC_SUBST([CRYPTOPP_NEON_SIMD])
+   AC_SUBST([CRYPTOPP_PPC_FLAG])
 
    ## cpu.cpp
    CXXFLAGS="-msse2"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SSE])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_CPU_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [XXX])
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Define to 1 if you have SSE2 instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_CPU_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
+         [Define to 1 if you do not have IA-32 SSE2 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
-
-   ## integer.cpp
-   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
 
    ## aria-simd.cpp
    CXXFLAGS="-mssse3"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ARIA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_ARIA_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [XXX])
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
+         [Define to 1 if you have the SSSE3 instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_ARIA_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1],
+         [Define to 1 if you do not have IA-32 SSSE3 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
-   ## blake2-simd.cpp
+   ## blake2-simd.cpp and crc.cpp
    CXXFLAGS="-msse4.2"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for BLAKE2])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for BLAKE2 and CRC32])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_BLAKE2_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [XXX])
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1],
+         [Define to 1 if you have SSE4.2 instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
+      AC_SUBST([CRYPTOPP_CRC_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
+         [Define to 1 if you do not have IA-32 SSE4.1 or SSE4.2 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
-
-   ## crc-simd.cpp
-   CXXFLAGS="-msse4.2"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for CRC32])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
-   )
-   ## BLAKE2 set -DDCRYPTOPP_DISABLE_SSE4
 
    ## gcm-simd.cpp
    CXXFLAGS="-mssse3 -mpclmul"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for GCM])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_GCM_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [XXX])
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1],
+         [Define to 1 if you have the CLMUL instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_GCM_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1],
+         [Define to 1 if you do not have IA-32 CLMUL instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
    fi
-
-   ## neon-simd.cpp
-   AC_SUBST([CRYPTOPP_NEON_SIMD])
-
-   ## ppc-simd.cpp
-   AC_SUBST([CRYPTOPP_PPC_FLAG])
 
    ## rijndael-simd.cpp
    CXXFLAGS="-msse4.1 -maes"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_AES_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], [XXX])
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
+         [Define to 1 if you have AES-NI instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_AES_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
+         [Define to 1 if you do not have IA-32 AES instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
@@ -246,13 +264,19 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="-msse4.2 -msha"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_SHA_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_SHANI_AVAILABLE], [1],
+         [Define to 1 if you have SHA instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_SHA_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
+         [Define to 1 if you do not have IA-32 SHA instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
    fi
 
    # Restore CXXFLAGS
@@ -284,46 +308,37 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID" -eq "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## cryptlib.cpp
+   ## Flags not conditionally set below
    AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
-
-   ## cpu.cpp
    AC_SUBST([CRYPTOPP_CPU_FLAG])
-
-   ## integer.cpp
    AC_SUBST([CRYPTOPP_INTEGER_FLAG])
-
-   ## crc-simd.cpp
    AC_SUBST([CRYPTOPP_CRC_FLAG])
-
-   ## ppc-simd.cpp
    AC_SUBST([CRYPTOPP_PPC_FLAG])
-
-   ## rijndael-simd.cpp
    AC_SUBST([CRYPTOPP_AES_FLAG])
-
-   ## rijndael-simd.cpp
    AC_SUBST([CRYPTOPP_SHA_FLAG])
 
    CXXFLAGS="-march=armv7-a -mfloat-abi=$FP_FLAG -mfpu=neon"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([ARM_FLAG], [1])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test "$ARM_FLAG" -eq "1"; then
-      AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+   if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1],
+         [Define to 1 if you have the NEON instructions available.])
    else
       AC_SUBST([CRYPTOPP_ARIA_FLAG])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
       AC_SUBST([CRYPTOPP_GCM_FLAG])
       AC_SUBST([CRYPTOPP_NEON_FLAG])
-      AC_DEFINE([CRYPTOPP_DISABLE_NEON], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_NEON"
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
+         [Define to 1 if you do not have ARM NEON instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
    # Restore CXXFLAGS
@@ -339,99 +354,82 @@ if test "$IS_AARCH64" -ne "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## cryptlib.cpp
+   ## Flags not conditionally set below
    AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
-
-   ## cpu.cpp
    AC_SUBST([CRYPTOPP_CPU_FLAG])
-
-   ## integer.cpp
    AC_SUBST([CRYPTOPP_INTEGER_FLAG])
+   AC_SUBST([CRYPTOPP_PPC_FLAG])
 
-   ## aria-simd.cpp
+   ## aria-simd.cpp, blake2-simd.cpp, neon-simd.cpp
    CXXFLAGS="-march=armv8-a"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ARIA])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ARIA, BLAKE2])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_ARIA_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_ASIMD], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASIMD"
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])
+   else
+      AC_SUBST([CRYPTOPP_ARIA_FLAG])
+      AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
+      AC_SUBST([CRYPTOPP_NEON_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
+         [Define to 1 if you do not have ARM NEON instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
-
-   ## blake2-simd.cpp
-   CXXFLAGS="-march=armv8-a"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for BLAKE2])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
-   )
-   ## ARIA set -DCRYPTOPP_DISABLE_ASIMD
 
    ## crc-simd.cpp
    CXXFLAGS="-march=armv8-a+crc"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for CRC32])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_CRC_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_CRC32], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CRC32"
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_CRC32_AVAILABLE], [1],
+         [Define to 1 if you have ARMv8-a CRC32 instructions available.])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_CRC32], [1],
+         [Define to 1 if you do not have ARMv8-a CRC32 instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_CRC32"
    fi
 
-   ## gcm-simd.cpp
+   ## gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    CXXFLAGS="-march=armv8-a+crypto"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for GCM])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for GCM, AES, SHA])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_GCM_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_PMULL], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_PMULL"
-   fi
-
-   ## neon-simd.cpp
-   CXXFLAGS="-march=armv8-a"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ASIMD])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
-   )
-   ## ARIA set -DCRYPTOPP_DISABLE_ASIMD
-
-   ## ppc-simd.cpp
-   AC_SUBST([CRYPTOPP_PPC_FLAG])
-
-   ## rijndael-simd.cpp
-   CXXFLAGS="-march=armv8-a+crypto"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test x"$CRYPTOPP_AES_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
-   fi
-
-   ## sha-simd.cpp
-   CXXFLAGS="-march=armv8-a+crypto"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test x"$CRYPTOPP_SHA_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_PMULL_AVAILABLE], [1],
+         [Define to 1 if you have ARMv8-a PMULL instructions available.])
+      AC_DEFINE([CRYPTOPP_ARM_AES_AVAILABLE], [1],
+         [Define to 1 if you have ARMv8-a AES instructions available.])
+      AC_DEFINE([CRYPTOPP_ARM_SHA_AVAILABLE], [1],
+         [Define to 1 if you have ARMv8-a SHA instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_GCM_FLAG])
+      AC_SUBST([CRYPTOPP_AES_FLAG])
+      AC_SUBST([CRYPTOPP_SHA_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_PMULL], [1],
+         [Define to 1 if you do not have ARMv8-a PMULL instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_AES], [1],
+         [Define to 1 if you do not have ARMv8-a AES instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA], [1],
+         [Define to 1 if you do not have ARMv8-a SHA instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_AES"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
    fi
 
    # Restore CXXFLAGS
@@ -447,67 +445,53 @@ if test "$IS_PPC" -ne "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## cryptlib.cpp
+   ## Flags not conditionally set below
    AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
-
-   ## cpu.cpp
    AC_SUBST([CRYPTOPP_CPU_FLAG])
-
-   ## integer.cpp
    AC_SUBST([CRYPTOPP_INTEGER_FLAG])
-
-   ## aria-simd.cpp
    AC_SUBST([CRYPTOPP_ARIA_FLAG])
-
-   ## blake2-simd.cpp
    AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
-
-   ## crc-simd.cpp
-   AC_SUBST([CRYPTOPP_CRC_FLAG])
-
-   ## gcm-simd.cpp
    AC_SUBST([CRYPTOPP_GCM_FLAG])
-
-   ## neon-simd.cpp
    AC_SUBST([CRYPTOPP_NEON_FLAG])
 
-   ## ppc-simd.cpp. Altivec needs Power4, but the VSX loads and stores needs Power7.
+   ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
+   ## Altivec needs Power4, but the VSX loads and stores needs Power7.
    CXXFLAGS="-maltivec -mcpu=power8"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for PPC])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test x"$CRYPTOPP_PPC_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_PPC], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
-   fi
-
-   ## rijndael-simd.cpp
-   CXXFLAGS="-maltivec -mcpu=power8"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test x"$CRYPTOPP_AES_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
-   fi
-
-   ## sha-simd.cpp
-   CXXFLAGS="-maltivec -mcpu=power8"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test x"$CRYPTOPP_SHA_FLAG" = "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [XXX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1],
+         [Define to 1 if you have POWER7 instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE], [1],
+         [Define to 1 if you have POWER8 instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1],
+         [Define to 1 if you have POWER8 Crypto instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1],
+         [Define to 1 if you have POWER8 Crypto instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1],
+         [Define to 1 if you have POWER8 Crypto instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_PPC_FLAG])
+      AC_SUBST([CRYPTOPP_CRC_FLAG])
+      AC_SUBST([CRYPTOPP_AES_FLAG])
+      AC_SUBST([CRYPTOPP_SHA_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1],
+         [Define to 1 if you do not have the Power8 PMULL instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1],
+         [Define to 1 if you do not have the Power8 AES instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1],
+         [Define to 1 if you do not have the Power8 SHA instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA"
    fi
 
    # Restore CXXFLAGS
