@@ -57,6 +57,9 @@ COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
 ## echo "    Build triplet: $build"
 ## echo "  Compiler target: $COMPILER_TARGET"
 
+## Assert this once to avoid surprises
+AC_LANG_ASSERT([C++])
+
 #############################################################################
 ## pthreads for thread local storage
 
