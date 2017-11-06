@@ -173,7 +173,8 @@ if test "$IS_IA32" -ne "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Define to 1 if you have SSE2 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 SSE2 instructions available.])
    else
       AC_SUBST([CRYPTOPP_CPU_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
@@ -192,12 +193,29 @@ if test "$IS_IA32" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
-         [Define to 1 if you have the SSSE3 instructions available.])
+         [Define to 1 if you have IA-32 SSSE3 instructions available.])
    else
       AC_SUBST([CRYPTOPP_ARIA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1],
          [Define to 1 if you do not have IA-32 SSSE3 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
+   fi
+
+   ## SSE4.1 because confg.h provides it.
+   CXXFLAGS="-msse4.1"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 SSE4.1 instructions available.])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
+         [Define to 1 if you do not have IA-32 SSE4.1 instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
    ## blake2-simd.cpp and crc.cpp
@@ -212,12 +230,12 @@ if test "$IS_IA32" -ne "0"; then
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1],
-         [Define to 1 if you have SSE4.2 instructions available.])
+         [Define to 1 if you have IA-32 SSE4.2 instructions available.])
    else
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
       AC_SUBST([CRYPTOPP_CRC_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
-         [Define to 1 if you do not have IA-32 SSE4.1 or SSE4.2 instructions available.])
+         [Define to 1 if you do not have IA-32 SSE4.2 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
@@ -232,7 +250,7 @@ if test "$IS_IA32" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1],
-         [Define to 1 if you have the CLMUL instructions available.])
+         [Define to 1 if you have IA-32 CLMUL instructions available.])
    else
       AC_SUBST([CRYPTOPP_GCM_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1],
@@ -251,11 +269,11 @@ if test "$IS_IA32" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
-         [Define to 1 if you have AES-NI instructions available.])
+         [Define to 1 if you have IA-32 AES-NI instructions available.])
    else
       AC_SUBST([CRYPTOPP_AES_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
-         [Define to 1 if you do not have IA-32 AES instructions available.])
+         [Define to 1 if you do not have IA-32 AES-NI instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
@@ -270,7 +288,7 @@ if test "$IS_IA32" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SHANI_AVAILABLE], [1],
-         [Define to 1 if you have SHA instructions available.])
+         [Define to 1 if you have IA-32 SHA instructions available.])
    else
       AC_SUBST([CRYPTOPP_SHA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
