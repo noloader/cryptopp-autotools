@@ -17,6 +17,11 @@
 ##        git checkout GNUmakefile
 ##
 
+## Automake does not support "specific flags for certain source files" natively, so we hack it.
+## The hacks include building eight or so libraries and then combining them into an archive or
+## shared object. Also see https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html
+## and https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html.
+##
 ## Visit the link below for the original Debian Autotools files
 ##   https://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
 ##
@@ -26,11 +31,9 @@
 ##  - Add architecture specific flags to certain source files. This is partially implemented for most
 ##    Linux, but we still need Altivec and Power8. We also need IBM's xlC on AIX and Sun's CC on Solaris.
 ##
-##    Automake does not support "specific flags for certain source files" natively, so we have to hack it.
-##    https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html and
-##    https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
+##  - Figure out why Solaris fails to include the Mapfile in the shared object
 ##
-##  - Add -ffunction-sections, -fdata-sections, -Wl,--gc-sections, and -Wl,-dead_strip for IoT gadgets
+##  - Figure out what's going on with DragonFly and dependencies
 ##
 
 AUTOMAKE_OPTIONS = foreign

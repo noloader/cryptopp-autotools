@@ -36,7 +36,7 @@ AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([local.h])
 
-AM_PROG_AR
+AC_PROG_LIBTOOL
 LT_INIT
 
 AC_PROG_CXX
