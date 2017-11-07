@@ -17,6 +17,10 @@
 ##        git checkout GNUmakefile
 ##
 
+## Visit the link below for the original Debian Autotools files
+##   https://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
+##
+
 ## TODO:
 ##
 ##  - Add architecture specific flags to certain source files. This is partially implemented for most
@@ -99,7 +103,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(libothers_la_OBJECTS)
 
 ## Very important... Version number of the library
-libcryptopp_la_LDFLAGS = -version-info 6:0:0
+libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 6:0:0
 
 ## CRYPTOPP_CRYPTLIB_FLAG set in configure.ac
 libcryptlib_la_SOURCES = cryptlib.cpp
@@ -195,7 +199,7 @@ libothers_la_SOURCES = \
 #   libshacal2_simd.la \
 #   libothers.la
 
-include_HEADERS = \
+pkginclude_HEADERS = \
    3way.h adler32.h aes.h algebra.h algparam.h arc4.h argnames.h \
    aria.h asn.h authenc.h base32.h base64.h basecode.h blake2.h \
    blowfish.h blumshub.h camellia.h cast.h cbcmac.h ccm.h \
@@ -232,7 +236,7 @@ noinst_HEADERS = \
 bin_PROGRAMS = cryptest
 noinst_PROGRAMS = cryptestcwd
 
-cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"@datadir@/@PACKAGE_TARNAME@/"'
+cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"@pkgdatadir@/@PACKAGE_TARNAME@/"'
 cryptest_SOURCES = \
    test.cpp \
    bench1.cpp \
@@ -272,11 +276,78 @@ cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
 CLEANFILES = adhoc.cpp
 
-## We need to copy the TestVectors/ and TestData/ to %{datadir}
-## https://xaizek.github.io/2014-09-28/how-to-install-data-directory-with-automake/
+## Copy the TestVectors/ and TestData/ to %{pkgdatadir}
+## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
-testdata_DIR = @datadir@/@PACKAGE_TARNAME@/TestData
-testvector_DIR = @datadir@/@PACKAGE_TARNAME@/TestVectors
+testdata_FILES = \
+   TestData/3desval.dat TestData/3wayval.dat \
+   TestData/aria.dat TestData/camellia.dat \
+   TestData/cast128v.dat TestData/cast256v.dat \
+   TestData/descert.dat TestData/dh1024.dat \
+   TestData/dh2048.dat TestData/dlie1024.dat \
+   TestData/dlie2048.dat TestData/dsa1024b.dat \
+   TestData/dsa1024.dat TestData/dsa512.dat \
+   TestData/elgc1024.dat TestData/esig1023.dat \
+   TestData/esig1536.dat TestData/esig2046.dat \
+   TestData/fhmqv160.dat TestData/fhmqv256.dat \
+   TestData/fhmqv384.dat TestData/fhmqv512.dat \
+   TestData/gostval.dat TestData/hmqv160.dat \
+   TestData/hmqv256.dat TestData/hmqv384.dat \
+   TestData/hmqv512.dat TestData/ideaval.dat \
+   TestData/luc1024.dat TestData/luc2048.dat \
+   TestData/lucc1024.dat TestData/lucc512.dat \
+   TestData/lucd1024.dat TestData/lucd512.dat \
+   TestData/lucs1024.dat TestData/lucs512.dat \
+   TestData/marsval.dat TestData/mqv1024.dat \
+   TestData/mqv2048.dat TestData/nr1024.dat \
+   TestData/nr2048.dat TestData/rabi1024.dat \
+   TestData/rabi2048.dat TestData/rc2val.dat \
+   TestData/rc5val.dat TestData/rc6val.dat \
+   TestData/rijndael.dat TestData/rsa1024.dat \
+   TestData/rsa2048a.dat TestData/rsa2048.dat \
+   TestData/rsa400pb.dat TestData/rsa400pv.dat \
+   TestData/rsa512a.dat TestData/rw1024.dat \
+   TestData/rw2048.dat TestData/saferval.dat \
+   TestData/serpentv.dat TestData/shacal2v.dat \
+   TestData/sharkval.dat TestData/skipjack.dat \
+   TestData/squareva.dat TestData/twofishv.dat \
+   TestData/usage.dat TestData/xtrdh171.dat \
+   TestData/xtrdh342.dat
+
+testvector_FILES = \
+   TestVectors/aes.txt TestVectors/all.txt \
+   TestVectors/aria.txt TestVectors/blake2b.txt \
+   TestVectors/blake2s.txt TestVectors/blake2.txt \
+   TestVectors/camellia.txt TestVectors/ccm.txt \
+   TestVectors/chacha.txt TestVectors/cmac.txt \
+   TestVectors/dlies.txt TestVectors/dsa_1363.txt \
+   TestVectors/dsa_rfc6979.txt TestVectors/dsa.txt \
+   TestVectors/eax.txt TestVectors/esign.txt \
+   TestVectors/gcm.txt TestVectors/hkdf.txt \
+   TestVectors/hmac.txt TestVectors/kalyna.txt \
+   TestVectors/keccak.txt TestVectors/mars.txt \
+   TestVectors/nr.txt TestVectors/panama.txt \
+   TestVectors/Readme.txt TestVectors/rsa_oaep.txt \
+   TestVectors/rsa_pkcs1_1_5.txt TestVectors/rsa_pss.txt \
+   TestVectors/rw.txt TestVectors/salsa.txt \
+   TestVectors/seal.txt TestVectors/seed.txt \
+   TestVectors/sha1_160_fips_180.txt TestVectors/sha1_fips_180.txt \
+   TestVectors/sha2_224_fips_180.txt TestVectors/sha2_256_fips_180.txt \
+   TestVectors/sha2_384_fips_180.txt TestVectors/sha2_512_fips_180.txt \
+   TestVectors/sha2_fips_180.txt TestVectors/sha2.txt \
+   TestVectors/sha3_224_fips_202.txt TestVectors/sha3_256_fips_202.txt \
+   TestVectors/sha3_384_fips_202.txt TestVectors/sha3_512_fips_202.txt \
+   TestVectors/sha3_fips_202.txt TestVectors/sha3.txt \
+   TestVectors/shacal2.txt TestVectors/sha.txt \
+   TestVectors/siphash.txt TestVectors/sosemanuk.txt \
+   TestVectors/tea.txt TestVectors/threefish.txt \
+   TestVectors/tls_chacha.txt TestVectors/ttmac.txt \
+   TestVectors/vmac.txt TestVectors/wake.txt \
+   TestVectors/whrlpool.txt
+
+dist_pkgdata_DATA = \
+   $(testdata_FILES) \
+   $(testvector_FILES)
 
 ## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
 ## C source files and drives link through the C compiler. We provide the empty adhoc.cpp
