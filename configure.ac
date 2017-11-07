@@ -89,6 +89,16 @@ if test "$ac_enable_tls" = "yes"; then
 fi
 
 #############################################################################
+## Big endian/little endian
+
+AC_C_BIGENDIAN(
+  AC_DEFINE(IS_BIG_ENDIAN, 1, [machine is big-endian]),
+  AC_DEFINE(IS_LITTLE_ENDIAN, 1, [machine is little-endian]),
+  AC_MSG_ERROR(unknown endianess),
+  AC_MSG_ERROR(universial endianess not supported)
+)
+
+#############################################################################
 ## Fix AR on iOS and OS X
 
 ## AR and ARFLAGS usage is currently broke under Autotools. Also see
@@ -544,8 +554,8 @@ if test "$IS_IA32" -ne "0" || test "$IS_AARCH64" -ne "0" || test "$IS_PPC" -ne "
 fi
 
 ## Remove existing makefiles
-AC_CONFIG_COMMANDS_PRE([[rm -f GNUmakefile 2>/dev/null]])
-AC_CONFIG_COMMANDS_PRE([[rm -f GNUmakefile-cross 2>/dev/null]])
+AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
+AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross 2>/dev/null])
 
 ## Write the Automake flags we set
 AC_SUBST([AM_CXXFLAGS])
@@ -557,4 +567,9 @@ AC_OUTPUT
 ## C source files and drive link through the C compiler. We provide the empty adhoc.cpp
 ## to get things back on course, so adhoc.cpp must always be copied.
 
-AC_CONFIG_COMMANDS_POST([[cp adhoc.cpp.proto adhoc.cpp]])
+AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
+
+#############################################################################
+## Print a summary of information
+
+AC_MSG_NOTICE(["Data Directory: Using $(datadir)/cryptopp for test vectors and data when cryptest is installed"])
