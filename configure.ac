@@ -3,6 +3,10 @@
 ##                based on Debian configure.ac by László Böszörményi.
 ##
 
+## Visit the link below for the original Debian Autotools files
+##   https://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
+##
+
 ## TODO
 ##
 ## - Figure out how to make Autoconf stop using the fucking C compiler for tasks.
@@ -571,5 +575,3 @@ AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
 
 #############################################################################
 ## Print a summary of information
-
-AC_MSG_NOTICE(["Data Directory: Using $(datadir)/cryptopp for test vectors and data when cryptest is installed"])
