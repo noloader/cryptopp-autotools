@@ -188,6 +188,8 @@ if test "$IS_SUN_OS" -ne "0"; then
    ## Save LDFLAGS
    SAVED_LDFLAGS="$LDFLAGS"
 
+   ## IA-32 gets a Mapfile for capabilities
+if test "$IS_IA32" -ne "0"; then
    LDFLAGS="-M cryptopp.mapfile"
    AC_MSG_CHECKING([if $LD supports $LDFLAGS])
    AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
@@ -198,6 +200,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
+fi
 
    LDFLAGS="-lnsl"
    AC_MSG_CHECKING([if $LD supports $LDFLAGS])
