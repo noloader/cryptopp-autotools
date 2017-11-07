@@ -20,13 +20,11 @@
 ##   much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
 ##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc.
 ##
-## - Fix compile tests on Solaris using SunCC. They currenly return success even for failure.
-##
-## - Add -ffunction-sections, -fdata-sections, -Wl,--gc-sections, and -Wl,-dead_strip for IoT gadgets.
+## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
 ##
 ## - Add ubsan and asan targets for testing.
 ##
-## - Setup test environment that uses Dash, which appears to be the lamest minimal shell
+## - Setup test environment with Dash, which appears to be the lamest shell
 ##
 
 #############################################################################
@@ -156,6 +154,71 @@ AC_C_BIGENDIAN(
 #   AC_SUBST([ARFLAGS], ["-static -o"])
 #   AC_SUBST([ac_ct_AR], ["/usr/bin/libtool"])
 #fi
+
+#############################################################################
+## Dead code stripping
+
+if true; then
+
+   ## Save FLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+   SAVED_LDFLAGS="$LDFLAGS"
+
+   CXXFLAGS="-fdata-sections"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   CXXFLAGS="-ffunction-sections"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   ## -Wl,-dead_strip is an OS X.
+   if test "$IS_APPLE_OS" -ne "0"; then
+
+      LDFLAGS="-Wl,-dead_strip"
+      AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
+
+      if test "$tr_RESULT" -eq "1"; then
+         AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+      fi
+
+   else
+
+      LDFLAGS="-Wl,--gc-sections"
+      AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
+
+      if test "$tr_RESULT" -eq "1"; then
+         AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+      fi
+
+   fi
+
+   # Restore FLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+   LDFLAGS="$SAVED_LDFLAGS"
+fi
 
 #############################################################################
 ## Solaris, GCC and -Wa,--divide
