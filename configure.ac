@@ -65,6 +65,7 @@ AC_CANONICAL_HOST
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
 IS_APPLE_OS=`echo "$build" | $EGREP -i -c 'apple'`
 IS_ANDROID_OS=`echo $build | $EGREP -i -c -E 'android'`
+IS_CYGWIN_OS=`echo $build | $EGREP -i -c -E 'cygwin'`
 
 IS_IA32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
 IS_ARM32=`echo $build | $EGREP -i -c 'arm'`
@@ -236,6 +237,31 @@ if test "$IS_SUN_OS" -ne "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   # Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## Crygwin, Newlib and _XOPEN_SOURCE
+
+if test "$IS_CYGWIN_OS" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   CXXFLAGS="-D_XOPEN_SOURCE=600"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_DEFINE([_XOPEN_SOURCE], [600],
+         [Define to 600 if you are working on Cygwin due to Newlib.])
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
