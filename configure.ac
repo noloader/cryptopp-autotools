@@ -20,12 +20,13 @@
 ##   much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
 ##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc.
 ##
-## - Add architectural flags for Aarch32/64 and Power7/8.
+## - Fix compile tests on Solaris using SunCC. They currenly return success even for failure.
 ##
 ## - Add -ffunction-sections, -fdata-sections, -Wl,--gc-sections, and -Wl,-dead_strip for IoT gadgets.
 ##
 ## - Add ubsan and asan targets for testing.
 ##
+## - Setup test environment that uses Dash, which appears to be the lamest minimal shell
 ##
 
 #############################################################################
@@ -48,21 +49,59 @@ AC_PROG_GREP
 AC_ENABLE_SHARED
 AC_ENABLE_STATIC
 
+## Assert this once to avoid surprises
+AC_LANG_ASSERT([C++])
+
 #############################################################################
 
 ## Determine the CPU and OS of the machine we are building for.
 ## Most people call this the target machine, but not Autotools.
+
 AC_CANONICAL_HOST
 
-## Determine the compiler's target. We add '2>/dev/null' because IBM's xlC
-## dumps the man page since '-dumpmachine' is not a valid option.
+## These are some variables that help us track platform and compiler.
+## It speeds up configuration by adding some intelligence to the
+## test selection process. It also avoids failed configurations by
+## avoiding some tests that fail but Autotools reports as success.
+
+IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
+IS_APPLE_OS=`echo "$build" | $EGREP -i -c 'apple'`
+IS_ANDROID_OS=`echo $build | $EGREP -i -c -E 'android'`
+
+IS_IA32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
+IS_ARM32=`echo $build | $EGREP -i -c 'arm'`
+IS_AARCH64=`echo $build | $EGREP -i -c -E 'aarch32|aarch64'`
+
+#############################################################################
+
+## Determine the compiler's target. GCC '-dumpmachine' is the build target,
+## so it represents what the compiler is building for (and not what its
+## running on). We add '2>/dev/null' because IBM's xlC dumps the man page
+## when presented with '-dumpmachine' since it is not a valid option.
+
 COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
 
-## echo "    Build triplet: $build"
-## echo "  Compiler target: $COMPILER_TARGET"
+## Determine the compiler's vendor. We need to work around some Autoconf bugs.
 
-## Assert this once to avoid surprises
-AC_LANG_ASSERT([C++])
+COMPILER_VERSION=`"$CXX" --version 2>/dev/null | head -n 1`
+
+## IBM xlC test if COMPILER_VERSION is empty
+if test x"$COMPILER_VERSION" = "x"; then
+   COMPILER_VERSION=`"$CXX" -qversion 2>/dev/null | head -n 1`
+fi
+
+## SunCC test if COMPILER_VERSION is empty
+if test x"$COMPILER_VERSION" = "x"; then
+   COMPILER_VERSION=`"$CXX" -V 2>&1 | head -n 1`
+fi
+
+IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
+
+##echo "**********************************************"
+##echo "    Build triplet: $build"
+##echo "  Compiler target: $COMPILER_TARGET"
+##echo " Compiler version: $COMPILER_VERSION"
+##echo "**********************************************"
 
 #############################################################################
 ## pthreads for thread local storage
@@ -73,7 +112,10 @@ AC_ARG_ENABLE(tls,
    ac_enable_tls=yes)
 AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
 
+## Hack: Use IS_SUN_COMPILER because AC_COMPILE_IFELSE misdetects the flag
 if test "$ac_enable_tls" = "yes"; then
+if test "$IS_SUN_COMPILER" -eq "0"; then
+
    SAVED_CXXFLAGS="$CXXFLAGS"
    CXXFLAGS="-pthread"
    AC_MSG_CHECKING([for C++ compiler pthread support])
@@ -90,6 +132,7 @@ if test "$ac_enable_tls" = "yes"; then
    AM_CXXFLAGS="$AM_CXXFLAGS -pthread"
    AM_LDFLAGS="$AM_LDFLAGS -pthread"
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
 fi
 
 #############################################################################
@@ -108,8 +151,7 @@ AC_C_BIGENDIAN(
 ## AR and ARFLAGS usage is currently broke under Autotools. Also see
 ## https://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html
 
-#IS_APPLE=`echo "$build" | $EGREP -i -c 'apple'`
-#if test "$IS_APPLE" -ne "0"; then
+#if test "$IS_APPLE_OS" -ne "0"; then
 #   AC_SUBST([AR], ["/usr/bin/libtool"])
 #   AC_SUBST([ARFLAGS], ["-static -o"])
 #   AC_SUBST([ac_ct_AR], ["/usr/bin/libtool"])
@@ -118,7 +160,6 @@ AC_C_BIGENDIAN(
 #############################################################################
 ## Solaris, GCC and -Wa,--divide
 
-IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
 if test "$IS_SUN_OS" -ne "0"; then
 
    ## Save CXXFLAGS
@@ -140,14 +181,36 @@ if test "$IS_SUN_OS" -ne "0"; then
 fi
 
 #############################################################################
-## Solaris and libraries
+## Solaris, map file and libraries
 
 if test "$IS_SUN_OS" -ne "0"; then
 
    ## Save LDFLAGS
    SAVED_LDFLAGS="$LDFLAGS"
 
-   LDFLAGS="-lnsl -lsocket"
+   LDFLAGS="-M cryptopp.mapfile"
+   AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   LDFLAGS="-lnsl"
+   AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   LDFLAGS="-lsocket"
    AC_MSG_CHECKING([if $LD supports $LDFLAGS])
    AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
@@ -169,8 +232,8 @@ fi
 ## detect "illegal option". The SunCC compiler literally generates and prints
 ## the message, but Autoconf ignores it and reports the option is valid.
 
-IS_IA32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
-if test "$IS_IA32" -ne "0"; then
+## This block handles GCC and friends. i86pc and SunCC is handled after this block
+if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -182,7 +245,7 @@ if test "$IS_IA32" -ne "0"; then
 
    ## cpu.cpp
    CXXFLAGS="-msse2"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SSE])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -199,9 +262,8 @@ if test "$IS_IA32" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
-   ## aria-simd.cpp
    CXXFLAGS="-mssse3"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ARIA])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -218,9 +280,8 @@ if test "$IS_IA32" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
-   ## SSE4.1 because confg.h provides it.
    CXXFLAGS="-msse4.1"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -235,9 +296,8 @@ if test "$IS_IA32" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
-   ## blake2-simd.cpp and crc.cpp
    CXXFLAGS="-msse4.2"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for BLAKE2 and CRC32])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -256,9 +316,8 @@ if test "$IS_IA32" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
-   ## gcm-simd.cpp
    CXXFLAGS="-mssse3 -mpclmul"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for GCM])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -275,9 +334,8 @@ if test "$IS_IA32" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
    fi
 
-   ## rijndael-simd.cpp
    CXXFLAGS="-msse4.1 -maes"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for AES])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -294,9 +352,8 @@ if test "$IS_IA32" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-   ## sha-simd.cpp
    CXXFLAGS="-msse4.2 -msha"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for SHA])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -317,17 +374,157 @@ if test "$IS_IA32" -ne "0"; then
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
+## This block handles i86pc and SunCC. GCC and friends were handled before this block
+if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## Flags not conditionally set below
+   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
+   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
+   AC_SUBST([CRYPTOPP_PPC_FLAG])
+
+   CXXFLAGS="-xarch=sse2"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 SSE2 instructions available.])
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=sse2"
+   else
+      AC_SUBST([CRYPTOPP_CPU_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
+         [Define to 1 if you do not have IA-32 SSE2 instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+   fi
+
+   CXXFLAGS="-xarch=ssse3"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 SSSE3 instructions available.])
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=ssse3"
+   else
+      AC_SUBST([CRYPTOPP_ARIA_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1],
+         [Define to 1 if you do not have IA-32 SSSE3 instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
+   fi
+
+   CXXFLAGS="-xarch=sse4_1"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 SSE4.1 instructions available.])
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_1"
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
+         [Define to 1 if you do not have IA-32 SSE4.1 instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+   fi
+   
+   CXXFLAGS="-xarch=sse4_2"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 SSE42 instructions available.])
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_2"
+   else
+      AC_SUBST([CRYPTOPP_CRC_FLAG])
+      AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
+         [Define to 1 if you do not have IA-32 SSE4.2 instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+   fi
+
+   CXXFLAGS="-xarch=aes"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 CLMUL instructions available.])
+      AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 AES-NI instructions available.])
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=aes"
+   else
+      AC_SUBST([CRYPTOPP_GCM_FLAG])
+      AC_SUBST([CRYPTOPP_AES_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1],
+         [Define to 1 if you do not have IA-32 CLMUL instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
+         [Define to 1 if you do not have IA-32 AES-NI instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
+   fi
+
+## Hack: disable -xarch=sha for the moment; enable the defines
+if false; then
+   CXXFLAGS="-xarch=sha"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 SHA-NI instructions available.])
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=sha"
+   else
+      AC_SUBST([CRYPTOPP_SHA_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
+         [Define to 1 if you do not have IA-32 SHA instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
+   fi
+else
+   AC_SUBST([CRYPTOPP_SHA_FLAG])
+   AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
+      [Define to 1 if you do not have IA-32 SHA instructions available.])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
+fi
+
+   # Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
 #############################################################################
 ## ARM A-32, including NEON, soft floats and hard floats
 
-IS_ARM32=`echo $build | $EGREP -i -c 'arm'`
-IS_ANDROID=`echo $build | $EGREP -i -c -E 'android'`
-
-if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID" -ne "0"; then
+if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -ne "0"; then
    AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
 fi
 
-if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID" -eq "0"; then
+if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
 
    ## Most Linux are hard-float systems.
    IS_ARMHF=`echo $build | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
@@ -382,7 +579,6 @@ fi
 #############################################################################
 ## ARM Aarch32 and Aarch64
 
-IS_AARCH64=`echo $build | $EGREP -i -c -E 'aarch32|aarch64'`
 if test "$IS_AARCH64" -ne "0"; then
 
    ## Save CXXFLAGS
@@ -396,7 +592,7 @@ if test "$IS_AARCH64" -ne "0"; then
 
    ## aria-simd.cpp, blake2-simd.cpp, neon-simd.cpp
    CXXFLAGS="-march=armv8-a"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for ARIA, BLAKE2])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -417,7 +613,7 @@ if test "$IS_AARCH64" -ne "0"; then
 
    ## crc-simd.cpp
    CXXFLAGS="-march=armv8-a+crc"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for CRC32])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -435,7 +631,7 @@ if test "$IS_AARCH64" -ne "0"; then
 
    ## gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    CXXFLAGS="-march=armv8-a+crypto"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for GCM, AES, SHA])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -491,7 +687,7 @@ if test "$IS_PPC" -ne "0"; then
    ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
    CXXFLAGS="-maltivec -mcpu=power8"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS for PPC])
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -537,8 +733,10 @@ fi
 
 ## Add -pipe for non-IoT gadgets to speedup the compile. IoT gadgets, like
 ## BeagleBoards and CubieTrucks, don't have swap files and run out of memory.
+## Hack: Use IS_SUN_COMPILER because AC_COMPILE_IFELSE misdetects the flag
 
 if test "$IS_IA32" -ne "0" || test "$IS_AARCH64" -ne "0" || test "$IS_PPC" -ne "0"; then
+if test "$IS_SUN_COMPILER" -eq "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -556,8 +754,9 @@ if test "$IS_IA32" -ne "0" || test "$IS_AARCH64" -ne "0" || test "$IS_PPC" -ne "
    # Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
+fi
 
-## Remove existing makefiles
+## Without this 'make' uses out GNUmakefile, and not Makefile
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross 2>/dev/null])
 
@@ -565,6 +764,7 @@ AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross 2>/dev/null])
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
+## Write the output artifacts
 AC_OUTPUT
 
 ## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
@@ -575,3 +775,47 @@ AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
 
 #############################################################################
 ## Print a summary of information
+
+echo ""
+echo "***********************************************************************"
+echo "Auto-configuration complete. A summary of options are below. If "
+echo "something looks wrong then please modify config.h and please report it"
+echo "at https://github.com/noloader/cryptopp-autotools."
+echo ""
+
+if test x"$CRYPTOPP_CPU_FLAG" != "x"; then
+   echo "CRYPTOPP_CPU_FLAG: $CRYPTOPP_CPU_FLAG"
+fi
+if test x"$CRYPTOPP_NEON_FLAG" != "x"; then
+   echo "CRYPTOPP_NEON_FLAG: $CRYPTOPP_NEON_FLAG"
+fi
+if test x"$CRYPTOPP_PPC_FLAG" != "x"; then
+   echo "CRYPTOPP_PPC_FLAG: $CRYPTOPP_PPC_FLAG"
+fi
+if test x"$CRYPTOPP_ARIA_FLAG" != "x"; then
+   echo "CRYPTOPP_ARIA_FLAG: $CRYPTOPP_ARIA_FLAG"
+fi
+if test x"$CRYPTOPP_BLAKE2_FLAG" != "x"; then
+   echo "CRYPTOPP_BLAKE2_FLAG: $CRYPTOPP_BLAKE2_FLAG"
+fi
+if test x"$CRYPTOPP_CRC_FLAG" != "x"; then
+   echo "CRYPTOPP_CRC_FLAG: $CRYPTOPP_CRC_FLAG"
+fi
+if test x"$CRYPTOPP_AES_FLAG" != "x"; then
+   echo "CRYPTOPP_AES_FLAG: $CRYPTOPP_AES_FLAG"
+fi
+if test x"$CRYPTOPP_SHA_FLAG" != "x"; then
+   echo "CRYPTOPP_SHA_FLAG: $CRYPTOPP_SHA_FLAG"
+fi
+
+echo ""
+echo "Automake flags (can be overridden by user flags):"
+echo "AM_CXXFLAGS: $AM_CXXFLAGS"
+echo "AM_LDFLAGS: $AM_LDFLAGS"
+
+echo ""
+echo "User flags (overrides Automake flags on conflict):"
+echo "CXXFLAGS: $CXXFLAGS"
+echo "LDFLAGS: $LDFLAGS"
+echo "***********************************************************************"
+echo ""
