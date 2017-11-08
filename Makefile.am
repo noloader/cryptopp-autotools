@@ -17,13 +17,13 @@
 ##        git checkout GNUmakefile
 ##
 
-## Automake does not support "specific flags for certain source files" natively, so we hack it.
-## The hacks include building eight or so libraries and then combining them into an archive or
-## shared object. Also see https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html
-## and https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html.
+##    Automake does not support "specific flags for certain source files" natively, so we hack it.
+##    The hacks include building eight or so libraries and then combining them into an archive or
+##    shared object. Also see https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html
+##    and https://www.gnu.org/software/automake/manual/html_node/Per_002dObject-Flags.html.
 ##
-## Visit the link below for the original Debian Autotools files
-##   https://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
+##    Visit the link below for the original Debian Autotools files
+##    https://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
 ##
 
 ## TODO:

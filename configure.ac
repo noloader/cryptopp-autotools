@@ -16,17 +16,28 @@
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X.
 ##   Also see https://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
 ##
-## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's not
-##   much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
-##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc.
+## - Fix failed self tests for OS X/Clang and Linux/xlC. They both fail two tests, and they are
+##   the same test. The tests are RSA signature verification using library test vectors.
+##
+## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's
+##   not much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
+##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them to do.
 ##
 ## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
 ##
 ## - Fix compile tests on Linux using xlC. AC_COMPILE_IFELSE returns success even for failure.
 ##
+## - For SunCC and IBM xlC we are trying to find a better test than AC_COMPILE_IFELSE. The macro is
+##   brain dead and allows illegal options to pass. see https://stackoverflow.com/q/47160617/608639.
+##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
+##
+## - Package Autotools propery, for a regular user's definition of "proper". I don't know what the
+##   final deliverables or artifacts are suppoed to look like. We also get warnings and errors
+##   due to a missing m4/ directory even though we don't use it. Maybe we need to distribute an
+##   empty m4/ directory to keep the tools quiet.
 ##
 
 #############################################################################
