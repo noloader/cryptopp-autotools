@@ -818,6 +818,50 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
+   ## -qrtti must be present for some xlC compilers
+   HAS_RTTI=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-qrtti'`
+   if test "$HAS_RTTI" -eq "0"; then
+
+      CXXFLAGS="-qrtti"
+      AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
+
+      if test "$tr_RESULT" -eq "1"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
+   ## -qpic should be supplied by Autotools, but it is missing
+   HAS_PIC=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-qpic'`
+   if test "$HAS_PIC" -eq "0"; then
+
+      CXXFLAGS="-qpic"
+      AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
+
+      if test "$tr_RESULT" -eq "1"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
+   # Promotes optimizations
+   CXXFLAGS="-qmaxmem=-1"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
    ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
    CXXFLAGS="-qarch=pwr8 -qaltivec"
@@ -854,18 +898,6 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA"
    fi
 
-   # Promotes optimizations
-   CXXFLAGS="-qmaxmem=-1"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-   )
-
-   if test "$tr_RESULT" -eq "1"; then
-      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-   fi
-
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
@@ -887,10 +919,11 @@ if test "$IS_XLC_COMPILER" -eq "0"; then
    CXXFLAGS="-pipe"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([CRYPTOPP_PIPE], [$CXXFLAGS])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
-   if test "$CRYPTOPP_PIPE" = "$CXXFLAGS"; then
+   if test "$tr_RESULT" -eq "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
