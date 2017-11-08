@@ -57,9 +57,6 @@ AC_LANG([C++])
 AC_PROG_CXXCPP
 AC_PROG_GREP
 
-AC_ENABLE_SHARED
-AC_ENABLE_STATIC
-
 ## Assert this once to avoid surprises
 AC_LANG_ASSERT([C++])
 
@@ -111,12 +108,32 @@ fi
 IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
 IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 
-##echo "**********************************************"
-##echo "    Build triplet: $build"
-##echo "         Build OS: $build_os"
-##echo "  Compiler target: $COMPILER_TARGET"
-##echo " Compiler version: $COMPILER_VERSION"
-##echo "**********************************************"
+## echo "**********************************************"
+## echo "    Build triplet: $build"
+## echo "         Build OS: $build_os"
+## echo "  Compiler target: $COMPILER_TARGET"
+## echo " Compiler version: $COMPILER_VERSION"
+## echo "**********************************************"
+
+#############################################################################
+## Shared and static libraries
+
+if true; then
+
+   AC_MSG_RESULT([checking if static libraries should be enabled... yes])
+   AC_ENABLE_STATIC
+
+   ## https://stackoverflow.com/a/21455267/608639
+   case $host_os in
+      msys* | mingw* | cygwin* )
+         AC_MSG_RESULT([checking if shared libraries should be enabled... no])
+         ;;
+	  *)
+         AC_MSG_RESULT([checking if shared libraries should be enabled... yes])
+	     AC_ENABLE_SHARED
+	     ;;
+   esac
+fi
 
 #############################################################################
 ## pthreads for thread local storage
@@ -284,7 +301,7 @@ if true; then
    if test "$tr_RESULT" -eq "1"; then
 
       CXXFLAGS="-D_XOPEN_SOURCE=600"
-      AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+      AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
       AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -302,19 +319,6 @@ if true; then
 fi
 
 #############################################################################
-## Disable DLL's and shared objects on Windows
-
-if true; then
-
-   ## https://stackoverflow.com/a/21455267/608639
-   case $host_os in
-      msys* | mingw* | cygwin* )
-         AC_MSG_RESULT([checking if shared libraries should be enabled... no])
-         enable_shared=no; enable_static=yes ;;
-   esac
-fi
-
-#############################################################################
 ## Solaris, map file and libraries
 
 if test "$IS_SUN_OS" -ne "0"; then
@@ -323,18 +327,18 @@ if test "$IS_SUN_OS" -ne "0"; then
    SAVED_LDFLAGS="$LDFLAGS"
 
    ## IA-32 gets a Mapfile for capabilities
-if test "$IS_IA32" -ne "0"; then
-   LDFLAGS="-M cryptopp.mapfile"
-   AC_MSG_CHECKING([if $LD supports $LDFLAGS])
-   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-   )
+   if test "$IS_IA32" -ne "0"; then
+      LDFLAGS="-M cryptopp.mapfile"
+      AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
 
-   if test "$tr_RESULT" -eq "1"; then
-      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+      if test "$tr_RESULT" -eq "1"; then
+         AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+      fi
    fi
-fi
 
    LDFLAGS="-lnsl"
    AC_MSG_CHECKING([if $LD supports $LDFLAGS])
