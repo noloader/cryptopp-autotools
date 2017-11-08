@@ -28,14 +28,14 @@
 ## - Fix compile tests on Linux using xlC. AC_COMPILE_IFELSE returns success even for failure.
 ##
 ## - For SunCC and IBM xlC we are trying to find a better test than AC_COMPILE_IFELSE. The macro is
-##   brain dead and allows illegal options to pass. see https://stackoverflow.com/q/47160617/608639.
+##   brain dead and allows illegal options to pass. See https://stackoverflow.com/q/47160617/608639.
 ##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
 ##
 ## - Package Autotools propery, for a regular user's definition of "proper". I don't know what the
-##   final deliverables or artifacts are suppoed to look like. We also get warnings and errors
+##   final deliverables or artifacts are supposed to look like. We also get warnings and errors
 ##   due to a missing m4/ directory even though we don't use it. Maybe we need to distribute an
 ##   empty m4/ directory to keep the tools quiet.
 ##
@@ -127,6 +127,7 @@ if true; then
    case $host_os in
       msys* | mingw* | cygwin* )
          AC_MSG_RESULT([checking if shared libraries should be enabled... no])
+		 enable_shared=no; enable_static=yes;
          ;;
 	  *)
          AC_MSG_RESULT([checking if shared libraries should be enabled... yes])
@@ -930,6 +931,10 @@ if test x"$COMPILER_VERSION" != "x"; then
    echo "Compiler: $COMPILER_VERSION"
    echo ""
 fi
+
+echo "Static library: $enable_static"
+echo "Shared library: $enable_shared"
+echo ""
 
 if test x"$CRYPTOPP_CPU_FLAG" != "x"; then
    echo "CRYPTOPP_CPU_FLAG: $CRYPTOPP_CPU_FLAG"
