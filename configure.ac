@@ -160,7 +160,7 @@ AC_C_BIGENDIAN(
 #############################################################################
 ## Dead code stripping
 
-if test true; then
+if true; then
 
    ## Save FLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -248,7 +248,7 @@ fi
 #############################################################################
 ## Newlib and _XOPEN_SOURCE
 
-if test true; then
+if true; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -285,7 +285,7 @@ fi
 #############################################################################
 ## Disable DLL's and shared objects on Windows
 
-if test true; then
+if true; then
 
    ## https://stackoverflow.com/a/21455267/608639
    case $host_os in
