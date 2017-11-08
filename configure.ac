@@ -22,6 +22,8 @@
 ##
 ## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
 ##
+## - Fix compile tests on Linux using xlC. AC_COMPILE_IFELSE returns success even for failure.
+##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
@@ -63,13 +65,14 @@ AC_CANONICAL_HOST
 ## avoiding some tests that fail but Autotools reports as success.
 
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
-IS_APPLE_OS=`echo "$build" | $EGREP -i -c 'apple'`
+IS_APPLE_OS=`echo "$build" | $EGREP -i -c -E 'apple|darwin'`
 IS_ANDROID_OS=`echo $build | $EGREP -i -c -E 'android'`
 IS_CYGWIN_OS=`echo $build | $EGREP -i -c -E 'cygwin'`
 
 IS_IA32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
 IS_ARM32=`echo $build | $EGREP -i -c 'arm'`
 IS_AARCH64=`echo $build | $EGREP -i -c -E 'aarch32|aarch64'`
+IS_PPC=`echo $build | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 
 #############################################################################
 
@@ -95,6 +98,7 @@ if test x"$COMPILER_VERSION" = "x"; then
 fi
 
 IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
+IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 
 ##echo "**********************************************"
 ##echo "    Build triplet: $build"
@@ -160,7 +164,9 @@ AC_C_BIGENDIAN(
 #############################################################################
 ## Dead code stripping
 
+## Hack: Use IS_XLC_COMPILER because AC_COMPILE_IFELSE misdetects the flag
 if true; then
+if test "$IS_XLC_COMPILER" -eq "0"; then
 
    ## Save FLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -217,9 +223,11 @@ if true; then
 
    fi
 
-   # Restore FLAGS
+   ## Restore FLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
    LDFLAGS="$SAVED_LDFLAGS"
+
+fi
 fi
 
 #############################################################################
@@ -241,7 +249,7 @@ if test "$IS_SUN_OS" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
-   # Restore CXXFLAGS
+   ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -278,7 +286,7 @@ if true; then
       fi
    fi
 
-   # Restore CXXFLAGS
+   ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -339,7 +347,7 @@ fi
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
-   # Restore LDFLAGS
+   ## Restore LDFLAGS
    LDFLAGS="$SAVED_LDFLAGS"
 fi
 
@@ -355,11 +363,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
-
-   ## Flags not conditionally set below
-   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
-   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
-   AC_SUBST([CRYPTOPP_PPC_FLAG])
 
    ## cpu.cpp
    CXXFLAGS="-msse2"
@@ -488,7 +491,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
    fi
 
-   # Restore CXXFLAGS
+   ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -497,11 +500,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
-
-   ## Flags not conditionally set below
-   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
-   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
-   AC_SUBST([CRYPTOPP_PPC_FLAG])
 
    CXXFLAGS="-xarch=sse2"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
@@ -631,7 +629,7 @@ else
    AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
 fi
 
-   # Restore CXXFLAGS
+   ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -657,15 +655,6 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## Flags not conditionally set below
-   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
-   AC_SUBST([CRYPTOPP_CPU_FLAG])
-   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
-   AC_SUBST([CRYPTOPP_CRC_FLAG])
-   AC_SUBST([CRYPTOPP_PPC_FLAG])
-   AC_SUBST([CRYPTOPP_AES_FLAG])
-   AC_SUBST([CRYPTOPP_SHA_FLAG])
-
    CXXFLAGS="-march=armv7-a -mfloat-abi=$FP_FLAG -mfpu=neon"
    AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
@@ -690,7 +679,7 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
-   # Restore CXXFLAGS
+   ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -701,12 +690,6 @@ if test "$IS_AARCH64" -ne "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
-
-   ## Flags not conditionally set below
-   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
-   AC_SUBST([CRYPTOPP_CPU_FLAG])
-   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
-   AC_SUBST([CRYPTOPP_PPC_FLAG])
 
    ## aria-simd.cpp, blake2-simd.cpp, neon-simd.cpp
    CXXFLAGS="-march=armv8-a"
@@ -780,27 +763,20 @@ if test "$IS_AARCH64" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
    fi
 
-   # Restore CXXFLAGS
+   ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
 #############################################################################
 ## PowerPC and PowerPC-64
 
-IS_PPC=`echo $build | $EGREP -i -c -E 'ppc|powerpc|powermac'`
-if test "$IS_PPC" -ne "0"; then
+## This block handles GCC and friends. IBM XL C/C++ is handled after this block
+## Hack: Use IS_XLC_COMPILER because AC_COMPILE_IFELSE misdetects the flag
+
+if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
-
-   ## Flags not conditionally set below
-   AC_SUBST([CRYPTOPP_CRYPTLIB_FLAG])
-   AC_SUBST([CRYPTOPP_CPU_FLAG])
-   AC_SUBST([CRYPTOPP_INTEGER_FLAG])
-   AC_SUBST([CRYPTOPP_ARIA_FLAG])
-   AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
-   AC_SUBST([CRYPTOPP_GCM_FLAG])
-   AC_SUBST([CRYPTOPP_NEON_FLAG])
 
    ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
@@ -842,7 +818,71 @@ if test "$IS_PPC" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA"
    fi
 
-   # Restore CXXFLAGS
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+## This block handles IBM XL C/C++. GCC and friends is handled before this block
+## Hack: Use IS_XLC_COMPILER because AC_COMPILE_IFELSE misdetects the flags
+
+if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
+   ## Altivec needs Power4, but the VSX loads and stores needs Power7.
+   CXXFLAGS="-qarch=pwr8 -qaltivec"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1],
+         [Define to 1 if you have POWER7 instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE], [1],
+         [Define to 1 if you have POWER8 instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1],
+         [Define to 1 if you have POWER8 Crypto instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1],
+         [Define to 1 if you have POWER8 Crypto instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1],
+         [Define to 1 if you have POWER8 Crypto instructions available.])
+   else
+      AC_SUBST([CRYPTOPP_PPC_FLAG])
+      AC_SUBST([CRYPTOPP_CRC_FLAG])
+      AC_SUBST([CRYPTOPP_AES_FLAG])
+      AC_SUBST([CRYPTOPP_SHA_FLAG])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1],
+         [Define to 1 if you do not have the Power8 PMULL instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1],
+         [Define to 1 if you do not have the Power8 AES instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1],
+         [Define to 1 if you do not have the Power8 SHA instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA"
+   fi
+
+   # Promotes optimizations
+   CXXFLAGS="-qmaxmem=-1"
+   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -855,6 +895,7 @@ fi
 
 if test "$IS_IA32" -ne "0" || test "$IS_AARCH64" -ne "0" || test "$IS_PPC" -ne "0"; then
 if test "$IS_SUN_COMPILER" -eq "0"; then
+if test "$IS_XLC_COMPILER" -eq "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -869,8 +910,9 @@ if test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
-   # Restore CXXFLAGS
+   ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
 fi
 fi
 
