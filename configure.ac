@@ -98,6 +98,7 @@ IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
 
 ##echo "**********************************************"
 ##echo "    Build triplet: $build"
+##echo "         Build OS: $build_os"
 ##echo "  Compiler target: $COMPILER_TARGET"
 ##echo " Compiler version: $COMPILER_VERSION"
 ##echo "**********************************************"
@@ -159,7 +160,7 @@ AC_C_BIGENDIAN(
 #############################################################################
 ## Dead code stripping
 
-if true; then
+if test true; then
 
    ## Save FLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -247,7 +248,7 @@ fi
 #############################################################################
 ## Newlib and _XOPEN_SOURCE
 
-if true; then
+if test true; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -279,6 +280,19 @@ if true; then
 
    # Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## Disable DLL's and shared objects on Windows
+
+if test true; then
+
+   ## https://stackoverflow.com/a/21455267/608639
+   case $host_os in
+      msys* | mingw* | cygwin* )
+         AC_MSG_RESULT([checking if shared libraries should be enabled... no])
+         enable_shared=no; enable_static=yes ;;
+   esac
 fi
 
 #############################################################################
