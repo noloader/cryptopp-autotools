@@ -273,7 +273,7 @@ if true; then
 
       if test "$tr_RESULT" -eq "1"; then
          AC_DEFINE([_XOPEN_SOURCE], [600],
-            [Define to 600 if you are working on Cygwin due to Newlib.])
+            [Define to 600 if you are using Newlib as your runtime library.])
          AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       fi
    fi
