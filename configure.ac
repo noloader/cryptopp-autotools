@@ -922,6 +922,7 @@ AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
 
 echo ""
 echo "***********************************************************************"
+
 echo "Auto-configuration complete. A summary of options are below. If "
 echo "something looks wrong then please modify config.h and please report it"
 echo "at https://github.com/noloader/cryptopp-autotools."
@@ -970,5 +971,29 @@ echo ""
 echo "User flags (overrides Automake flags on conflict):"
 echo "CXXFLAGS: $CXXFLAGS"
 echo "LDFLAGS: $LDFLAGS"
+
+OPT_NDEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -c -E '\-DNDEBUG'`
+if test "$OPT_NDEBUG" -eq "0"; then
+   echo ""
+   echo "CPPFLAGS does not include -DNDEBUG. You should consider building"
+   echo "with NDEBUG defined so an assert does inadvertently crash your"
+   echo "program and egress sensitive data to an Error Reporting service"
+   echo "like AppPort, Windows Error Reporting, Crash Reporter, etc."
+fi
+
+OPT_SYM=`echo $CPPFLAGS $CXXFLAGS | $EGREP -c -E '\-g'`
+if test "$OPT_SYM" -eq "0"; then
+   echo ""
+   echo "CPPFLAGS does not include -g. You should consider building with -g"
+   echo "to add debug symbols in case you have to analyze a crash."
+fi
+
+OPT_O3=`echo $CXXFLAGS | $EGREP -c -E '\-O3|\-O4|\-O5|\-Os|\-Ofast'`
+if test "$OPT_O3" -eq "0"; then
+   echo ""
+   echo "CXXFLAGS does not include -O3. You should consider building at -O3"
+   echo "to engage compiler vectorizations and enhance performance."
+fi
+
 echo "***********************************************************************"
 echo ""
