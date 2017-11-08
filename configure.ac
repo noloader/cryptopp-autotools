@@ -116,6 +116,12 @@ IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 ## echo "**********************************************"
 
 #############################################################################
+## Friendly names
+
+CXXNAME=`basename "$CXX"`
+LDNAME=`basename "$LD"`
+
+#############################################################################
 ## Shared and static libraries
 
 if true; then
@@ -134,6 +140,43 @@ if true; then
          AC_ENABLE_SHARED
          ;;
    esac
+fi
+
+#############################################################################
+## Solaris, SunCC and missing optimizations
+
+OPT_ANY=`echo $CXXFLAGS | $EGREP -c -E '\-O0|\-O1|\-O2|\-O3|\-O4|\-O5|\-Os|\-Ofast'`
+
+if test "$OPT_ANY" -eq "0"; then
+
+   infile="in.$RANDOM$RANDOM.cxx"
+   outfile="out.$RANDOM$RANDOM"
+   echo 'int main(int argc, char* argv[]) {return 0;}' > "$infile"
+   echo "" >> "$infile"
+
+   FLAG="-O2"
+   AC_MSG_CHECKING([if $CXXNAME supports $FLAG])
+   OPT_ERROR=`$CXX $FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|unrecognized|not found|not exist'`
+   if test "$OPT_ERROR" -eq "0"; then
+      echo "yes"
+      AM_CXXFLAGS="$AM_CXXFLAGS $FLAG"
+   else
+      echo "no"
+   fi
+
+   if test "$OPT_ERROR" -ne "0"; then
+      FLAG="-xO2"
+      AC_MSG_CHECKING([if $CXXNAME supports $FLAG])
+      OPT_ERROR=`$CXX $FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|unrecognized|not found|not exist'`
+      if test "$OPT_ERROR" -eq "0"; then
+         echo "yes"
+         AM_CXXFLAGS="$AM_CXXFLAGS $FLAG"
+      else
+         echo "no"
+      fi
+   fi
+
+   rm -f "$infile" "$outfile" 1>/dev/null 2>&1
 fi
 
 #############################################################################
@@ -193,16 +236,16 @@ AC_C_BIGENDIAN(
 #############################################################################
 ## Dead code stripping
 
-## Hack: Use IS_XLC_COMPILER because AC_COMPILE_IFELSE misdetects the flag
+## Hack: Use IS_SUN_COMPILER and IS_XLC_COMPILER because AC_COMPILE_IFELSE misdetects the flag
 if true; then
-if test "$IS_XLC_COMPILER" -eq "0"; then
+if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
    ## Save FLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
    SAVED_LDFLAGS="$LDFLAGS"
 
    CXXFLAGS="-fdata-sections"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -213,7 +256,7 @@ if test "$IS_XLC_COMPILER" -eq "0"; then
    fi
 
    CXXFLAGS="-ffunction-sections"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -227,7 +270,7 @@ if test "$IS_XLC_COMPILER" -eq "0"; then
    if test "$IS_APPLE_OS" -ne "0"; then
 
       LDFLAGS="-Wl,-dead_strip"
-      AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
       AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -240,7 +283,7 @@ if test "$IS_XLC_COMPILER" -eq "0"; then
    else
 
       LDFLAGS="-Wl,--gc-sections"
-      AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
       AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -268,7 +311,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    CXXFLAGS="-Wa,--divide"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -330,7 +373,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    ## IA-32 gets a Mapfile for capabilities
    if test "$IS_IA32" -ne "0"; then
       LDFLAGS="-M cryptopp.mapfile"
-      AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
       AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -342,7 +385,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    fi
 
    LDFLAGS="-lnsl"
-   AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -353,7 +396,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    fi
 
    LDFLAGS="-lsocket"
-   AC_MSG_CHECKING([if $LD supports $LDFLAGS])
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -382,7 +425,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    ## cpu.cpp
    CXXFLAGS="-msse2"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -399,7 +442,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    fi
 
    CXXFLAGS="-mssse3"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -416,7 +459,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    fi
 
    CXXFLAGS="-msse4.1"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -432,7 +475,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    fi
 
    CXXFLAGS="-msse4.2"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -450,7 +493,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    fi
 
    CXXFLAGS="-mssse3 -mpclmul"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -467,7 +510,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    fi
 
    CXXFLAGS="-msse4.1 -maes"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -484,7 +527,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    fi
 
    CXXFLAGS="-msse4.2 -msha"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -511,7 +554,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    CXXFLAGS="-xarch=sse2"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -529,7 +572,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    fi
 
    CXXFLAGS="-xarch=ssse3"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -547,7 +590,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    fi
 
    CXXFLAGS="-xarch=sse4_1"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -564,7 +607,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    fi
    
    CXXFLAGS="-xarch=sse4_2"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -583,7 +626,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    fi
 
    CXXFLAGS="-xarch=aes"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -608,7 +651,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 ## Hack: disable -xarch=sha for the moment; enable the defines
 if false; then
    CXXFLAGS="-xarch=sha"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -658,7 +701,7 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    CXXFLAGS="-march=armv7-a -mfloat-abi=$FP_FLAG -mfpu=neon"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -691,7 +734,7 @@ if test "$IS_AARCH64" -ne "0"; then
 
    ## aria-simd.cpp, blake2-simd.cpp, neon-simd.cpp
    CXXFLAGS="-march=armv8-a"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -709,7 +752,7 @@ if test "$IS_AARCH64" -ne "0"; then
 
    ## crc-simd.cpp
    CXXFLAGS="-march=armv8-a+crc"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -727,7 +770,7 @@ if test "$IS_AARCH64" -ne "0"; then
 
    ## gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    CXXFLAGS="-march=armv8-a+crypto"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -773,7 +816,7 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -eq "0"; then
    ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
    CXXFLAGS="-maltivec -mcpu=power8"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -823,23 +866,7 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
    if test "$HAS_RTTI" -eq "0"; then
 
       CXXFLAGS="-qrtti"
-      AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
-      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-      )
-
-      if test "$tr_RESULT" -eq "1"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-      fi
-   fi
-
-   ## -qpic should be supplied by Autotools, but it is missing
-   HAS_PIC=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-qpic'`
-   if test "$HAS_PIC" -eq "0"; then
-
-      CXXFLAGS="-qpic"
-      AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -852,7 +879,7 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
 
    # Promotes optimizations
    CXXFLAGS="-qmaxmem=-1"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -865,7 +892,7 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
    ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
    CXXFLAGS="-qarch=pwr8 -qaltivec"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -917,7 +944,7 @@ if test "$IS_XLC_COMPILER" -eq "0"; then
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    CXXFLAGS="-pipe"
-   AC_MSG_CHECKING([if $CXX supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
