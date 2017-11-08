@@ -127,12 +127,12 @@ if true; then
    case $host_os in
       msys* | mingw* | cygwin* )
          AC_MSG_RESULT([checking if shared libraries should be enabled... no])
-		 enable_shared=no; enable_static=yes;
+         enable_shared=no; enable_static=yes;
          ;;
 	  *)
          AC_MSG_RESULT([checking if shared libraries should be enabled... yes])
-	     AC_ENABLE_SHARED
-	     ;;
+         AC_ENABLE_SHARED
+         ;;
    esac
 fi
 
