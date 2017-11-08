@@ -377,7 +377,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE2 instructions available.])
    else
-      AC_SUBST([CRYPTOPP_CPU_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
          [Define to 1 if you do not have IA-32 SSE2 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
@@ -395,7 +394,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSSE3 instructions available.])
    else
-      AC_SUBST([CRYPTOPP_ARIA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1],
          [Define to 1 if you do not have IA-32 SSSE3 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
@@ -430,8 +428,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE4.2 instructions available.])
    else
-      AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
-      AC_SUBST([CRYPTOPP_CRC_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
          [Define to 1 if you do not have IA-32 SSE4.2 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
@@ -449,7 +445,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1],
          [Define to 1 if you have IA-32 CLMUL instructions available.])
    else
-      AC_SUBST([CRYPTOPP_GCM_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1],
          [Define to 1 if you do not have IA-32 CLMUL instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
@@ -467,7 +462,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
          [Define to 1 if you have IA-32 AES-NI instructions available.])
    else
-      AC_SUBST([CRYPTOPP_AES_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
          [Define to 1 if you do not have IA-32 AES-NI instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
@@ -485,7 +479,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AC_DEFINE([CRYPTOPP_SHANI_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SHA instructions available.])
    else
-      AC_SUBST([CRYPTOPP_SHA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
          [Define to 1 if you do not have IA-32 SHA instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
@@ -514,7 +507,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
          [Define to 1 if you have IA-32 SSE2 instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse2"
    else
-      AC_SUBST([CRYPTOPP_CPU_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
          [Define to 1 if you do not have IA-32 SSE2 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
@@ -533,7 +525,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
          [Define to 1 if you have IA-32 SSSE3 instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=ssse3"
    else
-      AC_SUBST([CRYPTOPP_ARIA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1],
          [Define to 1 if you do not have IA-32 SSSE3 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
@@ -570,8 +561,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
          [Define to 1 if you have IA-32 SSE42 instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_2"
    else
-      AC_SUBST([CRYPTOPP_CRC_FLAG])
-      AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
          [Define to 1 if you do not have IA-32 SSE4.2 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
@@ -593,8 +582,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
          [Define to 1 if you have IA-32 AES-NI instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=aes"
    else
-      AC_SUBST([CRYPTOPP_GCM_FLAG])
-      AC_SUBST([CRYPTOPP_AES_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1],
          [Define to 1 if you do not have IA-32 CLMUL instructions available.])
       AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
@@ -617,7 +604,6 @@ if false; then
          [Define to 1 if you have IA-32 SHA-NI instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sha"
    else
-      AC_SUBST([CRYPTOPP_SHA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
          [Define to 1 if you do not have IA-32 SHA instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
@@ -670,10 +656,6 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
       AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1],
          [Define to 1 if you have the NEON instructions available.])
    else
-      AC_SUBST([CRYPTOPP_ARIA_FLAG])
-      AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
-      AC_SUBST([CRYPTOPP_GCM_FLAG])
-      AC_SUBST([CRYPTOPP_NEON_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
          [Define to 1 if you do not have ARM NEON instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
@@ -704,9 +686,6 @@ if test "$IS_AARCH64" -ne "0"; then
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])
    else
-      AC_SUBST([CRYPTOPP_ARIA_FLAG])
-      AC_SUBST([CRYPTOPP_BLAKE2_FLAG])
-      AC_SUBST([CRYPTOPP_NEON_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
          [Define to 1 if you do not have ARM NEON instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
@@ -749,9 +728,6 @@ if test "$IS_AARCH64" -ne "0"; then
       AC_DEFINE([CRYPTOPP_ARM_SHA_AVAILABLE], [1],
          [Define to 1 if you have ARMv8-a SHA instructions available.])
    else
-      AC_SUBST([CRYPTOPP_GCM_FLAG])
-      AC_SUBST([CRYPTOPP_AES_FLAG])
-      AC_SUBST([CRYPTOPP_SHA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_PMULL], [1],
          [Define to 1 if you do not have ARMv8-a PMULL instructions available.])
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_AES], [1],
@@ -803,10 +779,6 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -eq "0"; then
       AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1],
          [Define to 1 if you have POWER8 Crypto instructions available.])
    else
-      AC_SUBST([CRYPTOPP_PPC_FLAG])
-      AC_SUBST([CRYPTOPP_CRC_FLAG])
-      AC_SUBST([CRYPTOPP_AES_FLAG])
-      AC_SUBST([CRYPTOPP_SHA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1],
          [Define to 1 if you do not have the Power8 PMULL instructions available.])
       AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1],
@@ -855,10 +827,6 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
       AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1],
          [Define to 1 if you have POWER8 Crypto instructions available.])
    else
-      AC_SUBST([CRYPTOPP_PPC_FLAG])
-      AC_SUBST([CRYPTOPP_CRC_FLAG])
-      AC_SUBST([CRYPTOPP_AES_FLAG])
-      AC_SUBST([CRYPTOPP_SHA_FLAG])
       AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1],
          [Define to 1 if you do not have the Power8 PMULL instructions available.])
       AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1],
@@ -942,6 +910,11 @@ echo "Auto-configuration complete. A summary of options are below. If "
 echo "something looks wrong then please modify config.h and please report it"
 echo "at https://github.com/noloader/cryptopp-autotools."
 echo ""
+
+if test x"$COMPILER_VERSION" != "x"; then
+   echo "Compiler: $COMPILER_VERSION"
+   echo ""
+fi
 
 if test x"$CRYPTOPP_CPU_FLAG" != "x"; then
    echo "CRYPTOPP_CPU_FLAG: $CRYPTOPP_CPU_FLAG"
