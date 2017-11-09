@@ -57,7 +57,6 @@ LT_INIT
 
 AC_PROG_CXX
 AC_LANG([C++])
-AC_PROG_CXXCPP
 AC_PROG_GREP
 
 ## Assert this once to avoid surprises
@@ -92,6 +91,17 @@ IS_PPC=`echo $build | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 ## running on). We add '2>/dev/null' because IBM's xlC dumps the man page
 ## when presented with '-dumpmachine' since it is not a valid option.
 
+## See if CXX is valid. Autools just trucks on with an invalid one.
+
+if test x"$CXX" != "x"; then
+   COMPILER_TARGET=`command -v "$CXX"`
+   if test x"$COMPILER_TARGET" = "x"; then
+      AC_MSG_FAILURE(["$CXX" is not a valid compiler or is not on-path])
+   fi
+fi
+
+## Compiler is valid. Try to detect the target and vendor
+
 COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
 
 ## Determine the compiler's vendor. We need to work around some Autoconf bugs.
@@ -117,6 +127,9 @@ IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 ## echo "  Compiler target: $COMPILER_TARGET"
 ## echo " Compiler version: $COMPILER_VERSION"
 ## echo "**********************************************"
+
+## echo "IS_SUN_COMPILER: $IS_SUN_COMPILER"
+## echo "IS_XLC_COMPILER: $IS_XLC_COMPILER"
 
 #############################################################################
 ## Friendly names
@@ -806,6 +819,46 @@ if test "$IS_AARCH64" -ne "0"; then
 fi
 
 #############################################################################
+## IBC XL C/C++ compiler, applies to IA-32 and PPC
+
+if test "$IS_XLC_COMPILER" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## -qrtti must be present for some xlC compilers
+   HAS_RTTI=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-qrtti'`
+   if test "$HAS_RTTI" -eq "0"; then
+
+      CXXFLAGS="-qrtti"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
+
+      if test "$tr_RESULT" -eq "1"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
+   # Promotes optimizations
+   CXXFLAGS="-qmaxmem=-1"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
 ## PowerPC and PowerPC-64
 
 ## This block handles GCC and friends. IBM XL C/C++ is handled after this block
@@ -863,18 +916,6 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
-
-   # Promotes optimizations
-   CXXFLAGS="-qmaxmem=-1"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-   )
-
-   if test "$tr_RESULT" -eq "1"; then
-      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-   fi
 
    ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
