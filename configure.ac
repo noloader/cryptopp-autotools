@@ -30,6 +30,8 @@
 ##
 ## - Fix compile tests on Linux using xlC. AC_COMPILE_IFELSE returns success even for failure.
 ##
+## - Fix compile tests on OS X using LLVM. AC_COMPILE_IFELSE and AC_LINK_IFELSE return success even for failure.
+##
 ## - For SunCC and IBM xlC we are trying to find a better test than AC_COMPILE_IFELSE. The macro is
 ##   brain dead and allows illegal options to pass. See https://stackoverflow.com/q/47160617/608639.
 ##
@@ -985,6 +987,29 @@ if test "$IS_XLC_COMPILER" -eq "0"; then
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
+fi
+fi
+
+## Add -Wl,--exclude-libs,ALL for GNU linker to stops us from re-exporting
+## symbols in other libraries. This keeps our ELF section header smaller.
+## Hack: Use IS_APPLE_OS because AC_LINK_IFELSE misdetects the flag
+if test "$enable_shared" = "yes"; then
+if test "$IS_APPLE_OS" -ne "0"; then
+
+   SAVED_LDFLAGS="$LDFLAGS"
+   LDFLAGS="-Wl,--exclude-libs,ALL"
+
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   LDFLAGS="$SAVED_LDFLAGS"
 fi
 fi
 
