@@ -28,10 +28,13 @@
 
 ## TODO:
 ##
-##  - Add architecture specific flags to certain source files. This is partially implemented for most
-##    Linux, but we still need Altivec and Power8. We also need IBM's xlC on AIX and Sun's CC on Solaris.
+##  - Fix the recipe to copy TestData/ and TestVectors/ to their install location
+##
+##  - Fix recipes which use @pkgdatadir@, which does not seem to be substituted
 ##
 ##  - Figure out what's going on with DragonFly and dependencies
+##
+##  - Figure out if we need noinst_LIBRARIES
 ##
 
 AUTOMAKE_OPTIONS = foreign
