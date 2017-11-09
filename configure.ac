@@ -1045,16 +1045,18 @@ if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
       echo ""
       echo "Adding postlink script"
-	  rm -f postlink.sh 2>/dev/null
-	  echo "echo \"Fixing shared object capabilities\"" >> postlink.sh
-	  echo "elfedit -e 'cap:hw1 0x1800' .libs/libcryptopp.so.6.0.0" >> postlink.sh
-	  echo "" >> postlink.sh
-	  chmod +x postlink.sh
+      rm -f postlink.sh 2>/dev/null
+      echo "echo \"Fixing shared object capabilities\"" >> postlink.sh
+      echo "elfedit -e 'cap:hw1 0x1800' .libs/cryptest" >> postlink.sh
+      echo "elfedit -e 'cap:hw1 0x1800' .libs/cryptestcwd" >> postlink.sh
+      echo "elfedit -e 'cap:hw1 0x1800' .libs/libcryptopp.so.6.0.0" >> postlink.sh
+      echo "" >> postlink.sh
+      chmod +x postlink.sh
 
       echo "Adding postlink script to libtool postlink_cmds"
-	  sed 's|postlink_cmds=""|postlink_cmds="./postlink.sh"|g' libtool > libtool.fixed
-	  mv libtool.fixed libtool
-	  chmod +x libtool
+      sed 's|postlink_cmds=""|postlink_cmds="./postlink.sh"|g' libtool > libtool.fixed
+      mv libtool.fixed libtool
+      chmod +x libtool
    fi
 fi
 
