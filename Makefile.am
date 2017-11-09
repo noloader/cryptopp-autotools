@@ -31,8 +31,6 @@
 ##  - Add architecture specific flags to certain source files. This is partially implemented for most
 ##    Linux, but we still need Altivec and Power8. We also need IBM's xlC on AIX and Sun's CC on Solaris.
 ##
-##  - Figure out why Solaris fails to include the Mapfile in the shared object
-##
 ##  - Figure out what's going on with DragonFly and dependencies
 ##
 
@@ -186,6 +184,7 @@ libothers_la_SOURCES = \
    vmac.cpp wait.cpp wake.cpp whrlpool.cpp xtr.cpp xtrcrypt.cpp \
    zdeflate.cpp zinflate.cpp zlib.cpp
 
+## TODO: do we need to do this?
 
 #noinst_LIBRARIES = \
 #   libcryptlib.la \
@@ -358,3 +357,4 @@ dist_pkgdata_DATA = \
 
 adhoc.cpp:
 	cp adhoc.cpp.proto adhoc.cpp
+	touch adhoc.cpp

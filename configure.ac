@@ -19,6 +19,9 @@
 ## - Fix failed self tests for OS X/Clang and Linux/xlC. They both fail two tests, and they are
 ##   the same test. The tests are RSA signature verification using library test vectors.
 ##
+## - Fix cryptest.exe crash in RSA test vectors on Solaris. Its probably the same issue as
+##   as the one with OS X and IBM XL C/C++.
+##
 ## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's
 ##   not much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
 ##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them to do.
@@ -861,22 +864,6 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## -qrtti must be present for some xlC compilers
-   HAS_RTTI=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-qrtti'`
-   if test "$HAS_RTTI" -eq "0"; then
-
-      CXXFLAGS="-qrtti"
-      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-      )
-
-      if test "$tr_RESULT" -eq "1"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-      fi
-   fi
-
    # Promotes optimizations
    CXXFLAGS="-qmaxmem=-1"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -976,6 +963,32 @@ AC_OUTPUT
 ## to get things back on course, so adhoc.cpp must always be copied.
 
 AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
+
+#############################################################################
+## Hack ahead. GNU's libtool does not honor our '-M cryptopp.mapfile' in AM_LDFLAGS
+## for the libcryptopp.so recipe. Many thanks to John Martin of Oracle for help wielding
+## elfedit. The hw_cap = 0x1800 is SSE2 SSE and its needed for old hardware when new
+## instructions are present, like SSE4.1, SSE4.2, CLMUL, AES, RDRAND, RDSEED and SHA.
+## TODO: determine if we are allowed to hijack libtool's postlink_cmds function. It
+## works well but we may be violating a policy somewhere along the line.
+
+if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
+   if test "$IS_IA32" -ne "0"; then
+
+      echo ""
+      echo "Adding postlink script"
+	  rm -f postlink.sh 2>/dev/null
+	  echo "echo \"Fixing shared object capabilities\"" >> postlink.sh
+	  echo "elfedit -e 'cap:hw1 0x1800' .libs/libcryptopp.so.6.0.0" >> postlink.sh
+	  echo "" >> postlink.sh
+	  chmod +x postlink.sh
+
+      echo "Adding postlink script to libtool postlink_cmds"
+	  sed 's|postlink_cmds=""|postlink_cmds="./postlink.sh"|g' libtool > libtool.fixed
+	  mv libtool.fixed libtool
+	  chmod +x libtool
+   fi
+fi
 
 #############################################################################
 ## Print a summary of information
