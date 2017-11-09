@@ -388,9 +388,11 @@ if test "$IS_SUN_OS" -ne "0"; then
    ## Save LDFLAGS
    SAVED_LDFLAGS="$LDFLAGS"
 
-   ## IA-32 gets a Mapfile for capabilities
+   ## IA-32 gets a Mapfile for capabilities. Due to libtool stripping
+   ## -M arguments, we need to escape it with -XCClinker in AM_LDFLAGS.
    if test "$IS_IA32" -ne "0"; then
-      LDFLAGS="-M cryptopp.mapfile"
+      LDFLAGS="-Mcryptopp.mapfile"
+	  ## LDFLAGS="-XCClinker -M,cryptopp.mapfile"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
       AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
@@ -398,7 +400,8 @@ if test "$IS_SUN_OS" -ne "0"; then
       )
 
       if test "$tr_RESULT" -eq "1"; then
-         AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+         ## AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+		 AM_LDFLAGS="$AM_LDFLAGS -XCClinker -Mcryptopp.mapfile"
       fi
    fi
 
@@ -1033,41 +1036,6 @@ AC_OUTPUT
 ## to get things back on course, so adhoc.cpp must always be copied.
 
 AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
-
-#############################################################################
-## Hack ahead. GNU's libtool does not honor our '-M cryptopp.mapfile' or
-## '-Wl,-M,cryptopp.mapfile' in AM_LDFLAGS for the libcryptopp.so recipe.
-## Many thanks to John Martin of Oracle for help wielding elfedit to add
-## the hardware capabilities back to the binaries.
-##
-## hw_cap = 0x1800 is SSE2 SSE and its needed for old hardware when new instruc-
-## tions are present, like SSE4.1, SSE4.2, CLMUL, AES, RDRAND, RDSEED and SHA.
-## We don't need hw_caps for other platforms, like SPARC, because we don't use
-## specialized hardware instructions.
-##
-## TODO: determine if we are allowed to hijack libtool's postlink_cmds function. It
-## works well but we may be violating a policy somewhere along the line. Also see
-## https://www.gnu.org/software/libtool/manual/html_node/libtool-script-contents.html
-
-if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
-   if test "$IS_IA32" -ne "0"; then
-
-      echo ""
-      echo "Adding postlink script"
-      rm -f postlink.sh 2>/dev/null
-      echo "echo \"Fixing shared object capabilities\"" >> postlink.sh
-      echo "elfedit -e 'cap:hw1 0x1800' .libs/cryptest" >> postlink.sh
-      echo "elfedit -e 'cap:hw1 0x1800' .libs/cryptestcwd" >> postlink.sh
-      echo "elfedit -e 'cap:hw1 0x1800' .libs/libcryptopp.so.6.0.0" >> postlink.sh
-      echo "" >> postlink.sh
-      chmod +x postlink.sh
-
-      echo "Adding postlink script to libtool postlink_cmds"
-      sed 's|postlink_cmds=""|postlink_cmds="./postlink.sh"|g' libtool > libtool.fixed
-      mv libtool.fixed libtool
-      chmod +x libtool
-   fi
-fi
 
 #############################################################################
 ## Print a summary of information
