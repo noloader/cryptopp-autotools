@@ -27,13 +27,13 @@
 ##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them to do.
 ##
 ## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
-##   Also see See https://stackoverflow.com/q/47160617/608639.
+##   Also see https://stackoverflow.com/q/47160617/608639.
 ##
 ## - Fix compile tests on Linux using xlC. AC_COMPILE_IFELSE returns success even for failure.
-##   Also see See https://stackoverflow.com/q/47160617/608639.
+##   Also see https://stackoverflow.com/q/47160617/608639.
 ##
 ## - Fix compile tests on OS X using LLVM. AC_COMPILE_IFELSE and AC_LINK_IFELSE return success even for failure.
-##   Also see See https://stackoverflow.com/q/47160617/608639.
+##   Also see https://stackoverflow.com/q/47160617/608639.
 ##
 ## - Add ubsan and asan targets for testing.
 ##
@@ -93,7 +93,7 @@ IS_PPC=`echo $build | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 ## running on). We add '2>/dev/null' because IBM's xlC dumps the man page
 ## when presented with '-dumpmachine' since it is not a valid option.
 
-## See if CXX is valid. Autools just trucks on with an invalid one.
+## See if CXX is valid. Autotools just trucks on with an invalid one.
 
 if test x"$CXX" != "x"; then
    COMPILER_TARGET=`command -v "$CXX"`
