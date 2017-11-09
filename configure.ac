@@ -992,9 +992,10 @@ fi
 
 ## Add -Wl,--exclude-libs,ALL for GNU linker to stops us from re-exporting
 ## symbols in other libraries. This keeps our ELF section header smaller.
-## Hack: Use IS_APPLE_OS because AC_LINK_IFELSE misdetects the flag
+## Hack: Use IS_APPLE_OS and IS_SUN_OS because AC_LINK_IFELSE misdetects the flag
 if test "$enable_shared" = "yes"; then
-if test "$IS_APPLE_OS" -ne "0"; then
+if test "$IS_APPLE_OS" -eq "0"; then
+if test "$IS_SUN_OS" -eq "0"; then
 
    SAVED_LDFLAGS="$LDFLAGS"
    LDFLAGS="-Wl,--exclude-libs,ALL"
@@ -1010,6 +1011,7 @@ if test "$IS_APPLE_OS" -ne "0"; then
    fi
 
    LDFLAGS="$SAVED_LDFLAGS"
+fi
 fi
 fi
 
