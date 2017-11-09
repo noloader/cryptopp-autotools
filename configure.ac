@@ -392,7 +392,6 @@ if test "$IS_SUN_OS" -ne "0"; then
    ## -M arguments, we need to escape it with -XCClinker in AM_LDFLAGS.
    if test "$IS_IA32" -ne "0"; then
       LDFLAGS="-Mcryptopp.mapfile"
-	  ## LDFLAGS="-XCClinker -M,cryptopp.mapfile"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
       AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
@@ -400,8 +399,7 @@ if test "$IS_SUN_OS" -ne "0"; then
       )
 
       if test "$tr_RESULT" -eq "1"; then
-         ## AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-		 AM_LDFLAGS="$AM_LDFLAGS -XCClinker -Mcryptopp.mapfile"
+         AM_LDFLAGS="$AM_LDFLAGS -XCClinker -Mcryptopp.mapfile"
       fi
    fi
 
