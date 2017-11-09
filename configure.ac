@@ -27,13 +27,13 @@
 ##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them to do.
 ##
 ## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
+##   Also see See https://stackoverflow.com/q/47160617/608639.
 ##
 ## - Fix compile tests on Linux using xlC. AC_COMPILE_IFELSE returns success even for failure.
+##   Also see See https://stackoverflow.com/q/47160617/608639.
 ##
 ## - Fix compile tests on OS X using LLVM. AC_COMPILE_IFELSE and AC_LINK_IFELSE return success even for failure.
-##
-## - For SunCC and IBM xlC we are trying to find a better test than AC_COMPILE_IFELSE. The macro is
-##   brain dead and allows illegal options to pass. See https://stackoverflow.com/q/47160617/608639.
+##   Also see See https://stackoverflow.com/q/47160617/608639.
 ##
 ## - Add ubsan and asan targets for testing.
 ##
@@ -206,7 +206,7 @@ AC_ARG_ENABLE(tls,
    ac_enable_tls=yes)
 AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
 
-## Hack: Use IS_SUN_COMPILER because AC_COMPILE_IFELSE misdetects the flag
+## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 if test "$ac_enable_tls" = "yes"; then
 if test "$IS_SUN_COMPILER" -eq "0"; then
 
@@ -254,7 +254,7 @@ AC_C_BIGENDIAN(
 #############################################################################
 ## Dead code stripping
 
-## Hack: Use IS_SUN_COMPILER and IS_XLC_COMPILER because AC_COMPILE_IFELSE misdetects the flag
+## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 if true; then
 if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
@@ -666,7 +666,8 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-## Hack: disable -xarch=sha for the moment; enable the defines
+## Hack: disable -xarch=sha for the moment; enable the defines.
+## Its too bad we cannot use AC_COMPILE_ELSEIF to perform the test.
 if false; then
    CXXFLAGS="-xarch=sha"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -864,7 +865,7 @@ fi
 ## PowerPC and PowerPC-64
 
 ## This block handles GCC and friends. IBM XL C/C++ is handled after this block
-## Hack: Use IS_XLC_COMPILER because AC_COMPILE_IFELSE misdetects the flag
+## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
@@ -912,7 +913,7 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 fi
 
 ## This block handles IBM XL C/C++. GCC and friends is handled before this block
-## Hack: Use IS_XLC_COMPILER because AC_COMPILE_IFELSE misdetects the flags
+## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
 
@@ -964,7 +965,7 @@ fi
 
 ## Add -pipe for non-IoT gadgets to speedup the compile. IoT gadgets, like
 ## BeagleBoards and CubieTrucks, don't have swap files and run out of memory.
-## Hack: Use IS_SUN_COMPILER because AC_COMPILE_IFELSE misdetects the flag
+## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$IS_IA32" -ne "0" || test "$IS_AARCH64" -ne "0" || test "$IS_PPC" -ne "0"; then
 if test "$IS_SUN_COMPILER" -eq "0"; then
@@ -992,7 +993,8 @@ fi
 
 ## Add -Wl,--exclude-libs,ALL for GNU linker to stops us from re-exporting
 ## symbols in other libraries. This keeps our ELF section header smaller.
-## Hack: Use IS_APPLE_OS and IS_SUN_OS because AC_LINK_IFELSE misdetects the flag
+## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+
 if test "$enable_shared" = "yes"; then
 if test "$IS_APPLE_OS" -eq "0"; then
 if test "$IS_SUN_OS" -eq "0"; then
@@ -1033,12 +1035,19 @@ AC_OUTPUT
 AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
 
 #############################################################################
-## Hack ahead. GNU's libtool does not honor our '-M cryptopp.mapfile' in AM_LDFLAGS
-## for the libcryptopp.so recipe. Many thanks to John Martin of Oracle for help wielding
-## elfedit. The hw_cap = 0x1800 is SSE2 SSE and its needed for old hardware when new
-## instructions are present, like SSE4.1, SSE4.2, CLMUL, AES, RDRAND, RDSEED and SHA.
+## Hack ahead. GNU's libtool does not honor our '-M cryptopp.mapfile' or
+## '-Wl,-M,cryptopp.mapfile' in AM_LDFLAGS for the libcryptopp.so recipe.
+## Many thanks to John Martin of Oracle for help wielding elfedit to add
+## the hardware capabilities back to the binaries.
+##
+## hw_cap = 0x1800 is SSE2 SSE and its needed for old hardware when new instruc-
+## tions are present, like SSE4.1, SSE4.2, CLMUL, AES, RDRAND, RDSEED and SHA.
+## We don't need hw_caps for other platforms, like SPARC, because we don't use
+## specialized hardware instructions.
+##
 ## TODO: determine if we are allowed to hijack libtool's postlink_cmds function. It
-## works well but we may be violating a policy somewhere along the line.
+## works well but we may be violating a policy somewhere along the line. Also see
+## https://www.gnu.org/software/libtool/manual/html_node/libtool-script-contents.html
 
 if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    if test "$IS_IA32" -ne "0"; then
