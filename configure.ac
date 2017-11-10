@@ -35,7 +35,7 @@
 ## - Fix compile tests on OS X using LLVM. AC_COMPILE_IFELSE and AC_LINK_IFELSE return success even for failure.
 ##   Also see https://stackoverflow.com/q/47160617/608639.
 ##
-## - Fix incorrect use of --with-sysroot.Autotools does not seem to honor it when it is set.
+## - Fix incorrect use of --with-sysroot. Autotools does not seem to honor it when it is set.
 ##   Also see https://stackoverflow.com/q/47226389/608639
 ##
 ## - Add ubsan and asan targets for testing.
@@ -88,6 +88,7 @@ IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
 IS_ARM32=`echo $host | $EGREP -i -c 'arm'`
 IS_AARCH64=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
 IS_PPC=`echo $host | $EGREP -i -c -E 'ppc|powerpc|powermac'`
+IS_SPARC=`echo $host | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
 
 #############################################################################
 
@@ -431,6 +432,56 @@ if test "$IS_SUN_OS" -ne "0"; then
 
    ## Restore LDFLAGS
    LDFLAGS="$SAVED_LDFLAGS"
+fi
+
+#############################################################################
+## Solaris, SunCC compiler options
+
+if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   CXXFLAGS="-template=no%extdef"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## SPARC (Solaris), SunCC compiler options
+
+## TODO: Does GCC need an equivalent to -xmemalign=4i?
+
+if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
+if test "$IS_SPARC" -ne "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   CXXFLAGS="-xmemalign=4i"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
 fi
 
 #############################################################################
