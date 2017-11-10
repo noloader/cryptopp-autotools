@@ -22,7 +22,8 @@ Version: @PACKAGE_VERSION@
 Bug-Report: @PACKAGE_BUGREPORT@
 Requires:
 
-## TODO: What do we use to record C++ flags?
+## These flags are mostly broken. We cannot record user choices,
+## and then have user programs use the same flags later.
 ## https://lists.freedesktop.org/archives/pkg-config/2017-November/001087.html
-Cflags: ${@CFLAGS@} -I${includedir}
+Cflags: -I${includedir}
 Libs: -L${libdir} -lcryptopp
