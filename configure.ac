@@ -77,18 +77,18 @@ AC_CANONICAL_HOST
 ## avoiding some tests that fail but Autotools reports as success.
 
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
-IS_APPLE_OS=`echo "$build" | $EGREP -i -c -E 'apple|darwin'`
-IS_ANDROID_OS=`echo $build | $EGREP -i -c -E 'android'`
-IS_CYGWIN_OS=`echo $build | $EGREP -i -c -E 'cygwin'`
+IS_APPLE_OS=`echo "$host" | $EGREP -i -c -E 'apple|darwin'`
+IS_ANDROID_OS=`echo $host | $EGREP -i -c -E 'android'`
+IS_CYGWIN_OS=`echo $host | $EGREP -i -c -E 'cygwin'`
 
-IS_IA32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
-IS_ARM32=`echo $build | $EGREP -i -c 'arm'`
-IS_AARCH64=`echo $build | $EGREP -i -c -E 'aarch32|aarch64'`
-IS_PPC=`echo $build | $EGREP -i -c -E 'ppc|powerpc|powermac'`
+IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
+IS_ARM32=`echo $host | $EGREP -i -c 'arm'`
+IS_AARCH64=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
+IS_PPC=`echo $host | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 
 #############################################################################
 
-## Determine the compiler's target. GCC '-dumpmachine' is the build target,
+## Determine the compiler's target. GCC '-dumpmachine' is the target,
 ## so it represents what the compiler is building for (and not what its
 ## running on). We add '2>/dev/null' because IBM's xlC dumps the man page
 ## when presented with '-dumpmachine' since it is not a valid option.
@@ -124,8 +124,8 @@ IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
 IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 
 ## echo "**********************************************"
-## echo "    Build triplet: $build"
-## echo "         Build OS: $build_os"
+## echo "    Build triplet: $host"
+## echo "         Build OS: $host_os"
 ## echo "  Compiler target: $COMPILER_TARGET"
 ## echo " Compiler version: $COMPILER_VERSION"
 ## echo "**********************************************"
@@ -708,7 +708,7 @@ fi
 if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
 
    ## Most Linux are hard-float systems.
-   IS_ARMHF=`echo $build | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
+   IS_ARMHF=`echo $host | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
    if test "$IS_ARMHF" -ne "0"; then
       AC_MSG_NOTICE([ARM hard-floats detected, using -mfloat-abi=hard.])
       FP_FLAG="hard"
