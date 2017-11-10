@@ -22,5 +22,6 @@ Version: @PACKAGE_VERSION@
 Bug-Report: @PACKAGE_BUGREPORT@
 Requires:
 
-Cflags: -I${includedir}
+## Cflags: ${@CFLAGS@} -I${includedir}
+Cxxflags: ${@CXXFLAGS@} -I${includedir}
 Libs: -L${libdir} -lcryptopp

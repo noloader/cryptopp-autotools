@@ -1095,8 +1095,8 @@ OPT_NDEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -c -E '\-DNDEBUG'`
 if test "$OPT_NDEBUG" -eq "0"; then
    echo ""
    echo "CPPFLAGS does not include -DNDEBUG. You should consider building"
-   echo "with NDEBUG defined so an assert does inadvertently crash your"
-   echo "program and egress sensitive data to an Error Reporting service"
+   echo "with NDEBUG defined so an assert does not inadvertently crash your"
+   echo "program and egress sensitive data to an error reporting service"
    echo "like AppPort, Windows Error Reporting, Crash Reporter, etc."
 fi
 

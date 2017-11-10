@@ -25,12 +25,13 @@
 ##    Visit the link below for the original Debian Autotools files
 ##    https://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
 ##
+##    Installation Directory Variables
+##    https://www.gnu.org/software/autoconf/manual/autoconf-2.62/html_node/Installation-Directory-Variables.html
+##
 
 ## TODO:
 ##
 ##  - Fix the recipe to copy TestData/ and TestVectors/ to their install location
-##
-##  - Fix recipes which use @pkgdatadir@, which does not seem to be substituted
 ##
 ##  - Figure out what's going on with DragonFly and dependencies
 ##
@@ -241,7 +242,7 @@ noinst_HEADERS = \
 bin_PROGRAMS = cryptest
 noinst_PROGRAMS = cryptestcwd
 
-cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"@pkgdatadir@/@PACKAGE_TARNAME@/"'
+cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"@datadir@/@PACKAGE@/"'
 cryptest_SOURCES = \
    test.cpp \
    bench1.cpp \
@@ -281,7 +282,7 @@ cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
 CLEANFILES = adhoc.cpp
 
-## Copy the TestVectors/ and TestData/ to %{pkgdatadir}
+## Copy the TestVectors/ and TestData/ to %{datadir}
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
 testdata_FILES = \
