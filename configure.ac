@@ -24,7 +24,7 @@
 ##
 ## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's
 ##   not much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
-##   IS_BIG_ENDIAN, IS_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them to do.
+##   CRYPTOPP_BIG_ENDIAN, CRYPTOPP_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them to do.
 ##
 ## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
 ##   Also see https://stackoverflow.com/q/47160617/608639.
@@ -83,6 +83,7 @@ IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
 IS_APPLE_OS=`echo "$host" | $EGREP -i -c -E 'apple|darwin'`
 IS_ANDROID_OS=`echo $host | $EGREP -i -c -E 'android'`
 IS_CYGWIN_OS=`echo $host | $EGREP -i -c -E 'cygwin'`
+IS_CYGWIN_OS=`echo $host | $EGREP -i -c -E 'aix'`
 
 IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
 IS_ARM32=`echo $host | $EGREP -i -c 'arm'`
@@ -124,13 +125,14 @@ if test x"$COMPILER_VERSION" = "x"; then
    COMPILER_VERSION=`"$CXX" -V 2>&1 | head -n 1`
 fi
 
+IS_GCC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -v 'Clang' | $EGREP -i -c -E 'GCC|G\+\+'`
 IS_LLVM_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'LLVM|Clang'`
 IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
 IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
+IS_MACPORTS_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'MacPorts'`
 
 ## echo "**********************************************"
 ## echo "    Build triplet: $host"
-## echo "         Build OS: $host_os"
 ## echo "  Compiler target: $COMPILER_TARGET"
 ## echo " Compiler version: $COMPILER_VERSION"
 ## echo "**********************************************"
@@ -238,8 +240,8 @@ fi
 ## Big endian/little endian
 
 AC_C_BIGENDIAN(
-  AC_DEFINE(IS_BIG_ENDIAN, 1, [machine is big-endian]),
-  AC_DEFINE(IS_LITTLE_ENDIAN, 1, [machine is little-endian]),
+  AC_DEFINE(CRYPTOPP_BIG_ENDIAN, 1, [machine is big-endian]),
+  AC_DEFINE(CRYPTOPP_LITTLE_ENDIAN, 1, [machine is little-endian]),
   AC_MSG_ERROR(unknown endianess),
   AC_MSG_ERROR(universial endianess not supported)
 )
@@ -321,7 +323,6 @@ if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
    ## Restore FLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
    LDFLAGS="$SAVED_LDFLAGS"
-
 fi
 fi
 
@@ -383,6 +384,45 @@ if true; then
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## MacPorts GCC using Clang integrated assembler
+
+## Modern GCC must use Clang as the assembler. The old
+## Apple assembler cannot handle much more than SSE3 or SSE4
+
+if test "$IS_APPLE_OS" -ne "0"; then
+if test "$IS_GCC_COMPILER" -ne "0" && test "$IS_MACPORTS_COMPILER" -ne "0"; then
+
+   HAVE_OPT=`echo $CXXFLAGS | $EGREP -i -c -E '\-Wa,-q'`
+   if test "$HAVE_OPT" -eq "0"; then
+
+      ## Save CXXFLAGS
+      SAVED_CXXFLAGS="$CXXFLAGS"
+
+      CXXFLAGS="-Wa,-q"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
+
+      if test "$tr_RESULT" -eq "1"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+
+      HAVE_OPT=`echo $CXXFLAGS | $EGREP -i -c -E '\-DCRYPTOPP_CLANG_INTEGRATED_ASSEMBLER'`
+      if test "$tr_RESULT" -eq "1"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_CLANG_INTEGRATED_ASSEMBLER=1"
+         AC_DEFINE([CRYPTOPP_CLANG_INTEGRATED_ASSEMBLER], [1],
+            [Define to 1 if you are using the Clang integrated assembler.])
+      fi
+
+      ## Restore CXXFLAGS
+      CXXFLAGS="$SAVED_CXXFLAGS"
+   fi
+fi
 fi
 
 #############################################################################
@@ -1166,6 +1206,20 @@ if test "$OPT_O3" -eq "0"; then
    echo ""
    echo "CXXFLAGS does not include -O3. You should consider building at -O3"
    echo "to engage compiler vectorizations and enhance performance."
+fi
+
+HAVE_BITS=`echo $CXXFLAGS | $EGREP -i -c -E '\-m32|\-m64|\-q32|\-q64'`
+IS_64BITS=`getconf LONG_BIT 2>&1 | $EGREP -i -c '64'`
+if test "$IS_64BITS" -eq "0"; then
+   IS_64BITS=`isainfo -b 2>/dev/null | $EGREP -i -c -E -E '64'`
+fi
+if test "$IS_64BITS" -eq "0"; then
+   IS_64BITS=`getconf KERNEL_BITMODE 2>/dev/null | $EGREP -i -c -E '64'`
+fi
+
+if test "$IS_64BITS" -ne "0" && test "$HAVE_BITS" -eq "0"; then
+   echo ""
+   echo "The machine is 64-bit capable but -m64 is not present in CXXFLAGS"
 fi
 
 echo "***********************************************************************"
