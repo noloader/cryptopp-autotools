@@ -22,6 +22,7 @@ Version: @PACKAGE_VERSION@
 Bug-Report: @PACKAGE_BUGREPORT@
 Requires:
 
-## Cflags: ${@CFLAGS@} -I${includedir}
-Cxxflags: ${@CXXFLAGS@} -I${includedir}
+## TODO: What do we use to record C++ flags?
+## https://lists.freedesktop.org/archives/pkg-config/2017-November/001087.html
+Cflags: ${@CFLAGS@} -I${includedir}
 Libs: -L${libdir} -lcryptopp
