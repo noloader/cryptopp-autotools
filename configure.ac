@@ -35,6 +35,9 @@
 ## - Fix compile tests on OS X using LLVM. AC_COMPILE_IFELSE and AC_LINK_IFELSE return success even for failure.
 ##   Also see https://stackoverflow.com/q/47160617/608639.
 ##
+## - Fix incorrect use of --with-sysroot.Autotools does not seem to honor it when it is set.
+##   Also see https://stackoverflow.com/q/47226389/608639
+##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
@@ -175,7 +178,7 @@ if test "$OPT_ANY" -eq "0"; then
 
    FLAG="-O2"
    AC_MSG_CHECKING([if $CXXNAME supports $FLAG])
-   OPT_ERROR=`$CXX $FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|unrecognized|not found|not exist'`
+   OPT_ERROR=`$CXX $FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
    if test "$OPT_ERROR" -eq "0"; then
       echo "yes"
       AM_CXXFLAGS="$AM_CXXFLAGS $FLAG"
@@ -186,7 +189,7 @@ if test "$OPT_ANY" -eq "0"; then
    if test "$OPT_ERROR" -ne "0"; then
       FLAG="-xO2"
       AC_MSG_CHECKING([if $CXXNAME supports $FLAG])
-      OPT_ERROR=`$CXX $FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|unrecognized|not found|not exist'`
+      OPT_ERROR=`$CXX $FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
       if test "$OPT_ERROR" -eq "0"; then
          echo "yes"
          AM_CXXFLAGS="$AM_CXXFLAGS $FLAG"
