@@ -1042,9 +1042,9 @@ AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
 echo ""
 echo "***********************************************************************"
 
-echo "Auto-configuration complete. A summary of options are below. If "
-echo "something looks wrong then please modify config.h and please report it"
-echo "at https://github.com/noloader/cryptopp-autotools."
+echo "Auto-configuration complete. A summary of options are below. If"
+echo "something looks wrong then please modify config.h and please report"
+echo "it at https://github.com/noloader/cryptopp-autotools."
 echo ""
 
 if test x"$COMPILER_VERSION" != "x"; then
