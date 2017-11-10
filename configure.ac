@@ -120,6 +120,7 @@ if test x"$COMPILER_VERSION" = "x"; then
    COMPILER_VERSION=`"$CXX" -V 2>&1 | head -n 1`
 fi
 
+IS_LLVM_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'LLVM|Clang'`
 IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
 IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 
