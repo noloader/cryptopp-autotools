@@ -79,11 +79,11 @@ AC_CANONICAL_HOST
 ## test selection process. It also avoids failed configurations by
 ## avoiding some tests that fail but Autotools reports as success.
 
+IS_AIX_OS=`echo $host | $EGREP -i -c -E 'aix'`
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
 IS_APPLE_OS=`echo "$host" | $EGREP -i -c -E 'apple|darwin'`
 IS_ANDROID_OS=`echo $host | $EGREP -i -c -E 'android'`
 IS_CYGWIN_OS=`echo $host | $EGREP -i -c -E 'cygwin'`
-IS_CYGWIN_OS=`echo $host | $EGREP -i -c -E 'aix'`
 
 IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
 IS_ARM32=`echo $host | $EGREP -i -c 'arm'`
@@ -329,7 +329,7 @@ fi
 #############################################################################
 ## Solaris, GCC and -Wa,--divide
 
-if test "$IS_SUN_OS" -ne "0"; then
+if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -1208,7 +1208,7 @@ if test "$OPT_O3" -eq "0"; then
    echo "to engage compiler vectorizations and enhance performance."
 fi
 
-HAVE_BITS=`echo $CXXFLAGS | $EGREP -i -c -E '\-m32|\-m64|\-q32|\-q64'`
+HAVE_WIDTH=`echo $CXXFLAGS | $EGREP -i -c -E '\-m32|\-m64|\-q32|\-q64|\-march=native|\-native'`
 IS_64BITS=`getconf LONG_BIT 2>&1 | $EGREP -i -c '64'`
 if test "$IS_64BITS" -eq "0"; then
    IS_64BITS=`isainfo -b 2>/dev/null | $EGREP -i -c -E -E '64'`
@@ -1217,7 +1217,7 @@ if test "$IS_64BITS" -eq "0"; then
    IS_64BITS=`getconf KERNEL_BITMODE 2>/dev/null | $EGREP -i -c -E '64'`
 fi
 
-if test "$IS_64BITS" -ne "0" && test "$HAVE_BITS" -eq "0"; then
+if test "$IS_64BITS" -ne "0" && test "$HAVE_WIDTH" -eq "0"; then
    echo ""
    echo "The machine is 64-bit capable but -m64 is not present in CXXFLAGS"
 fi
