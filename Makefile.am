@@ -31,8 +31,6 @@
 
 ## TODO:
 ##
-##  - Fix the recipe to copy TestData/ and TestVectors/ to their install location
-##
 ##  - Figure out what's going on with DragonFly and dependencies
 ##
 ##  - Figure out if we need noinst_LIBRARIES
@@ -285,7 +283,8 @@ CLEANFILES = adhoc.cpp
 ## Copy the TestVectors/ and TestData/ to %{datadir}
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
-testdata_FILES = \
+testdatadir = "@datadir@/@PACKAGE@/TestData"
+testdata_DATA = \
    TestData/3desval.dat TestData/3wayval.dat \
    TestData/aria.dat TestData/camellia.dat \
    TestData/cast128v.dat TestData/cast256v.dat \
@@ -320,7 +319,8 @@ testdata_FILES = \
    TestData/usage.dat TestData/xtrdh171.dat \
    TestData/xtrdh342.dat
 
-testvector_FILES = \
+testvectordir = "@datadir@/@PACKAGE@/TestVectors"
+testvector_DATA = \
    TestVectors/aes.txt TestVectors/all.txt \
    TestVectors/aria.txt TestVectors/blake2b.txt \
    TestVectors/blake2s.txt TestVectors/blake2.txt \
