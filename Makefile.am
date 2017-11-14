@@ -283,8 +283,7 @@ CLEANFILES = adhoc.cpp
 ## Copy the TestVectors/ and TestData/ to ${pkgdatadir}
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
-testdatadir = "${pkgdatadir}/TestData"
-testdata_DATA = \
+testdata_FILES = \
    TestData/3desval.dat TestData/3wayval.dat \
    TestData/aria.dat TestData/camellia.dat \
    TestData/cast128v.dat TestData/cast256v.dat \
@@ -319,8 +318,7 @@ testdata_DATA = \
    TestData/usage.dat TestData/xtrdh171.dat \
    TestData/xtrdh342.dat
 
-testvectordir = "${pkgdatadir}/TestVectors"
-testvector_DATA = \
+testvector_FILES = \
    TestVectors/aes.txt TestVectors/all.txt \
    TestVectors/aria.txt TestVectors/blake2b.txt \
    TestVectors/blake2s.txt TestVectors/blake2.txt \
@@ -351,7 +349,7 @@ testvector_DATA = \
    TestVectors/vmac.txt TestVectors/wake.txt \
    TestVectors/whrlpool.txt
 
-dist_pkgdata_DATA = \
+nobase_dist_pkgdata_DATA = \
    $(testdata_FILES) \
    $(testvector_FILES)
 
