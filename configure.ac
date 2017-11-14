@@ -1155,9 +1155,9 @@ echo "something looks wrong then please modify config.h and please report"
 echo "it at http://github.com/noloader/cryptopp-autotools."
 echo ""
 
-echo "    Build triplet: $host"
-echo "  Compiler target: $COMPILER_TARGET"
-echo " Compiler version: $COMPILER_VERSION"
+echo "   Build triplet: $host"
+echo " Compiler target: $COMPILER_TARGET"
+echo "Compiler version: $COMPILER_VERSION"
 echo ""
 
 echo "Static library: $enable_static"

@@ -240,7 +240,7 @@ noinst_HEADERS = \
 bin_PROGRAMS = cryptest
 noinst_PROGRAMS = cryptestcwd
 
-cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"@datadir@/@PACKAGE@/"'
+cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"${pkgdatadir}/"'
 cryptest_SOURCES = \
    test.cpp \
    bench1.cpp \
@@ -280,10 +280,10 @@ cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
 CLEANFILES = adhoc.cpp
 
-## Copy the TestVectors/ and TestData/ to %{datadir}
+## Copy the TestVectors/ and TestData/ to ${pkgdatadir}
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
-testdatadir = "@datadir@/@PACKAGE@/TestData"
+testdatadir = "${pkgdatadir}/TestData"
 testdata_DATA = \
    TestData/3desval.dat TestData/3wayval.dat \
    TestData/aria.dat TestData/camellia.dat \
@@ -319,7 +319,7 @@ testdata_DATA = \
    TestData/usage.dat TestData/xtrdh171.dat \
    TestData/xtrdh342.dat
 
-testvectordir = "@datadir@/@PACKAGE@/TestVectors"
+testvectordir = "${pkgdatadir}/TestVectors"
 testvector_DATA = \
    TestVectors/aes.txt TestVectors/all.txt \
    TestVectors/aria.txt TestVectors/blake2b.txt \
@@ -362,3 +362,7 @@ dist_pkgdata_DATA = \
 adhoc.cpp:
 	cp adhoc.cpp.proto adhoc.cpp
 	touch adhoc.cpp
+
+## Automake does not properly uninstall the library test data and vectors
+uninstall-hook:
+	-rm -rf ${pkgdatadir}
