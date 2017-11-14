@@ -4,7 +4,7 @@
 ##
 
 ## Visit the link below for the original Debian Autotools files
-##   https://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
+##   http://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
 ##
 
 ## TODO
@@ -14,12 +14,12 @@
 ##   fails to provide a AC_PROG_NO_CC macro. The damn tool is no better than Cmake.
 ##
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X.
-##   Also see https://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
+##   Also see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
 ##
-## - Fix failed self tests for OS X/Clang and Linux/xlC. They both fail two tests, and they are
-##   the same test. The tests are RSA signature verification using library test vectors.
+## - Fix failed self tests for 32-bit OS X/Clang and Linux/xlC. They both fail two tests, and they
+##   are the same test. The tests are RSA signature verification using library test vectors.
 ##
-## - Fix cryptest.exe crash in RSA test vectors on Solaris. Its probably the same issue as
+## - Fix cryptest.exe crash in RSA test vectors on 32-bit Solaris. Its probably the same issue as
 ##   as the one with OS X and IBM XL C/C++.
 ##
 ## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's
@@ -27,16 +27,24 @@
 ##   CRYPTOPP_BIG_ENDIAN, CRYPTOPP_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them to do.
 ##
 ## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
-##   Also see https://stackoverflow.com/q/47160617/608639.
+##   Also see http://stackoverflow.com/q/47160617/608639.
 ##
 ## - Fix compile tests on Linux using xlC. AC_COMPILE_IFELSE returns success even for failure.
-##   Also see https://stackoverflow.com/q/47160617/608639.
+##   Also see http://stackoverflow.com/q/47160617/608639.
 ##
 ## - Fix compile tests on OS X using LLVM. AC_COMPILE_IFELSE and AC_LINK_IFELSE return success even for failure.
-##   Also see https://stackoverflow.com/q/47160617/608639.
+##   Also see http://stackoverflow.com/q/47160617/608639.
+##
+## - Cut-in a more robust CRYPTOPP_COMPILE_ELSEIF. We have the code at the associated  below; we need
+#    to cut it in. Also see http://stackoverflow.com/q/47160617/608639.
 ##
 ## - Fix incorrect use of --with-sysroot. Autotools does not seem to honor it when it is set.
-##   Also see https://stackoverflow.com/q/47226389/608639
+##   Also see http://stackoverflow.com/q/47226389/608639
+##
+## - Fix MSYS2 compile error due to `lt-cryptest.c` and `lt-cryptestcwd.c`. They are C files and
+##   don't use necessary C++ flags. They also use Posix functions but fail to define _XOPEN_SOURCE.
+##   I'm guessing this has something to do with libtool, but I have no idea how to fix it at
+##   the moment. Also see http://lists.gnu.org/archive/html/bug-libtool/2017-11/msg00002.html.
 ##
 ## - Add ubsan and asan targets for testing.
 ##
@@ -154,7 +162,7 @@ if true; then
    AC_MSG_RESULT([checking if static libraries should be enabled... yes])
    AC_ENABLE_STATIC
 
-   ## https://stackoverflow.com/a/21455267/608639
+   ## http://stackoverflow.com/a/21455267/608639
    case $host_os in
       msys* | mingw* | cygwin* )
          AC_MSG_RESULT([checking if shared libraries should be enabled... no])
@@ -250,7 +258,7 @@ AC_C_BIGENDIAN(
 ## Fix AR on iOS and OS X
 
 ## AR and ARFLAGS usage is currently broke under Autotools. Also see
-## https://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html
+## http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html
 
 #if test "$IS_APPLE_OS" -ne "0"; then
 #   AC_SUBST([AR], ["/usr/bin/libtool"])
@@ -358,7 +366,7 @@ if true; then
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    ## This test may need to be changed if the Newlib folks provide directions.
-   ## Also see https://www.sourceware.org/ml/newlib/2017/msg01095.html.
+   ## Also see http://www.sourceware.org/ml/newlib/2017/msg01095.html.
 
    AC_MSG_CHECKING([if runtime library is Newlib])
    AC_PREPROC_IFELSE([AC_LANG_PROGRAM([#include <_newlib_version.h>])],
@@ -1150,7 +1158,7 @@ echo "***********************************************************************"
 
 echo "Auto-configuration complete. A summary of options are below. If"
 echo "something looks wrong then please modify config.h and please report"
-echo "it at https://github.com/noloader/cryptopp-autotools."
+echo "it at http://github.com/noloader/cryptopp-autotools."
 echo ""
 
 if test x"$COMPILER_VERSION" != "x"; then
