@@ -666,6 +666,8 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
+   ## SunCC does not pass GCC-like defines through the compiler
+   SSE_DEFINES=""
 
    CXXFLAGS="-xarch=sse2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -676,6 +678,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])
+      SSE_DEFINES="$SSE_DEFINES -D__SSE2__=1"
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE2 instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse2"
@@ -694,6 +697,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      SSE_DEFINES="$SSE_DEFINES -D__SSSE3__=1"
       AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSSE3 instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=ssse3"
@@ -711,6 +715,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      SSE_DEFINES="$SSE_DEFINES -D__SSE4_1__=1"
       AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE4.1 instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_1"
@@ -730,6 +735,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
+      SSE_DEFINES="$SSE_DEFINES -D__SSE4_2__=1"
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE42 instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_2"
@@ -749,6 +755,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+      SSE_DEFINES="$SSE_DEFINES -D__AES__=1"
       AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1],
          [Define to 1 if you have IA-32 CLMUL instructions available.])
       AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
@@ -774,6 +781,7 @@ if false; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      SSE_DEFINES="$SSE_DEFINES -D__SHA__=1"
       AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SHA-NI instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sha"
@@ -788,6 +796,10 @@ else
       [Define to 1 if you do not have IA-32 SHA instructions available.])
    AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
 fi
+
+   if test x"$SSE_DEFINES" != "x"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $SSE_DEFINES"
+   fi
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
