@@ -139,12 +139,6 @@ IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
 IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 IS_MACPORTS_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'MacPorts'`
 
-## echo "**********************************************"
-## echo "    Build triplet: $host"
-## echo "  Compiler target: $COMPILER_TARGET"
-## echo " Compiler version: $COMPILER_VERSION"
-## echo "**********************************************"
-
 ## echo "IS_SUN_COMPILER: $IS_SUN_COMPILER"
 ## echo "IS_XLC_COMPILER: $IS_XLC_COMPILER"
 
@@ -1161,10 +1155,10 @@ echo "something looks wrong then please modify config.h and please report"
 echo "it at http://github.com/noloader/cryptopp-autotools."
 echo ""
 
-if test x"$COMPILER_VERSION" != "x"; then
-   echo "Compiler: $COMPILER_VERSION"
-   echo ""
-fi
+echo "    Build triplet: $host"
+echo "  Compiler target: $COMPILER_TARGET"
+echo " Compiler version: $COMPILER_VERSION"
+echo ""
 
 echo "Static library: $enable_static"
 echo "Shared library: $enable_shared"
