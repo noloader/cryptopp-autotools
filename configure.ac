@@ -1230,9 +1230,12 @@ if test "$IS_64BITS" -eq "0"; then
    IS_64BITS=`getconf KERNEL_BITMODE 2>/dev/null | $EGREP -i -c -E '64'`
 fi
 
+## Don't print message for Aarch64
+if test "$IS_AARCH64" -eq "0"; then
 if test "$IS_64BITS" -ne "0" && test "$HAVE_WIDTH" -eq "0"; then
    echo ""
    echo "The machine is 64-bit capable but -m64 is not present in CXXFLAGS"
+fi
 fi
 
 echo "***********************************************************************"
