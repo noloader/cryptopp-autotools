@@ -139,12 +139,7 @@ IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
 IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 IS_MACPORTS_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'MacPorts'`
 
-## echo "IS_SUN_COMPILER: $IS_SUN_COMPILER"
-## echo "IS_XLC_COMPILER: $IS_XLC_COMPILER"
-
-#############################################################################
-## Friendly names
-
+## Friendly names for reporting
 CXXNAME=`basename "$CXX"`
 LDNAME=`basename "$LD"`
 
@@ -218,6 +213,7 @@ AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
 ## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 if test "$ac_enable_tls" = "yes"; then
 if test "$IS_SUN_COMPILER" -eq "0"; then
+if test "$IS_XLC_COMPILER" -eq "0"; then
 
    SAVED_CXXFLAGS="$CXXFLAGS"
    CXXFLAGS="-pthread"
@@ -235,6 +231,7 @@ if test "$IS_SUN_COMPILER" -eq "0"; then
    AM_CXXFLAGS="$AM_CXXFLAGS -pthread"
    AM_LDFLAGS="$AM_LDFLAGS -pthread"
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
 fi
 fi
 
