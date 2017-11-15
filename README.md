@@ -52,6 +52,16 @@ To update the library and the submodule perform the following. The `make clean` 
 
 Despite our efforts we have not been able to add the submodule to Crypto++ for seamless integration. If anyone knows how to add the submodule directly to the Crypto++ directory, then please provide the instructions.
 
+# Prerequisites
+
+Before running the Autotools project please ensure you have the following installed:
+
+1. autoconf
+2. automake
+3. libtool
+
+Libtool may be "libltdl-dev" on Debian and Ubuntu; and may be "libtool-ltdl" on Fedora.
+
 # Integration
 The Autotools submodule integrates with the Crypto++ library. The submodule removes the library's `GNUmakefile` and `GNUmakefile-cross`. In the future we plan to overwrite the library's `config.h` and produce a n installation specific `config.h`.
 
