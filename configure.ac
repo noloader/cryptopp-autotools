@@ -144,6 +144,20 @@ CXXNAME=`basename "$CXX"`
 LDNAME=`basename "$LD"`
 
 #############################################################################
+
+## An improved COMPILE_ELSEIF that's not so braindead. Unfortunately, it
+## does not work. It has something to do with quoting or double quoting or
+## under quoting. Also see http://stackoverflow.com/q/47160617/608639
+## and http://lists.gnu.org/archive/html/autoconf/2009-03/msg00099.html.
+
+AC_DEFUN([XXX_COMPILE_ELSEIF],
+   [AC_REQUIRE([AC_PROG_EGREP])
+   AC_COMPILE_IFELSE([$1],[retval=0
+      if $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist' conftest.err >/dev/null; then retval=1; fi],[retval=1])
+   AS_IF([test $retval = 0],[$2],[$3])]
+)
+
+#############################################################################
 ## Shared and static libraries
 
 if true; then
