@@ -265,6 +265,7 @@ AC_C_BIGENDIAN(
 
 ## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 if true; then
+if test "$IS_AIX_OS" -eq "0"; then
 if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
    ## Save FLAGS
@@ -325,6 +326,7 @@ if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
    ## Restore FLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
    LDFLAGS="$SAVED_LDFLAGS"
+fi
 fi
 fi
 
@@ -1107,6 +1109,7 @@ fi
 if test "$enable_shared" = "yes"; then
 if test "$IS_APPLE_OS" -eq "0"; then
 if test "$IS_SUN_OS" -eq "0"; then
+if test "$IS_AIX_OS" -eq "0"; then
 
    SAVED_LDFLAGS="$LDFLAGS"
    LDFLAGS="-Wl,--exclude-libs,ALL"
@@ -1122,6 +1125,7 @@ if test "$IS_SUN_OS" -eq "0"; then
    fi
 
    LDFLAGS="$SAVED_LDFLAGS"
+fi
 fi
 fi
 fi
