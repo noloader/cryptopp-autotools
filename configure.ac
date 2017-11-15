@@ -726,7 +726,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
          [Define to 1 if you do not have IA-32 SSE4.1 instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
-   
+
    CXXFLAGS="-xarch=sse4_2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
@@ -974,65 +974,25 @@ fi
 #############################################################################
 ## PowerPC and PowerPC-64
 
-## This block handles GCC and friends. IBM XL C/C++ is handled after this block
-## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+if test "$IS_PPC" -ne "0"; then
 
-if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -eq "0"; then
-
-   ## Save CXXFLAGS
-   SAVED_CXXFLAGS="$CXXFLAGS"
-
-   ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
-   ## Altivec needs Power4, but the VSX loads and stores needs Power7.
-   CXXFLAGS="-maltivec -mcpu=power8"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-   )
-
-   if test "$tr_RESULT" -eq "1"; then
-      AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1],
-         [Define to 1 if you have POWER7 instructions available.])
-      AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE], [1],
-         [Define to 1 if you have POWER8 instructions available.])
-      AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1],
-         [Define to 1 if you have POWER8 Crypto instructions available.])
-      AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1],
-         [Define to 1 if you have POWER8 Crypto instructions available.])
-      AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1],
-         [Define to 1 if you have POWER8 Crypto instructions available.])
+   ## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+   if test "$IS_XLC_COMPILER" -ne "0"; then
+      PPC_POWER4_FLAG="-qarch=pwr4 -qaltivec"
+      PPC_POWER7_FLAG="-qarch=pwr7 -qaltivec"
+      PPC_POWER8_FLAG="-qarch=pwr8 -qaltivec"
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1],
-         [Define to 1 if you do not have the Power8 PMULL instructions available.])
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1],
-         [Define to 1 if you do not have the Power8 AES instructions available.])
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1],
-         [Define to 1 if you do not have the Power8 SHA instructions available.])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC"
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES"
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA"
+      PPC_POWER4_FLAG="-mcpu=power4 -maltivec"
+      PPC_POWER7_FLAG="-mcpu=power7 -maltivec"
+      PPC_POWER8_FLAG="-mcpu=power8 -maltivec"
    fi
 
-   ## Restore CXXFLAGS
-   CXXFLAGS="$SAVED_CXXFLAGS"
-fi
-
-## This block handles IBM XL C/C++. GCC and friends is handled before this block
-## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
-
-if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
-
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
-   CXXFLAGS="-qarch=pwr8 -qaltivec"
+   CXXFLAGS="$PPC_POWER4_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
@@ -1041,29 +1001,68 @@ if test "$IS_PPC" -ne "0" && test "$IS_XLC_COMPILER" -ne "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1],
-         [Define to 1 if you have POWER7 instructions available.])
-      AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE], [1],
-         [Define to 1 if you have POWER8 instructions available.])
-      AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1],
-         [Define to 1 if you have POWER8 Crypto instructions available.])
-      AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1],
-         [Define to 1 if you have POWER8 Crypto instructions available.])
-      AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1],
-         [Define to 1 if you have POWER8 Crypto instructions available.])
+      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1],
+         [Define to 1 if you have Altivec instructions available.])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1],
-         [Define to 1 if you do not have the Power8 PMULL instructions available.])
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1],
-         [Define to 1 if you do not have the Power8 AES instructions available.])
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1],
-         [Define to 1 if you do not have the Power8 SHA instructions available.])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC"
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES"
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA"
+      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1],
+         [Define to 1 if you do not have the Altivec instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ALTIVEC=1"
+   fi
+
+   CXXFLAGS="$PPC_POWER7_FLAG"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1],
+         [Define to 1 if you have Power7 instructions available.])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1],
+         [Define to 1 if you do not have the Altivec instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
+   fi
+
+   ## Power7 and Altivec is available. Test for Power8 and Crypto extensions.
+   if test "$tr_RESULT" -eq "1"; then
+
+      CXXFLAGS="$PPC_POWER8_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
+
+      if test "$tr_RESULT" -eq "1"; then
+         AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
+         AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
+         AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+         AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+         AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE], [1],
+            [Define to 1 if you have POWER8 instructions available.])
+         AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1],
+            [Define to 1 if you have POWER8 Crypto instructions available.])
+         AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1],
+            [Define to 1 if you have POWER8 Crypto instructions available.])
+         AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1],
+            [Define to 1 if you have POWER8 Crypto instructions available.])
+      else
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1],
+            [Define to 1 if you do not have the Power8 instructions available.])
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1],
+            [Define to 1 if you do not have the Power8 PMULL instructions available.])
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1],
+            [Define to 1 if you do not have the Power8 AES instructions available.])
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1],
+            [Define to 1 if you do not have the Power8 SHA instructions available.])
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8=1"
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC=1"
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES=1"
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA=1"
+      fi
    fi
 
    ## Restore CXXFLAGS
