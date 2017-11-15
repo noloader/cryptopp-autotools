@@ -60,7 +60,7 @@ Before running the Autotools project please ensure you have the following instal
 2. automake
 3. libtool
 
-Libtool may be "libltdl-dev" on Debian and Ubuntu; and may be "libtool-ltdl" on Fedora.
+You may also need `libltdl-dev` on Debian and Ubuntu; and may need `libtool-ltdl-devel` on Fedora.
 
 # Integration
 The Autotools submodule integrates with the Crypto++ library. The submodule removes the library's `GNUmakefile` and `GNUmakefile-cross`. In the future we plan to overwrite the library's `config.h` and produce a n installation specific `config.h`.
