@@ -61,6 +61,7 @@ EXTRA_LTLIBRARIES = \
    librijndael_simd.la \
    libsha_simd.la \
    libshacal2_simd.la \
+   libsse_simd.la \
    libothers.la
 
 ## libcryptopp_la_SOURCES is empty because we need to create the library artifact from disjoint
@@ -86,6 +87,7 @@ libcryptopp_la_LIBADD = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
+   $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
 ## Don't use EXTRA_ prefix for libcryptopp_la_DEPENDENCIES. It breaks Solaris.
@@ -103,6 +105,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
+   $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
 ## Very important... Version number of the library
@@ -156,6 +159,10 @@ libsha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 libshacal2_simd_la_SOURCES = shacal2-simd.cpp
 libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
+## CRYPTOPP_SSE_FLAG set in configure.ac
+libsse_simd_la_SOURCES = sse-simd.cpp
+libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE_FLAG)
+
 # This is the list of remaining sources files that don't need special order and don't need
 # special flags. It is formed by removing cryptlib.cpp, cpu.cpp, integer.cpp and other
 # source files with architectural specific flags. It is sorted in alphabetical order for
@@ -201,6 +208,7 @@ libothers_la_SOURCES = \
 #   librijndael_simd.la \
 #   libsha_simd.la \
 #   libshacal2_simd.la \
+#   libsse_simd.la \
 #   libothers.la
 
 pkginclude_HEADERS = \

@@ -552,7 +552,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## cpu.cpp
    CXXFLAGS="-msse2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
@@ -561,7 +560,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
-      AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE2 instructions available.])
    else
@@ -692,7 +691,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
-      AC_SUBST([CRYPTOPP_CPU_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE2__=1"
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE2 instructions available.])
@@ -1178,8 +1177,8 @@ echo "Static library: $enable_static"
 echo "Shared library: $enable_shared"
 echo ""
 
-if test x"$CRYPTOPP_CPU_FLAG" != "x"; then
-   echo "CRYPTOPP_CPU_FLAG: $CRYPTOPP_CPU_FLAG"
+if test x"$CRYPTOPP_SSE_FLAG" != "x"; then
+   echo "CRYPTOPP_SSE_FLAG: $CRYPTOPP_SSE_FLAG"
 fi
 if test x"$CRYPTOPP_NEON_FLAG" != "x"; then
    echo "CRYPTOPP_NEON_FLAG: $CRYPTOPP_NEON_FLAG"
