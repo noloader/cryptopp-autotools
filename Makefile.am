@@ -61,6 +61,7 @@ EXTRA_LTLIBRARIES = \
    librijndael_simd.la \
    libsha_simd.la \
    libshacal2_simd.la \
+   libspeck_simd.la \
    libsse_simd.la \
    libothers.la
 
@@ -87,6 +88,7 @@ libcryptopp_la_LIBADD = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
+   $(libspeck_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
@@ -105,6 +107,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
+   $(libspeck_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
@@ -159,6 +162,10 @@ libsha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 libshacal2_simd_la_SOURCES = shacal2-simd.cpp
 libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
+## CRYPTOPP_SPECK_FLAG set in configure.ac
+libspeck_simd_la_SOURCES = speck-simd.cpp
+libspeck_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK_FLAG)
+
 ## CRYPTOPP_SSE_FLAG set in configure.ac
 libsse_simd_la_SOURCES = sse-simd.cpp
 libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE_FLAG)
@@ -186,8 +193,8 @@ libothers_la_SOURCES = \
    pssr.cpp pubkey.cpp queue.cpp rabin.cpp randpool.cpp rc2.cpp \
    rc5.cpp rc6.cpp rdrand.cpp rdtables.cpp rijndael.cpp \
    ripemd.cpp rng.cpp rsa.cpp rw.cpp safer.cpp salsa.cpp \
-   seal.cpp seed.cpp serpent.cpp sha.cpp sha3.cpp \
-   shacal2.cpp shark.cpp sharkbox.cpp skipjack.cpp socketft.cpp \
+   seal.cpp seed.cpp serpent.cpp sha.cpp sha3.cpp simon.cpp shacal2.cpp \
+   speck.cpp shark.cpp sharkbox.cpp skipjack.cpp socketft.cpp \
    sosemanuk.cpp square.cpp squaretb.cpp strciphr.cpp tea.cpp tftables.cpp \
    threefish.cpp tiger.cpp tigertab.cpp trdlocal.cpp ttmac.cpp twofish.cpp \
    vmac.cpp wait.cpp wake.cpp whrlpool.cpp xtr.cpp xtrcrypt.cpp \
@@ -208,6 +215,7 @@ libothers_la_SOURCES = \
 #   librijndael_simd.la \
 #   libsha_simd.la \
 #   libshacal2_simd.la \
+#   libspeck_simd.la \
 #   libsse_simd.la \
 #   libothers.la
 
@@ -230,9 +238,9 @@ pkginclude_HEADERS = \
    pkcspad.h poly1305.h polynomi.h ppc-crypto.h pssr.h pubkey.h \
    pwdbased.h queue.h rabin.h randpool.h rc2.h rc5.h \
    rc6.h rdrand.h rijndael.h ripemd.h rng.h rsa.h \
-   rw.h safer.h salsa.h seal.h secblock.h seckey.h \
-   seed.h serpent.h serpentp.h sha.h sha3.h shacal2.h \
-   shark.h simple.h siphash.h skipjack.h smartptr.h socketft.h \
+   rw.h safer.h salsa.h seal.h secblock.h seckey.h seed.h \
+   serpent.h serpentp.h sha.h sha3.h shacal2.h simon.h shark.h \
+   simple.h siphash.h skipjack.h smartptr.h speck.h socketft.h \
    sosemanuk.h square.h stdcpp.h strciphr.h tea.h threefish.h \
    tiger.h trap.h trdlocal.h trunhash.h ttmac.h twofish.h \
    vmac.h wait.h wake.h whrlpool.h winpipes.h words.h \
@@ -352,6 +360,7 @@ testvector_FILES = \
    TestVectors/sha3_fips_202.txt TestVectors/sha3.txt \
    TestVectors/shacal2.txt TestVectors/sha.txt \
    TestVectors/siphash.txt TestVectors/sosemanuk.txt \
+   TestVectors/simon.txt TestVectors/speck.txt \
    TestVectors/tea.txt TestVectors/threefish.txt \
    TestVectors/tls_chacha.txt TestVectors/ttmac.txt \
    TestVectors/vmac.txt TestVectors/wake.txt \
