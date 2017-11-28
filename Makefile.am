@@ -61,6 +61,7 @@ EXTRA_LTLIBRARIES = \
    librijndael_simd.la \
    libsha_simd.la \
    libshacal2_simd.la \
+   libsimon_simd.la \
    libspeck_simd.la \
    libsse_simd.la \
    libothers.la
@@ -88,6 +89,7 @@ libcryptopp_la_LIBADD = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
+   $(libsimon_simd_la_OBJECTS) \
    $(libspeck_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
@@ -107,6 +109,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
+   $(libsimon_simd_la_OBJECTS) \
    $(libspeck_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
@@ -162,6 +165,10 @@ libsha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 libshacal2_simd_la_SOURCES = shacal2-simd.cpp
 libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
+## CRYPTOPP_SIMON_FLAG set in configure.ac
+libsimon_simd_la_SOURCES = simon-simd.cpp
+libsimon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON_FLAG)
+
 ## CRYPTOPP_SPECK_FLAG set in configure.ac
 libspeck_simd_la_SOURCES = speck-simd.cpp
 libspeck_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK_FLAG)
@@ -176,8 +183,7 @@ libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE_FLAG)
 # deterministic builds.
 
 libothers_la_SOURCES = \
-   cryptlib.cpp cpu.cpp integer.cpp 3way.cpp \
-   adler32.cpp algebra.cpp algparam.cpp arc4.cpp aria.cpp ariatab.cpp asn.cpp \
+   3way.cpp adler32.cpp algebra.cpp algparam.cpp arc4.cpp aria.cpp ariatab.cpp asn.cpp \
    authenc.cpp base32.cpp base64.cpp basecode.cpp bfinit.cpp blake2.cpp blowfish.cpp \
    blumshub.cpp camellia.cpp cast.cpp casts.cpp cbcmac.cpp ccm.cpp chacha.cpp channels.cpp \
    cmac.cpp crc.cpp default.cpp des.cpp dessp.cpp dh.cpp dh2.cpp \
@@ -190,8 +196,8 @@ libothers_la_SOURCES = \
    panama.cpp pem-com.cpp pem-rd.cpp pem-wr.cpp pkcspad.cpp poly1305.cpp polynomi.cpp \
    pssr.cpp pubkey.cpp queue.cpp rabin.cpp randpool.cpp rc2.cpp rc5.cpp rc6.cpp \
    rdrand.cpp rdtables.cpp rijndael.cpp ripemd.cpp rng.cpp rsa.cpp rw.cpp \
-   safer.cpp salsa.cpp seal.cpp seed.cpp serpent.cpp sha.cpp sha3.cpp \
-   shacal2.cpp shark.cpp sharkbox.cpp simon.cpp skipjack.cpp sm4.cpp socketft.cpp \
+   safer.cpp salsa.cpp seal.cpp seed.cpp serpent.cpp sha.cpp sha3.cpp shacal2.cpp \
+   shark.cpp sharkbox.cpp simon.cpp skipjack.cpp sm3.cpp sm4.cpp socketft.cpp \
    sosemanuk.cpp speck.cpp square.cpp squaretb.cpp strciphr.cpp tea.cpp \
    tftables.cpp threefish.cpp tiger.cpp tigertab.cpp trdlocal.cpp ttmac.cpp twofish.cpp vmac.cpp \
    wait.cpp wake.cpp whrlpool.cpp xtr.cpp xtrcrypt.cpp zdeflate.cpp zinflate.cpp zlib.cpp
@@ -211,6 +217,7 @@ libothers_la_SOURCES = \
 #   librijndael_simd.la \
 #   libsha_simd.la \
 #   libshacal2_simd.la \
+#   libsimon_simd.la \
 #   libspeck_simd.la \
 #   libsse_simd.la \
 #   libothers.la

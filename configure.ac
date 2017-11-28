@@ -578,6 +578,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSSE3 instructions available.])
@@ -712,6 +713,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSSE3__=1"
       AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
@@ -855,6 +857,7 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1],
          [Define to 1 if you have the NEON instructions available.])
@@ -888,6 +891,7 @@ if test "$IS_AARCH64" -ne "0"; then
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
@@ -1207,6 +1211,9 @@ if test x"$CRYPTOPP_SHA_FLAG" != "x"; then
 fi
 if test x"$CRYPTOPP_SPECK_FLAG" != "x"; then
    echo "CRYPTOPP_SPECK_FLAG: $CRYPTOPP_SPECK_FLAG"
+fi
+if test x"$CRYPTOPP_SIMON_FLAG" != "x"; then
+   echo "CRYPTOPP_SIMON_FLAG: $CRYPTOPP_SIMON_FLAG"
 fi
 
 echo ""
