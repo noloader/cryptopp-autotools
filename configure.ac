@@ -597,6 +597,8 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE4.1 instructions available.])
    else
