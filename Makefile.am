@@ -239,7 +239,7 @@ pkginclude_HEADERS = \
     eax.h ec2n.h eccrypto.h ecp.h ecpoint.h elgamal.h \
     emsa2.h eprecomp.h equihash.h esign.h fhmqv.h files.h \
     filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h \
-    gf2n.h gfpcrypt.h gost.h gzip.h hex.h hkdf.h \
+    gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hex.h hkdf.h \
     hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h \
     iterhash.h kalyna.h keccak.h lubyrack.h luc.h mars.h \
     md2.h md4.h md5.h mdc.h mersenne.h misc.h \
