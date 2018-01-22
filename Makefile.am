@@ -195,7 +195,7 @@ libothers_la_SOURCES = \
     hex.cpp hmac.cpp hrtimer.cpp ida.cpp idea.cpp iterhash.cpp \
     kalyna.cpp kalynatab.cpp keccak.cpp luc.cpp mars.cpp marss.cpp \
     md2.cpp md4.cpp md5.cpp misc.cpp modes.cpp mqueue.cpp \
-    mqv.cpp nbtheory.cpp network.cpp oaep.cpp ospstore.cpp \
+    mqv.cpp nbtheory.cpp network.cpp oaep.cpp \
     osrng.cpp padlkrng.cpp panama.cpp pkcspad.cpp poly1305.cpp polynomi.cpp \
     pssr.cpp pubkey.cpp queue.cpp rabin.cpp randpool.cpp \
     rc2.cpp rc5.cpp rc6.cpp rdrand.cpp rdtables.cpp \
@@ -244,7 +244,7 @@ pkginclude_HEADERS = \
     iterhash.h kalyna.h keccak.h lubyrack.h luc.h mars.h \
     md2.h md4.h md5.h mdc.h mersenne.h misc.h modarith.h \
     modes.h modexppc.h mqueue.h mqv.h naclite.h nbtheory.h \
-    network.h nr.h oaep.h oids.h ospstore.h osrng.h \
+    network.h nr.h oaep.h oids.h osrng.h \
     ossig.h padlkrng.h panama.h pch.h pkcspad.h poly1305.h \
     polynomi.h ppc-simd.h pssr.h pubkey.h pwdbased.h queue.h \
     rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h \
