@@ -203,9 +203,9 @@ libothers_la_SOURCES = \
     salsa.cpp seal.cpp seed.cpp serpent.cpp sha.cpp \
     sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp \
     simon.cpp skipjack.cpp sm3.cpp sm4.cpp socketft.cpp sosemanuk.cpp \
-    speck.cpp square.cpp squaretb.cpp strciphr.cpp \
-    tea.cpp tftables.cpp threefish.cpp tiger.cpp tigertab.cpp trdlocal.cpp \
-    ttmac.cpp twofish.cpp vmac.cpp wait.cpp wake.cpp whrlpool.cpp \
+    speck.cpp square.cpp squaretb.cpp strciphr.cpp tea.cpp tftables.cpp \
+    threefish.cpp tiger.cpp tigertab.cpp trdlocal.cpp ttmac.cpp \
+    tweetnacl.cpp twofish.cpp vmac.cpp wait.cpp wake.cpp whrlpool.cpp \
     xtr.cpp xtrcrypt.cpp zdeflate.cpp zinflate.cpp zlib.cpp
 
 
@@ -242,8 +242,8 @@ pkginclude_HEADERS = \
     gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hex.h hkdf.h \
     hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h \
     iterhash.h kalyna.h keccak.h lubyrack.h luc.h mars.h \
-    md2.h md4.h md5.h mdc.h mersenne.h misc.h \
-    modarith.h modes.h modexppc.h mqueue.h mqv.h nbtheory.h \
+    md2.h md4.h md5.h mdc.h mersenne.h misc.h modarith.h \
+    modes.h modexppc.h mqueue.h mqv.h naclite.h nbtheory.h \
     network.h nr.h oaep.h oids.h ospstore.h osrng.h \
     ossig.h padlkrng.h panama.h pch.h pkcspad.h poly1305.h \
     polynomi.h ppc-simd.h pssr.h pubkey.h pwdbased.h queue.h \
@@ -277,6 +277,7 @@ cryptest_SOURCES = \
     validat1.cpp \
     validat2.cpp \
     validat3.cpp \
+    validat4.cpp \
     datatest.cpp \
     regtest1.cpp \
     regtest2.cpp \
@@ -296,6 +297,7 @@ cryptestcwd_SOURCES = \
     validat1.cpp \
     validat2.cpp \
     validat3.cpp \
+    validat4.cpp \
     datatest.cpp \
     regtest1.cpp \
     regtest2.cpp \
