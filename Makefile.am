@@ -237,7 +237,7 @@ pkginclude_HEADERS = \
     config.h cpu.h crc.h cryptlib.h default.h des.h \
     dh.h dh2.h dll.h dmac.h drbg.h dsa.h \
     eax.h ec2n.h eccrypto.h ecp.h ecpoint.h elgamal.h \
-    emsa2.h eprecomp.h equihash.h esign.h fhmqv.h files.h \
+    emsa2.h eprecomp.h esign.h fhmqv.h files.h \
     filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h \
     gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hex.h hkdf.h \
     hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h \
