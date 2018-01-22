@@ -1205,6 +1205,9 @@ fi
 if test x"$CRYPTOPP_CRC_FLAG" != "x"; then
    echo "CRYPTOPP_CRC_FLAG: $CRYPTOPP_CRC_FLAG"
 fi
+if test x"$CRYPTOPP_GCM_FLAG" != "x"; then
+   echo "CRYPTOPP_GCM_FLAG: $CRYPTOPP_GCM_FLAG"
+fi
 if test x"$CRYPTOPP_AES_FLAG" != "x"; then
    echo "CRYPTOPP_AES_FLAG: $CRYPTOPP_AES_FLAG"
 fi
