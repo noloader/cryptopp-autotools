@@ -16,6 +16,9 @@
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X.
 ##   Also see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
 ##
+## - Fix Autoconf ignoring our config.h.in. This one looks like it is a problem without a solution.
+##   Also see https://stackoverflow.com/q/48436715/608639
+##
 ## - Fix failed self tests for 32-bit OS X/Clang and Linux/xlC. They both fail two tests, and they
 ##   are the same test. The tests are RSA signature verification using library test vectors.
 ##
@@ -61,7 +64,7 @@ AC_INIT([Crypto++], [6.0], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp]
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([local.h])
 AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
 AC_CONFIG_SRCDIR([configure.ac])
 
