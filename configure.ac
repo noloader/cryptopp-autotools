@@ -61,9 +61,9 @@ AC_INIT([Crypto++], [6.0], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp]
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
 AC_CONFIG_SRCDIR([configure.ac])
-AC_CONFIG_HEADERS([local.h])
 
 AC_PROG_LIBTOOL
 LT_INIT
@@ -1135,7 +1135,7 @@ if test "$IS_AIX_OS" -eq "0"; then
    LDFLAGS="-Wl,--exclude-libs,ALL"
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1161,7 +1161,7 @@ if test "$IS_AIX_OS" -eq "0"; then
    LDFLAGS="-Wl,--as-needed"
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
