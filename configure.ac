@@ -1150,6 +1150,31 @@ fi
 fi
 fi
 
+## Add -Wl,--as-needed for GNU linker to avoid linking unneeded libraries.
+## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+
+if test "$IS_APPLE_OS" -eq "0"; then
+if test "$IS_SUN_OS" -eq "0"; then
+if test "$IS_AIX_OS" -eq "0"; then
+
+   SAVED_LDFLAGS="$LDFLAGS"
+   LDFLAGS="-Wl,--as-needed"
+
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   LDFLAGS="$SAVED_LDFLAGS"
+fi
+fi
+fi
+
 ## Without this 'make' uses out GNUmakefile, and not Makefile
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross 2>/dev/null])
