@@ -19,15 +19,11 @@
 ## - Fix Autoconf ignoring our config.h.in. This one looks like it is a problem without a solution.
 ##   Also see https://stackoverflow.com/q/48436715/608639
 ##
-## - Fix failed self tests for 32-bit OS X/Clang and Linux/xlC. They both fail two tests, and they
-##   are the same test. The tests are RSA signature verification using library test vectors.
-##
-## - Fix cryptest.exe crash in RSA test vectors on 32-bit Solaris. Its probably the same issue as
-##   as the one with OS X and IBM XL C/C++.
-##
 ## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's
 ##   not much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
-##   CRYPTOPP_BIG_ENDIAN, CRYPTOPP_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them to do.
+##   CRYPTOPP_BIG_ENDIAN, CRYPTOPP_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them.
+##   This problem now appears to be closely related to the config.h.in problem. We can't supply a
+##   template and expect Autotools to honor it.
 ##
 ## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
 ##   Also see http://stackoverflow.com/q/47160617/608639.
@@ -1177,6 +1173,27 @@ if test "$IS_AIX_OS" -eq "0"; then
 fi
 fi
 fi
+
+cat << EOT >> local.h
+typedef unsigned char byte;
+typedef unsigned short word16;
+typedef unsigned int word32;
+
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+	typedef unsigned __int64 word64;
+	#define W64LIT(x) x##ui64
+#elif (_LP64 || __LP64__)
+	typedef unsigned long word64;
+	#define W64LIT(x) x##UL
+#else
+	typedef unsigned long long word64;
+	#define W64LIT(x) x##ULL
+#endif
+
+// define large word type, used for file offsets and such
+typedef word64 lword;
+const lword LWORD_MAX = W64LIT(0xffffffffffffffff);
+EOT
 
 ## Without this 'make' uses out GNUmakefile, and not Makefile
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
