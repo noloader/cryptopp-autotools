@@ -200,7 +200,7 @@ libothers_la_SOURCES = \
     pssr.cpp pubkey.cpp queue.cpp rabin.cpp randpool.cpp \
     rc2.cpp rc5.cpp rc6.cpp rdrand.cpp rdtables.cpp \
     rijndael.cpp ripemd.cpp rng.cpp rsa.cpp rw.cpp safer.cpp \
-    salsa.cpp seal.cpp seed.cpp serpent.cpp sha.cpp \
+    salsa.cpp scrypt.cpp seal.cpp seed.cpp serpent.cpp sha.cpp \
     sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp \
     simon.cpp skipjack.cpp sm3.cpp sm4.cpp socketft.cpp sosemanuk.cpp \
     speck.cpp square.cpp squaretb.cpp strciphr.cpp tea.cpp tftables.cpp \
@@ -249,7 +249,7 @@ pkginclude_HEADERS = \
     polynomi.h ppc-simd.h pssr.h pubkey.h pwdbased.h queue.h \
     rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h \
     rijndael.h ripemd.h rng.h rsa.h rw.h safer.h \
-    salsa.h seal.h secblock.h seckey.h seed.h serpent.h \
+    salsa.h scrypt.h seal.h secblock.h seckey.h seed.h serpent.h \
     serpentp.h sha.h sha3.h shacal2.h shark.h simon.h \
     simple.h siphash.h skipjack.h sm3.h sm4.h smartptr.h \
     socketft.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h \
