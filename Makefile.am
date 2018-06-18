@@ -115,7 +115,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(libothers_la_OBJECTS)
 
 ## Very important... Version number of the library
-libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 6:0:0
+libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 7:0:0
 
 ## CRYPTOPP_CRYPTLIB_FLAG set in configure.ac
 libcryptlib_la_SOURCES = cryptlib.cpp
@@ -186,15 +186,15 @@ libothers_la_SOURCES = \
     3way.cpp adler32.cpp algebra.cpp algparam.cpp arc4.cpp \
     aria.cpp ariatab.cpp asn.cpp authenc.cpp base32.cpp base64.cpp basecode.cpp \
     bfinit.cpp blake2.cpp blowfish.cpp blumshub.cpp camellia.cpp \
-    cast.cpp casts.cpp cbcmac.cpp ccm.cpp chacha.cpp channels.cpp \
-    cmac.cpp crc.cpp default.cpp des.cpp dessp.cpp \
+    cast.cpp casts.cpp cbcmac.cpp ccm.cpp chacha.cpp cham.cpp \
+    channels.cpp cmac.cpp crc.cpp default.cpp des.cpp dessp.cpp \
     dh.cpp dh2.cpp dll.cpp dsa.cpp eax.cpp ec2n.cpp \
     eccrypto.cpp ecp.cpp elgamal.cpp emsa2.cpp eprecomp.cpp esign.cpp \
     files.cpp filters.cpp fips140.cpp fipstest.cpp gcm.cpp \
     gf256.cpp gf2_32.cpp gf2n.cpp gfpcrypt.cpp gost.cpp gzip.cpp \
     hex.cpp hmac.cpp hrtimer.cpp ida.cpp idea.cpp iterhash.cpp \
-    kalyna.cpp kalynatab.cpp keccak.cpp luc.cpp mars.cpp marss.cpp \
-    md2.cpp md4.cpp md5.cpp misc.cpp modes.cpp mqueue.cpp \
+    kalyna.cpp kalynatab.cpp keccak.cpp lea.cpp luc.cpp mars.cpp \
+    marss.cpp md2.cpp md4.cpp md5.cpp misc.cpp modes.cpp mqueue.cpp \
     mqv.cpp nbtheory.cpp network.cpp oaep.cpp \
     osrng.cpp padlkrng.cpp panama.cpp pkcspad.cpp poly1305.cpp polynomi.cpp \
     pssr.cpp pubkey.cpp queue.cpp rabin.cpp randpool.cpp \
@@ -233,7 +233,7 @@ pkginclude_HEADERS = \
     3way.h adler32.h adv-simd.h aes.h algebra.h algparam.h \
     arc4.h argnames.h aria.h asn.h authenc.h base32.h \
     base64.h basecode.h blake2.h blowfish.h blumshub.h camellia.h \
-    cast.h cbcmac.h ccm.h chacha.h channels.h cmac.h \
+    cast.h cbcmac.h ccm.h chacha.h cham.h channels.h cmac.h \
     config.h cpu.h crc.h cryptlib.h default.h des.h \
     dh.h dh2.h dll.h dmac.h drbg.h dsa.h \
     eax.h ec2n.h eccrypto.h ecp.h ecpoint.h elgamal.h \
@@ -241,7 +241,7 @@ pkginclude_HEADERS = \
     filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h \
     gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hex.h hkdf.h \
     hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h \
-    iterhash.h kalyna.h keccak.h lubyrack.h luc.h mars.h \
+    iterhash.h kalyna.h keccak.h lubyrack.h lea.h luc.h mars.h \
     md2.h md4.h md5.h mdc.h mersenne.h misc.h modarith.h \
     modes.h modexppc.h mqueue.h mqv.h naclite.h nbtheory.h \
     network.h nr.h oaep.h oids.h osrng.h \
@@ -353,13 +353,13 @@ testvector_FILES = \
     TestVectors/aria.txt TestVectors/blake2b.txt \
     TestVectors/blake2s.txt TestVectors/blake2.txt \
     TestVectors/camellia.txt TestVectors/ccm.txt \
-    TestVectors/chacha.txt TestVectors/cmac.txt \
+    TestVectors/chacha.txt TestVectors/cham.txt TestVectors/cmac.txt \
     TestVectors/dlies.txt TestVectors/dsa_1363.txt \
     TestVectors/dsa_rfc6979.txt TestVectors/dsa.txt \
     TestVectors/eax.txt TestVectors/esign.txt \
     TestVectors/gcm.txt TestVectors/hkdf.txt \
     TestVectors/hmac.txt TestVectors/kalyna.txt \
-    TestVectors/keccak.txt TestVectors/mars.txt \
+    TestVectors/keccak.txt TestVectors/lea.txt TestVectors/mars.txt \
     TestVectors/nr.txt TestVectors/panama.txt \
     TestVectors/Readme.txt TestVectors/rsa_oaep.txt \
     TestVectors/rsa_pkcs1_1_5.txt TestVectors/rsa_pss.txt \
