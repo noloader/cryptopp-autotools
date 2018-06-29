@@ -1316,7 +1316,7 @@ fi
 HAVE_WIDTH=`echo $CXXFLAGS | $EGREP -i -c -E '\-m32|\-m64|\-q32|\-q64|\-march=native|\-native|\-arch x86_64|\-arch arm64'`
 IS_64BITS=`getconf LONG_BIT 2>&1 | $EGREP -i -c '64'`
 if test "$IS_64BITS" -eq "0"; then
-   IS_64BITS=`isainfo -b 2>/dev/null | $EGREP -i -c -E -E '64'`
+   IS_64BITS=`isainfo -b 2>/dev/null | $EGREP -i -c '64'`
 fi
 if test "$IS_64BITS" -eq "0"; then
    IS_64BITS=`getconf KERNEL_BITMODE 2>/dev/null | $EGREP -i -c -E '64'`
@@ -1332,3 +1332,4 @@ fi
 
 echo "***********************************************************************"
 echo ""
+

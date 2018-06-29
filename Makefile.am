@@ -411,3 +411,4 @@ adhoc.cpp:
 ## Automake does not properly uninstall the library test data and vectors
 uninstall-hook:
 	-rm -rf ${pkgdatadir}
+
