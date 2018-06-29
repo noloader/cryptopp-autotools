@@ -54,8 +54,10 @@ EXTRA_LTLIBRARIES = \
    libinteger.la \
    libaria_simd.la \
    libblake2_simd.la \
+   libcham_simd.la \
    libcrc_simd.la \
    libgcm_simd.la \
+   liblea_simd.la \
    libneon_simd.la \
    libppc_simd.la \
    librijndael_simd.la \
@@ -82,8 +84,10 @@ libcryptopp_la_LIBADD = \
    $(libinteger_la_OBJECTS) \
    $(libaria_simd_la_OBJECTS) \
    $(libblake2_simd_la_OBJECTS) \
+   $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
+   $(liblea_simd_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
    $(librijndael_simd_la_OBJECTS) \
@@ -102,7 +106,9 @@ libcryptopp_la_DEPENDENCIES = \
    $(libinteger_la_OBJECTS) \
    $(libaria_simd_la_OBJECTS) \
    $(libblake2_simd_la_OBJECTS) \
+   $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
+   $(liblea_simd_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
@@ -137,6 +143,10 @@ libaria_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_ARIA_FLAG)
 libblake2_simd_la_SOURCES = blake2-simd.cpp
 libblake2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2_FLAG)
 
+## CRYPTOPP_CHAM_FLAG set in configure.ac
+libcham_simd_la_SOURCES = cham-simd.cpp
+libcham_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHAM_FLAG)
+
 ## CRYPTOPP_CRC_FLAG set in configure.ac
 libcrc_simd_la_SOURCES = crc-simd.cpp
 libcrc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CRC_FLAG)
@@ -144,6 +154,10 @@ libcrc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CRC_FLAG)
 ## CRYPTOPP_GCM_FLAG set in configure.ac
 libgcm_simd_la_SOURCES = gcm-simd.cpp
 libgcm_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GCM_FLAG)
+
+## CRYPTOPP_LEA_FLAG set in configure.ac
+liblea_simd_la_SOURCES = lea-simd.cpp
+liblea_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LEA_FLAG)
 
 ## CRYPTOPP_NEON_FLAG set in configure.ac
 libneon_simd_la_SOURCES = neon-simd.cpp
@@ -192,7 +206,7 @@ libothers_la_SOURCES = \
     eccrypto.cpp ecp.cpp elgamal.cpp emsa2.cpp eprecomp.cpp esign.cpp \
     files.cpp filters.cpp fips140.cpp fipstest.cpp gcm.cpp \
     gf256.cpp gf2_32.cpp gf2n.cpp gfpcrypt.cpp gost.cpp gzip.cpp \
-    hex.cpp hmac.cpp hrtimer.cpp ida.cpp idea.cpp iterhash.cpp \
+    hex.cpp hight.cpp hmac.cpp hrtimer.cpp ida.cpp idea.cpp iterhash.cpp \
     kalyna.cpp kalynatab.cpp keccak.cpp lea.cpp luc.cpp mars.cpp \
     marss.cpp md2.cpp md4.cpp md5.cpp misc.cpp modes.cpp mqueue.cpp \
     mqv.cpp nbtheory.cpp network.cpp oaep.cpp \
@@ -217,8 +231,10 @@ libothers_la_SOURCES = \
 #   libinteger.la \
 #   libaria_simd.la \
 #   libblake2_simd.la \
+#   libcham_simd.la \
 #   libcrc_simd.la \
 #   libgcm_simd.la \
+#   liblea_simd.la \
 #   libneon_simd.la \
 #   libppc_simd.la \
 #   librijndael_simd.la \
@@ -239,8 +255,8 @@ pkginclude_HEADERS = \
     eax.h ec2n.h eccrypto.h ecp.h ecpoint.h elgamal.h \
     emsa2.h eprecomp.h esign.h fhmqv.h files.h \
     filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h \
-    gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hex.h hkdf.h \
-    hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h \
+    gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hex.h hight.h \
+    hkdf.h hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h \
     iterhash.h kalyna.h keccak.h lubyrack.h lea.h luc.h mars.h \
     md2.h md4.h md5.h mdc.h mersenne.h misc.h modarith.h \
     modes.h modexppc.h mqueue.h mqv.h naclite.h nbtheory.h \
