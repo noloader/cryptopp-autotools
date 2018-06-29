@@ -373,7 +373,7 @@ testvector_FILES = \
     TestVectors/dlies.txt TestVectors/dsa_1363.txt \
     TestVectors/dsa_rfc6979.txt TestVectors/dsa.txt \
     TestVectors/eax.txt TestVectors/esign.txt \
-    TestVectors/gcm.txt TestVectors/hkdf.txt \
+    TestVectors/gcm.txt TestVectors/hight.txt TestVectors/hkdf.txt \
     TestVectors/hmac.txt TestVectors/kalyna.txt \
     TestVectors/keccak.txt TestVectors/lea.txt TestVectors/mars.txt \
     TestVectors/nr.txt TestVectors/panama.txt \
