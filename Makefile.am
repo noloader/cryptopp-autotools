@@ -215,7 +215,7 @@ libothers_la_SOURCES = \
     rc2.cpp rc5.cpp rc6.cpp rdrand.cpp rdtables.cpp \
     rijndael.cpp ripemd.cpp rng.cpp rsa.cpp rw.cpp safer.cpp \
     salsa.cpp scrypt.cpp seal.cpp seed.cpp serpent.cpp sha.cpp \
-    sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp \
+    sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp simeck.cpp \
     simon.cpp skipjack.cpp sm3.cpp sm4.cpp socketft.cpp sosemanuk.cpp \
     speck.cpp square.cpp squaretb.cpp strciphr.cpp tea.cpp tftables.cpp \
     threefish.cpp tiger.cpp tigertab.cpp trdlocal.cpp ttmac.cpp \
@@ -266,7 +266,7 @@ pkginclude_HEADERS = \
     rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h \
     rijndael.h ripemd.h rng.h rsa.h rw.h safer.h \
     salsa.h scrypt.h seal.h secblock.h seckey.h seed.h serpent.h \
-    serpentp.h sha.h sha3.h shacal2.h shark.h simon.h \
+    serpentp.h sha.h sha3.h shacal2.h shark.h simeck.h simon.h \
     simple.h siphash.h skipjack.h sm3.h sm4.h smartptr.h \
     socketft.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h \
     tea.h threefish.h tiger.h trap.h trdlocal.h trunhash.h \
