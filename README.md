@@ -69,6 +69,15 @@ The Autotools submodule integrates with the Crypto++ library. The submodule remo
 
 The library's `GNUmakefile` and `GNUmakefile-cross` were modified to clean the artifacts produced by Autotools. To clean the directory after running Autotools perform a `git checkout GNUmakefile` followed by a `make -f GNUmakefile distclean`.
 
+# cryptest-autotools.sh
+In June 2018 the library added `cryptest-autotools.sh` to help test the Autotools gear. The script is located in Crypto++'s `TestScripts` directory. The script downloads the Autotools project files, builds the library and then runs the self tests.
+
+If you want to use `cryptest-autotools.sh` to drive things then perform the following steps.
+
+    cd cryptopp
+    cp TestScripts/cryptest-autotools.sh .
+    ./cryptest-autotools.sh
+
 # Collaboration
 We would like all distro maintainers to be collaborators on this repo. If you are a distro maintainer then please contact us so we can send you an invite.
 
