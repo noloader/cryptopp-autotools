@@ -63,6 +63,7 @@ EXTRA_LTLIBRARIES = \
    librijndael_simd.la \
    libsha_simd.la \
    libshacal2_simd.la \
+   libsimeck_simd.la \
    libsimon_simd.la \
    libspeck_simd.la \
    libsse_simd.la \
@@ -93,6 +94,7 @@ libcryptopp_la_LIBADD = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
+   $(libsimeck_simd_la_OBJECTS) \
    $(libsimon_simd_la_OBJECTS) \
    $(libspeck_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS) \
@@ -115,13 +117,14 @@ libcryptopp_la_DEPENDENCIES = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
+   $(libsimeck_simd_la_OBJECTS) \
    $(libsimon_simd_la_OBJECTS) \
    $(libspeck_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
 ## Very important... Version number of the library
-libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 7:0:0
+libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 7:1:0
 
 ## CRYPTOPP_CRYPTLIB_FLAG set in configure.ac
 libcryptlib_la_SOURCES = cryptlib.cpp
@@ -179,6 +182,10 @@ libsha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 libshacal2_simd_la_SOURCES = shacal2-simd.cpp
 libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
+## CRYPTOPP_SIMECK_FLAG set in configure.ac
+libsimeck_simd_la_SOURCES = simeck-simd.cpp
+libsimeck_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMECK_FLAG)
+
 ## CRYPTOPP_SIMON_FLAG set in configure.ac
 libsimon_simd_la_SOURCES = simon-simd.cpp
 libsimon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON_FLAG)
@@ -215,7 +222,7 @@ libothers_la_SOURCES = \
     rc2.cpp rc5.cpp rc6.cpp rdrand.cpp rdtables.cpp \
     rijndael.cpp ripemd.cpp rng.cpp rsa.cpp rw.cpp safer.cpp \
     salsa.cpp scrypt.cpp seal.cpp seed.cpp serpent.cpp sha.cpp \
-    sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp simeck.cpp \
+    sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp simeck-simd.cpp simeck.cpp \
     simon.cpp skipjack.cpp sm3.cpp sm4.cpp socketft.cpp sosemanuk.cpp \
     speck.cpp square.cpp squaretb.cpp strciphr.cpp tea.cpp tftables.cpp \
     threefish.cpp tiger.cpp tigertab.cpp trdlocal.cpp ttmac.cpp \
@@ -240,6 +247,7 @@ libothers_la_SOURCES = \
 #   librijndael_simd.la \
 #   libsha_simd.la \
 #   libshacal2_simd.la \
+#   libsimeck_simd.la \
 #   libsimon_simd.la \
 #   libspeck_simd.la \
 #   libsse_simd.la \
@@ -388,8 +396,8 @@ testvector_FILES = \
     TestVectors/sha3_224_fips_202.txt TestVectors/sha3_256_fips_202.txt \
     TestVectors/sha3_384_fips_202.txt TestVectors/sha3_512_fips_202.txt \
     TestVectors/sha3_fips_202.txt TestVectors/sha3.txt \
-    TestVectors/shacal2.txt TestVectors/sha.txt \
-    TestVectors/siphash.txt TestVectors/sosemanuk.txt \
+    TestVectors/shacal2.txt TestVectors/sha.txt TestVectors/siphash.txt \
+    TestVectors/sosemanuk.txt TestVectors/simeck.txt \
     TestVectors/simon.txt TestVectors/speck.txt \
     TestVectors/tea.txt TestVectors/threefish.txt \
     TestVectors/tls_chacha.txt TestVectors/ttmac.txt \
