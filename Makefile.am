@@ -222,7 +222,7 @@ libothers_la_SOURCES = \
     rc2.cpp rc5.cpp rc6.cpp rdrand.cpp rdtables.cpp \
     rijndael.cpp ripemd.cpp rng.cpp rsa.cpp rw.cpp safer.cpp \
     salsa.cpp scrypt.cpp seal.cpp seed.cpp serpent.cpp sha.cpp \
-    sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp simeck-simd.cpp simeck.cpp \
+    sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp simeck.cpp \
     simon.cpp skipjack.cpp sm3.cpp sm4.cpp socketft.cpp sosemanuk.cpp \
     speck.cpp square.cpp squaretb.cpp strciphr.cpp tea.cpp tftables.cpp \
     threefish.cpp tiger.cpp tigertab.cpp trdlocal.cpp ttmac.cpp \
