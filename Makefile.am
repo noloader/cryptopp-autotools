@@ -219,7 +219,7 @@ libothers_la_SOURCES = \
     mqv.cpp nbtheory.cpp network.cpp oaep.cpp \
     osrng.cpp padlkrng.cpp panama.cpp pkcspad.cpp poly1305.cpp polynomi.cpp \
     pssr.cpp pubkey.cpp queue.cpp rabin.cpp randpool.cpp \
-    rc2.cpp rc5.cpp rc6.cpp rdrand.cpp rdtables.cpp \
+    rabbit.cpp rc2.cpp rc5.cpp rc6.cpp rdrand.cpp rdtables.cpp \
     rijndael.cpp ripemd.cpp rng.cpp rsa.cpp rw.cpp safer.cpp \
     salsa.cpp scrypt.cpp seal.cpp seed.cpp serpent.cpp sha.cpp \
     sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp simeck.cpp \
@@ -271,7 +271,7 @@ pkginclude_HEADERS = \
     network.h nr.h oaep.h oids.h osrng.h \
     ossig.h padlkrng.h panama.h pch.h pkcspad.h poly1305.h \
     polynomi.h ppc-simd.h pssr.h pubkey.h pwdbased.h queue.h \
-    rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h \
+    rabin.h randpool.h rabbit.h rc2.h rc5.h rc6.h rdrand.h \
     rijndael.h ripemd.h rng.h rsa.h rw.h safer.h \
     salsa.h scrypt.h seal.h secblock.h seckey.h seed.h serpent.h \
     serpentp.h sha.h sha3.h shacal2.h shark.h simeck.h simon.h \
@@ -387,7 +387,7 @@ testvector_FILES = \
     TestVectors/nr.txt TestVectors/panama.txt \
     TestVectors/Readme.txt TestVectors/rsa_oaep.txt \
     TestVectors/rsa_pkcs1_1_5.txt TestVectors/rsa_pss.txt \
-    TestVectors/rw.txt TestVectors/salsa.txt \
+    TestVectors/rw.txt TestVectors/rabbit.txt TestVectors/salsa.txt \
     TestVectors/seal.txt TestVectors/seed.txt \
     TestVectors/sha1_160_fips_180.txt TestVectors/sha1_fips_180.txt \
     TestVectors/sha2_224_fips_180.txt TestVectors/sha2_256_fips_180.txt \
