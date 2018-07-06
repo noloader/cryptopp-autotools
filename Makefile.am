@@ -213,8 +213,8 @@ libothers_la_SOURCES = \
     eccrypto.cpp ecp.cpp elgamal.cpp emsa2.cpp eprecomp.cpp esign.cpp \
     files.cpp filters.cpp fips140.cpp fipstest.cpp gcm.cpp \
     gf256.cpp gf2_32.cpp gf2n.cpp gfpcrypt.cpp gost.cpp gzip.cpp \
-    hex.cpp hight.cpp hmac.cpp hrtimer.cpp ida.cpp idea.cpp iterhash.cpp \
-    kalyna.cpp kalynatab.cpp keccak.cpp lea.cpp luc.cpp mars.cpp \
+    hc128.cpp hc256.cpp hex.cpp hight.cpp hmac.cpp hrtimer.cpp ida.cpp idea.cpp \
+    iterhash.cpp kalyna.cpp kalynatab.cpp keccak.cpp lea.cpp luc.cpp mars.cpp \
     marss.cpp md2.cpp md4.cpp md5.cpp misc.cpp modes.cpp mqueue.cpp \
     mqv.cpp nbtheory.cpp network.cpp oaep.cpp \
     osrng.cpp padlkrng.cpp panama.cpp pkcspad.cpp poly1305.cpp polynomi.cpp \
@@ -263,8 +263,8 @@ pkginclude_HEADERS = \
     eax.h ec2n.h eccrypto.h ecp.h ecpoint.h elgamal.h \
     emsa2.h eprecomp.h esign.h fhmqv.h files.h \
     filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h \
-    gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hex.h hight.h \
-    hkdf.h hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h \
+    gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hc128.h hc256.h hex.h \
+    hight.h hkdf.h hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h \
     iterhash.h kalyna.h keccak.h lubyrack.h lea.h luc.h mars.h \
     md2.h md4.h md5.h mdc.h mersenne.h misc.h modarith.h \
     modes.h modexppc.h mqueue.h mqv.h naclite.h nbtheory.h \
