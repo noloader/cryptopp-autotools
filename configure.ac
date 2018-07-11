@@ -64,6 +64,7 @@ AC_CONFIG_HEADERS([local.h])
 AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
 AC_CONFIG_SRCDIR([configure.ac])
 
+AM_PROG_AS
 AC_PROG_LIBTOOL
 LT_INIT
 
@@ -886,9 +887,9 @@ fi
 ## ARM A-32
 
 if test "$IS_ARM32" -ne "0"; then
-
-   ## https://www.gnu.org/software/automake/manual/html_node/Usage-of-Conditionals.html
    AM_CONDITIONAL([CRYPTOPP_ARM32], [true])
+else
+   AM_CONDITIONAL([CRYPTOPP_ARM32], [false])
 fi
 
 #############################################################################
