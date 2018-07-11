@@ -31,6 +31,11 @@
 
 ## TODO:
 ##
+##  - Fix ARM A-32 compiles. We use GCC to drive the compile process for
+##    aes-armv4.S, not the asembler. Atuomake dies as it tries to do shit
+##    with the assembler. We need to figure out how to tell Automake to
+##    stop using the assembler.
+##
 ##  - Figure out what's going on with DragonFly and dependencies
 ##
 ##  - Figure out if we need noinst_LIBRARIES
@@ -40,9 +45,10 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 AM_DEFAULT_SOURCE_EXT = .cpp
 
-## libcryptopp.la is created from disjoint libraries due to object file ordering and
-## per-object file flags requirements. libcryptopp.la is named as the primary library,
-## and the object files with special needs are listed as EXTRA_LTLIBRARIES. Also see
+## libcryptopp.la is created from disjoint libraries due to object file
+## ordering and per-object file flags requirements. libcryptopp.la is named
+## as the primary library, and the object files with special needs are listed
+## as EXTRA_LTLIBRARIES. Also see
 ## https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 
 lib_LTLIBRARIES = \
@@ -69,9 +75,10 @@ EXTRA_LTLIBRARIES = \
    libsse_simd.la \
    libothers.la
 
-## libcryptopp_la_SOURCES is empty because we need to create the library artifact from disjoint
-## libraries due to object file ordering and per-object file flags requriements. Actually, the
-## adhoc.cpp file is due to an automake issue of assuming C sources when the list is empty. Also
+## libcryptopp_la_SOURCES is empty because we need to create the library
+## artifact from disjoint libraries due to object file ordering and per-object
+## file flags requriements. Actually, the adhoc.cpp file is due to an automake
+## issue of assuming C sources when the list is empty. Also see
 ## https://lists.gnu.org/archive/html/automake/2017-11/msg00000.html.
 
 libcryptopp_la_SOURCES = \
@@ -228,7 +235,6 @@ libothers_la_SOURCES = \
     threefish.cpp tiger.cpp tigertab.cpp trdlocal.cpp ttmac.cpp \
     tweetnacl.cpp twofish.cpp vmac.cpp wait.cpp wake.cpp whrlpool.cpp \
     xtr.cpp xtrcrypt.cpp zdeflate.cpp zinflate.cpp zlib.cpp
-
 
 ## TODO: do we need to do this?
 
@@ -420,3 +426,14 @@ adhoc.cpp:
 uninstall-hook:
 	-rm -rf ${pkgdatadir}
 
+## Let's see how this works
+## https://www.gnu.org/software/automake/manual/html_node/Usage-of-Conditionals.html
+if CRYPTOPP_ARM32
+
+  libothers_la_SOURCES += aes-armv4.S
+  pkginclude_HEADERS += aes-armv4.h
+
+aes-armv4.o : aes-armv4.S
+	$(AM_CXX) $(AM_CXXFLAGS) -march=armv7-a -marm $<
+
+endif

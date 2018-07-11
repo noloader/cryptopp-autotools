@@ -93,7 +93,7 @@ IS_ANDROID_OS=`echo $host | $EGREP -i -c -E 'android'`
 IS_CYGWIN_OS=`echo $host | $EGREP -i -c -E 'cygwin'`
 
 IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
-IS_ARM32=`echo $host | $EGREP -i -c 'arm'`
+IS_ARM32=`echo $host | $EGREP -i -c 'arm|armhf|arm7l|eabihf'`
 IS_AARCH64=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
 IS_PPC=`echo $host | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 IS_SPARC=`echo $host | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
@@ -883,6 +883,15 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
 fi
 
 #############################################################################
+## ARM A-32
+
+if test "$IS_ARM32" -ne "0"; then
+
+   ## https://www.gnu.org/software/automake/manual/html_node/Usage-of-Conditionals.html
+   AM_CONDITIONAL([CRYPTOPP_ARM32], [true])
+fi
+
+#############################################################################
 ## ARM Aarch32 and Aarch64
 
 if test "$IS_AARCH64" -ne "0"; then
@@ -1187,6 +1196,12 @@ fi
 fi
 fi
 
+#############################################################################
+## It is too bad this does not work. If we could write directly
+## to the config file we could do away with the library one.
+
+if false; then
+
 cat << EOT >> local.h
 typedef unsigned char byte;
 typedef unsigned short word16;
@@ -1207,6 +1222,7 @@ typedef unsigned int word32;
 typedef word64 lword;
 const lword LWORD_MAX = W64LIT(0xffffffffffffffff);
 EOT
+fi
 
 ## Without this 'make' uses out GNUmakefile, and not Makefile
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
