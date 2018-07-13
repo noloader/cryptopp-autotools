@@ -72,6 +72,7 @@ EXTRA_LTLIBRARIES = \
    libsimeck_simd.la \
    libsimon_simd.la \
    libspeck_simd.la \
+   libsm4_simd.la \
    libsse_simd.la \
    libothers.la
 
@@ -104,6 +105,7 @@ libcryptopp_la_LIBADD = \
    $(libsimeck_simd_la_OBJECTS) \
    $(libsimon_simd_la_OBJECTS) \
    $(libspeck_simd_la_OBJECTS) \
+   $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
@@ -127,6 +129,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(libsimeck_simd_la_OBJECTS) \
    $(libsimon_simd_la_OBJECTS) \
    $(libspeck_simd_la_OBJECTS) \
+   $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS) \
    $(libothers_la_OBJECTS)
 
@@ -201,6 +204,10 @@ libsimon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON_FLAG)
 libspeck_simd_la_SOURCES = speck-simd.cpp
 libspeck_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK_FLAG)
 
+## CRYPTOPP_SM4_FLAG set in configure.ac
+libsm4_simd_la_SOURCES = sm4-simd.cpp
+libsm4_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SM4_FLAG)
+
 ## CRYPTOPP_SSE_FLAG set in configure.ac
 libsse_simd_la_SOURCES = sse-simd.cpp
 libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE_FLAG)
@@ -256,6 +263,7 @@ libothers_la_SOURCES = \
 #   libsimeck_simd.la \
 #   libsimon_simd.la \
 #   libspeck_simd.la \
+#   libsm4_simd.la \
 #   libsse_simd.la \
 #   libothers.la
 
