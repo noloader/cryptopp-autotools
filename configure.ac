@@ -820,33 +820,36 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-## Hack: disable -xarch=sha for the moment; enable the defines.
-## Its too bad we cannot use AC_COMPILE_ELSEIF to perform the test.
-if false; then
+   infile="in.$RANDOM$RANDOM.cxx"
+   outfile="out.$RANDOM$RANDOM"
+
+   echo '#include <immintrin.h>
+int main(int argc, char* argv[]) {
+    __m128i x;
+    x=_mm_sha1rnds4_epu32(x,x,0);
+    return 0;
+}' > "$infile"
+   echo "" >> "$infile"
+
    CXXFLAGS="-xarch=sha"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-   )
+   SHA_ERROR=`$CXX $CXXFLAGS -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
 
-   if test "$tr_RESULT" -eq "1"; then
+   rm -f "$infile" "$outfile" 1>/dev/null 2>&1
+
+   if test "$SHA_ERROR" -eq "0"; then
+      AC_MSG_RESULT([yes])
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SHA__=1"
       AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SHA-NI instructions available.])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sha"
    else
+      AC_MSG_RESULT([no])
       AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
          [Define to 1 if you do not have IA-32 SHA instructions available.])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
    fi
-else
-   AC_SUBST([CRYPTOPP_SHA_FLAG])
-   AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
-      [Define to 1 if you do not have IA-32 SHA instructions available.])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
-fi
 
    if test x"$SSE_DEFINES" != "x"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $SSE_DEFINES"
@@ -877,7 +880,7 @@ int main(int argc, char* argv[]) {
    echo "" >> "$infile"
 
    AC_MSG_CHECKING([if assembler supports SSE4.1])
-   SSE4_ERROR=`$CXX -msse4.1 -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
+   SSE4_ERROR=`$CXX $CRYPTOPP_SSE41_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
    if test "$SSE4_ERROR" -eq "0"; then
       echo "yes"
    else
