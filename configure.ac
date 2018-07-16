@@ -560,6 +560,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SSE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE2 instructions available.])
@@ -577,6 +578,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_LEA_FLAG], [$CXXFLAGS])
@@ -599,6 +601,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SSE41_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
@@ -618,6 +621,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SSE42_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE4.2 instructions available.])
@@ -644,6 +648,23 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
    fi
 
+   CXXFLAGS="-mssse3 -maes"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
+         [Define to 1 if you have IA-32 AES-NI instructions available.])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
+         [Define to 1 if you do not have IA-32 AES-NI instructions available.])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
+   fi
+
    CXXFLAGS="-msse4.1 -maes"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
@@ -653,7 +674,6 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_SM4_FLAG], ["-mssse3 -maes"])
       AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
          [Define to 1 if you have IA-32 AES-NI instructions available.])
    else
@@ -718,6 +738,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_LEA_FLAG], [$CXXFLAGS])
@@ -742,6 +763,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SSE41_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE4_1__=1"
       AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1],
          [Define to 1 if you have IA-32 SSE4.1 instructions available.])
@@ -760,6 +782,7 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    )
 
    if test "$tr_RESULT" -eq "1"; then
+      AC_SUBST([CRYPTOPP_SSE42_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE4_2__=1"
@@ -831,6 +854,81 @@ fi
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## Assembler support for SHA on IA-32, i386, i586, i686, x86_64, etc.
+
+## We are kind of screwed on some platforms because AC_COMPILE_IFELSE fails to
+## detect "illegal option". The SunCC compiler literally generates and prints
+## the message, but Autoconf ignores it and reports the option is valid.
+
+if test "$IS_IA32" -ne "0"; then
+
+   infile="in.$RANDOM$RANDOM.cxx"
+   outfile="out.$RANDOM$RANDOM"
+
+   echo '#include <smmintrin.h>
+int main(int argc, char* argv[]) {
+    __m128i x;
+    x=_mm_blend_epi16 (x,x,0);
+    return 0;
+}' > "$infile"
+   echo "" >> "$infile"
+
+   AC_MSG_CHECKING([if assembler supports SSE4.1])
+   SSE4_ERROR=`$CXX -msse4.1 -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
+   if test "$SSE4_ERROR" -eq "0"; then
+      echo "yes"
+   else
+      echo "no"
+	  COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_SSE4'`
+	  if test "$COUNT" -eq "0"; then
+	      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+	  fi
+   fi
+
+   echo '#include <wmmintrin.h>
+int main(int argc, char* argv[]) {
+    __m128i x;
+    x=_mm_aesenc_si128(x,x);
+    return 0;
+}' > "$infile"
+   echo "" >> "$infile"
+
+   AC_MSG_CHECKING([if assembler supports AES])
+   AES_ERROR=`$CXX $CRYPTOPP_AES_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
+   if test "$AES_ERROR" -eq "0"; then
+      echo "yes"
+   else
+      echo "no"
+	  COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_AESNI'`
+	  if test "$COUNT" -eq "0"; then
+	      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
+	  fi
+   fi
+
+   echo '#include <immintrin.h>
+int main(int argc, char* argv[]) {
+    __m128i x;
+    x=_mm_sha1rnds4_epu32(x,x,0);
+    return 0;
+}' > "$infile"
+   echo "" >> "$infile"
+
+   AC_MSG_CHECKING([if assembler supports SHA])
+   SHA_ERROR=`$CXX $CRYPTOPP_SHA_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
+   if test "$SHA_ERROR" -eq "0"; then
+      echo "yes"
+   else
+      echo "no"
+	  COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_SHANI'`
+	  if test "$COUNT" -eq "0"; then
+	      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
+	  fi
+   fi
+
+   rm -f "$infile" "$outfile" 1>/dev/null 2>&1
 fi
 
 #############################################################################
@@ -1365,4 +1463,3 @@ fi
 
 echo "***********************************************************************"
 echo ""
-
