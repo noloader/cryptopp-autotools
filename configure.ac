@@ -513,33 +513,6 @@ if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 fi
 
 #############################################################################
-## SPARC (Solaris), SunCC compiler options
-
-## TODO: Does GCC need an equivalent to -xmemalign=4i?
-
-if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
-if test "$IS_SPARC" -ne "0"; then
-
-   ## Save CXXFLAGS
-   SAVED_CXXFLAGS="$CXXFLAGS"
-
-   CXXFLAGS="-xmemalign=4i"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-   )
-
-   if test "$tr_RESULT" -eq "1"; then
-      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-   fi
-
-   ## Restore CXXFLAGS
-   CXXFLAGS="$SAVED_CXXFLAGS"
-fi
-fi
-
-#############################################################################
 ## IA-32, i386, i586, i686, x86_64, etc.
 
 ## We are kind of screwed on some platforms because AC_COMPILE_IFELSE fails to
