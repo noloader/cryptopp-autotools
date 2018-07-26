@@ -158,6 +158,18 @@ AC_DEFUN([XXX_COMPILE_ELSEIF],
 )
 
 #############################################################################
+## Doxygen documentation
+## This only provides a 'make html-doc' recipe in the Makefile.
+## If Docygen is available the user still must issue the command.
+
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+if test -z "$DOXYGEN"; then
+	AM_CONDITIONAL([CRYPTOPP_DOXYGEN_AVAILABLE], [false])
+else
+	AM_CONDITIONAL([CRYPTOPP_DOXYGEN_AVAILABLE], [true])
+fi
+
+#############################################################################
 ## Shared and static libraries
 
 if true; then
@@ -181,7 +193,7 @@ fi
 #############################################################################
 ## Solaris, SunCC and missing optimizations
 
-OPT_ANY=`echo $CXXFLAGS | $EGREP -c -E '\-O0|\-O1|\-O2|\-O3|\-O4|\-O5|\-Os|\-Ofast'`
+OPT_ANY=`echo $CXXFLAGS | $EGREP -c -E '\-O0|\-O1|\-O2|\-O3|\-O4|\-O5|\-Os|\-Og|\-Ofast'`
 
 if test "$OPT_ANY" -eq "0"; then
 
