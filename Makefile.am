@@ -5,7 +5,7 @@
 ##    The GNUmakefile can generate the list of lib headers, lib sources,
 ##    test headers and test sources. Generate the list of files with
 ##    'make sources'. Remove the SIMD files for libothers_la_SOURCES.
-##    Thanks to steeldrive on U&L Stack Exchange for help with the sed.
+##    Thanks to steeldriver on U&L.SE for help with the sed.
 ##
 ##       make sources | sed -e 's|[[:alnum:]]*-simd.cpp ||g' | fold -w75 -s
 ##
@@ -443,8 +443,8 @@ endif
 ## TODO: copy docs to ${pkghtmldir} if built
 if CRYPTOPP_DOXYGEN_AVAILABLE
 
-.PHONY: docs html htmldoc
-docs html htmldoc:
+.PHONY: doc docs html htmldoc
+doc docs html htmldoc:
 	$(DOXYGEN) Doxyfile -d CRYPTOPP_DOXYGEN_PROCESSING
 
 endif

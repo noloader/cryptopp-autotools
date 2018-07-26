@@ -23,19 +23,8 @@
 ##   not much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
 ##   CRYPTOPP_BIG_ENDIAN, CRYPTOPP_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them.
 ##   This problem now appears to be closely related to the config.h.in problem. We can't supply a
-##   template and expect Autotools to honor it.
-##
-## - Fix compile tests on Solaris using SunCC. AC_COMPILE_IFELSE returns success even for failure.
-##   Also see http://stackoverflow.com/q/47160617/608639.
-##
-## - Fix compile tests on Linux using xlC. AC_COMPILE_IFELSE returns success even for failure.
-##   Also see http://stackoverflow.com/q/47160617/608639.
-##
-## - Fix compile tests on OS X using LLVM. AC_COMPILE_IFELSE and AC_LINK_IFELSE return success even for failure.
-##   Also see http://stackoverflow.com/q/47160617/608639.
-##
-## - Cut-in a more robust CRYPTOPP_COMPILE_ELSEIF. We have the code at the associated  below; we need
-#    to cut it in. Also see http://stackoverflow.com/q/47160617/608639.
+##   template and expect Autotools to honor it. Also see
+##   https://lists.gnu.org/archive/html/autoconf/2018-07/msg00014.html
 ##
 ## - Fix incorrect use of --with-sysroot. Autotools does not seem to honor it when it is set.
 ##   Also see http://stackoverflow.com/q/47226389/608639
@@ -74,6 +63,11 @@ AC_PROG_GREP
 
 ## Assert this once to avoid surprises
 AC_LANG_ASSERT([C++])
+
+## Used for our test compile and link to detect failures. It is more
+## robust than Autotools and catches XL C/C++ and SunCC problems.
+
+BAD_RESULT="fatal|error|unknown|unrecognized|illegal|ignored|not found|not exist|cannot find"
 
 #############################################################################
 
@@ -145,15 +139,18 @@ LDNAME=`basename "$LD"`
 
 #############################################################################
 
-## An improved COMPILE_ELSEIF that's not so braindead. Unfortunately, it
-## does not work. It has something to do with quoting or double quoting or
-## under quoting. Also see http://stackoverflow.com/q/47160617/608639
-## and http://lists.gnu.org/archive/html/autoconf/2009-03/msg00099.html.
+## An improved AC_COMPILE_IFELSE that's not so braindead.
+## Also see http://stackoverflow.com/q/47160617/608639 and
+## http://lists.gnu.org/archive/html/autoconf/2009-03/msg00099.html.
 
-AC_DEFUN([XXX_COMPILE_ELSEIF],
+AC_DEFUN([XXX_COMPILE_IFELSE],
    [AC_REQUIRE([AC_PROG_EGREP])
-   AC_COMPILE_IFELSE([$1],[retval=0
-      if $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist' conftest.err >/dev/null; then retval=1; fi],[retval=1])
+   AC_COMPILE_IFELSE(
+      [$1],
+      [retval=0
+        if $EGREP -i -c -E "$BAD_RESULT" conftest.err >/dev/null; then retval=1; fi
+      ],[retval=1]
+   )
    AS_IF([test $retval = 0],[$2],[$3])]
 )
 
@@ -164,9 +161,9 @@ AC_DEFUN([XXX_COMPILE_ELSEIF],
 
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN"; then
-	AM_CONDITIONAL([CRYPTOPP_DOXYGEN_AVAILABLE], [false])
+   AM_CONDITIONAL([CRYPTOPP_DOXYGEN_AVAILABLE], [false])
 else
-	AM_CONDITIONAL([CRYPTOPP_DOXYGEN_AVAILABLE], [true])
+   AM_CONDITIONAL([CRYPTOPP_DOXYGEN_AVAILABLE], [true])
 fi
 
 #############################################################################
@@ -183,7 +180,7 @@ if true; then
          AC_MSG_RESULT([checking if shared libraries should be enabled... no])
          enable_shared=no; enable_static=yes;
          ;;
-	  *)
+      *)
          AC_MSG_RESULT([checking if shared libraries should be enabled... yes])
          AC_ENABLE_SHARED
          ;;
@@ -197,68 +194,65 @@ OPT_ANY=`echo $CXXFLAGS | $EGREP -c -E '\-O0|\-O1|\-O2|\-O3|\-O4|\-O5|\-Os|\-Og|
 
 if test "$OPT_ANY" -eq "0"; then
 
-   infile="in.$RANDOM$RANDOM.cxx"
-   outfile="out.$RANDOM$RANDOM"
-   echo 'int main(int argc, char* argv[]) {return 0;}' > "$infile"
-   echo "" >> "$infile"
-
-   FLAG="-O2"
-   AC_MSG_CHECKING([if $CXXNAME supports $FLAG])
-   OPT_ERROR=`$CXX $FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
-   if test "$OPT_ERROR" -eq "0"; then
-      echo "yes"
-      AM_CXXFLAGS="$AM_CXXFLAGS $FLAG"
-   else
-      echo "no"
-   fi
-
-   if test "$OPT_ERROR" -ne "0"; then
-      FLAG="-xO2"
-      AC_MSG_CHECKING([if $CXXNAME supports $FLAG])
-      OPT_ERROR=`$CXX $FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
-      if test "$OPT_ERROR" -eq "0"; then
-         echo "yes"
-         AM_CXXFLAGS="$AM_CXXFLAGS $FLAG"
-      else
-         echo "no"
-      fi
-   fi
-
-   rm -f "$infile" "$outfile" 1>/dev/null 2>&1
+   SAVED_CXXFLAGS="$CXXFLAGS"
+   CXXFLAGS="-xO2"
+   AC_MSG_CHECKING([for -xO2 support])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_FAILURE([no])]
+   )
+   AM_CXXFLAGS="$AM_CXXFLAGS -xO2"
+   CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
 #############################################################################
 ## pthreads for thread local storage
 
-AC_ARG_ENABLE(tls,
-   AS_HELP_STRING([--enable-tls], [enable thread storage (default is yes)]),
-   ac_enable_tls=$enableval,
-   ac_enable_tls=yes)
-AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
+if test "$IS_SUN_COMPILER" = "1"; then
 
-## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+   AC_ARG_ENABLE(tls,
+      AS_HELP_STRING([--enable-tls], [enable thread storage (default is no)]),
+      ac_enable_tls=$enableval,
+      ac_enable_tls=no)
+   AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
+
+else
+
+   AC_ARG_ENABLE(tls,
+      AS_HELP_STRING([--enable-tls], [enable thread storage (default is yes)]),
+      ac_enable_tls=$enableval,
+      ac_enable_tls=yes)
+   AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
+
+fi
+
 if test "$ac_enable_tls" = "yes"; then
-if test "$IS_SUN_COMPILER" -eq "0"; then
-if test "$IS_XLC_COMPILER" -eq "0"; then
 
    SAVED_CXXFLAGS="$CXXFLAGS"
+   SAVED_LDFLAGS="$LDFLAGS"
+
    CXXFLAGS="-pthread"
    AC_MSG_CHECKING([for C++ compiler pthread support])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_FAILURE(["--enable-tls=yes but pthreads are not available"])]
    )
+
+   LDFLAGS="-pthread"
    AC_MSG_CHECKING([for linker pthread support])
-   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_FAILURE(["--enable-tls=yes but pthreads are not available"])]
    )
-   # AC_MSG_FAILURE stops the configure process
+
    AM_CXXFLAGS="$AM_CXXFLAGS -pthread"
    AM_LDFLAGS="$AM_LDFLAGS -pthread"
+
+   LDFLAGS="$SAVED_LDFLAGS"
    CXXFLAGS="$SAVED_CXXFLAGS"
-fi
-fi
 fi
 
 #############################################################################
@@ -286,10 +280,7 @@ AC_C_BIGENDIAN(
 #############################################################################
 ## Dead code stripping
 
-## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 if true; then
-if test "$IS_AIX_OS" -eq "0"; then
-if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
    ## Save FLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -297,7 +288,8 @@ if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
    CXXFLAGS="-fdata-sections"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -308,7 +300,8 @@ if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
    CXXFLAGS="-ffunction-sections"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -322,7 +315,8 @@ if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
       LDFLAGS="-Wl,-dead_strip"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+      AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -335,7 +329,8 @@ if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
 
       LDFLAGS="-Wl,--gc-sections"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+      AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -350,8 +345,6 @@ if test "$IS_SUN_COMPILER" -eq "0" && test "$IS_XLC_COMPILER" -eq "0"; then
    CXXFLAGS="$SAVED_CXXFLAGS"
    LDFLAGS="$SAVED_LDFLAGS"
 fi
-fi
-fi
 
 #############################################################################
 ## Solaris, GCC and -Wa,--divide
@@ -363,7 +356,8 @@ if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    CXXFLAGS="-Wa,--divide"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -397,7 +391,8 @@ if true; then
 
       CXXFLAGS="-D_XOPEN_SOURCE=600"
       AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
-      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -430,7 +425,8 @@ if test "$IS_GCC_COMPILER" -ne "0" && test "$IS_MACPORTS_COMPILER" -ne "0"; then
 
       CXXFLAGS="-Wa,-q"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -465,7 +461,8 @@ if test "$IS_SUN_OS" -ne "0"; then
    if test "$IS_IA32" -ne "0"; then
       LDFLAGS="-Mcryptopp.mapfile"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+      AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -477,7 +474,8 @@ if test "$IS_SUN_OS" -ne "0"; then
 
    LDFLAGS="-lnsl"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -488,7 +486,8 @@ if test "$IS_SUN_OS" -ne "0"; then
 
    LDFLAGS="-lsocket"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -511,7 +510,8 @@ if test "$IS_SUN_OS" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    CXXFLAGS="-template=no%extdef"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -527,19 +527,17 @@ fi
 #############################################################################
 ## IA-32, i386, i586, i686, x86_64, etc.
 
-## We are kind of screwed on some platforms because AC_COMPILE_IFELSE fails to
-## detect "illegal option". The SunCC compiler literally generates and prints
-## the message, but Autoconf ignores it and reports the option is valid.
-
 ## This block handles GCC and friends. i86pc and SunCC is handled after this block
 if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
+   ## SSE2
    CXXFLAGS="-msse2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -555,9 +553,11 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
+   ## SSSE3
    CXXFLAGS="-mssse3"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -578,9 +578,11 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
+   ## SSE4.1
    CXXFLAGS="-msse4.1"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -598,9 +600,11 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
+   ## SSE4.2
    CXXFLAGS="-msse4.2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -616,9 +620,11 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
+   ## PCLMUL
    CXXFLAGS="-mssse3 -mpclmul"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -633,9 +639,11 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
    fi
 
+   ## AES
    CXXFLAGS="-mssse3 -maes"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -650,9 +658,11 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
+   ## AES
    CXXFLAGS="-msse4.1 -maes"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -667,9 +677,11 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
+   ## SHA
    CXXFLAGS="-msse4.2 -msha"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -698,7 +710,8 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    CXXFLAGS="-xarch=sse2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -717,7 +730,8 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    CXXFLAGS="-xarch=ssse3"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -742,7 +756,8 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    CXXFLAGS="-xarch=sse4_1"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -761,7 +776,8 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    CXXFLAGS="-xarch=sse4_2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -782,7 +798,8 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
 
    CXXFLAGS="-xarch=aes"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -818,7 +835,7 @@ int main(int argc, char* argv[]) {
 
    CXXFLAGS="-xarch=sha"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   SHA_ERROR=`$CXX $CXXFLAGS -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
+   SHA_ERROR=`$CXX $CXXFLAGS -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E "$BAD_RESULT"`
 
    rm -f "$infile" "$outfile" 1>/dev/null 2>&1
 
@@ -845,17 +862,14 @@ int main(int argc, char* argv[]) {
 fi
 
 #############################################################################
-## Assembler support for SHA on IA-32, i386, i586, i686, x86_64, etc.
-
-## We are kind of screwed on some platforms because AC_COMPILE_IFELSE fails to
-## detect "illegal option". The SunCC compiler literally generates and prints
-## the message, but Autoconf ignores it and reports the option is valid.
+## Assembler support on IA-32, i386, i586, i686, x86_64, etc.
 
 if test "$IS_IA32" -ne "0"; then
 
    infile="in.$RANDOM$RANDOM.cxx"
    outfile="out.$RANDOM$RANDOM"
 
+   ## SSE4.1. Old BSD linkers don't support it.
    echo '#include <smmintrin.h>
 int main(int argc, char* argv[]) {
     __m128i x;
@@ -865,17 +879,18 @@ int main(int argc, char* argv[]) {
    echo "" >> "$infile"
 
    AC_MSG_CHECKING([if assembler supports SSE4.1])
-   SSE4_ERROR=`$CXX $CRYPTOPP_SSE41_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
+   SSE4_ERROR=`$CXX $CRYPTOPP_SSE41_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E "$BAD_RESULT"`
    if test "$SSE4_ERROR" -eq "0"; then
       echo "yes"
    else
       echo "no"
-	  COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_SSE4'`
-	  if test "$COUNT" -eq "0"; then
-	      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
-	  fi
+     COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_SSE4'`
+     if test "$COUNT" -eq "0"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+     fi
    fi
 
+   ## AES. Some old linkers don't support it.
    echo '#include <wmmintrin.h>
 int main(int argc, char* argv[]) {
     __m128i x;
@@ -885,17 +900,18 @@ int main(int argc, char* argv[]) {
    echo "" >> "$infile"
 
    AC_MSG_CHECKING([if assembler supports AES])
-   AES_ERROR=`$CXX $CRYPTOPP_AES_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
+   AES_ERROR=`$CXX $CRYPTOPP_AES_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E "$BAD_RESULT"`
    if test "$AES_ERROR" -eq "0"; then
       echo "yes"
    else
       echo "no"
-	  COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_AESNI'`
-	  if test "$COUNT" -eq "0"; then
-	      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
-	  fi
+     COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_AESNI'`
+     if test "$COUNT" -eq "0"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
+     fi
    fi
 
+   ## SHA. Some linkers don't support it.
    echo '#include <immintrin.h>
 int main(int argc, char* argv[]) {
     __m128i x;
@@ -905,15 +921,15 @@ int main(int argc, char* argv[]) {
    echo "" >> "$infile"
 
    AC_MSG_CHECKING([if assembler supports SHA])
-   SHA_ERROR=`$CXX $CRYPTOPP_SHA_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E 'fatal|error|illegal|unrecognized|not found|not exist'`
+   SHA_ERROR=`$CXX $CRYPTOPP_SHA_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E "$BAD_RESULT"`
    if test "$SHA_ERROR" -eq "0"; then
       echo "yes"
    else
       echo "no"
-	  COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_SHANI'`
-	  if test "$COUNT" -eq "0"; then
-	      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
-	  fi
+     COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_SHANI'`
+     if test "$COUNT" -eq "0"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
+     fi
    fi
 
    rm -f "$infile" "$outfile" 1>/dev/null 2>&1
@@ -943,7 +959,8 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
 
    CXXFLAGS="-march=armv7-a -mfloat-abi=$FP_FLAG -mfpu=neon"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -994,7 +1011,8 @@ if test "$IS_AARCH64" -ne "0"; then
    ## aria-simd.cpp, blake2-simd.cpp, neon-simd.cpp
    CXXFLAGS="-march=armv8-a"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1017,7 +1035,8 @@ if test "$IS_AARCH64" -ne "0"; then
    ## crc-simd.cpp
    CXXFLAGS="-march=armv8-a+crc"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1035,7 +1054,8 @@ if test "$IS_AARCH64" -ne "0"; then
    ## gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    CXXFLAGS="-march=armv8-a+crypto"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1080,7 +1100,8 @@ if test "$IS_XLC_COMPILER" -ne "0"; then
 
       CXXFLAGS="-qrtti"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      XXX_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -1093,7 +1114,8 @@ if test "$IS_XLC_COMPILER" -ne "0"; then
    # Promotes optimizations
    CXXFLAGS="-qmaxmem=-1"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1111,7 +1133,7 @@ fi
 
 if test "$IS_PPC" -ne "0"; then
 
-   ## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+   ## Hack: work around XXX_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
    if test "$IS_XLC_COMPILER" -ne "0"; then
       PPC_POWER4_FLAG="-qarch=pwr4 -qaltivec"
       PPC_POWER7_FLAG="-qarch=pwr7 -qaltivec"
@@ -1129,7 +1151,8 @@ if test "$IS_PPC" -ne "0"; then
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
    CXXFLAGS="$PPC_POWER4_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1146,7 +1169,8 @@ if test "$IS_PPC" -ne "0"; then
 
    CXXFLAGS="$PPC_POWER7_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1166,7 +1190,8 @@ if test "$IS_PPC" -ne "0"; then
 
       CXXFLAGS="$PPC_POWER8_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+      XXX_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -1209,7 +1234,7 @@ fi
 
 ## Add -pipe for non-IoT gadgets to speedup the compile. IoT gadgets, like
 ## BeagleBoards and CubieTrucks, don't have swap files and run out of memory.
-## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+## Hack: work around XXX_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$IS_IA32" -ne "0" || test "$IS_AARCH64" -ne "0" || test "$IS_PPC" -ne "0"; then
 if test "$IS_SUN_COMPILER" -eq "0"; then
@@ -1220,7 +1245,8 @@ if test "$IS_XLC_COMPILER" -eq "0"; then
 
    CXXFLAGS="-pipe"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1237,7 +1263,7 @@ fi
 
 ## Add -Wl,--exclude-libs,ALL for GNU linker to stops us from re-exporting
 ## symbols in other libraries. This keeps our ELF section header smaller.
-## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+## Hack: work around XXX_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$enable_shared" = "yes"; then
 if test "$IS_APPLE_OS" -eq "0"; then
@@ -1248,7 +1274,8 @@ if test "$IS_AIX_OS" -eq "0"; then
    LDFLAGS="-Wl,--exclude-libs,ALL"
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1264,7 +1291,7 @@ fi
 fi
 
 ## Add -Wl,--as-needed for GNU linker to avoid linking unneeded libraries.
-## Hack: work around AC_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
+## Hack: work around XXX_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$IS_APPLE_OS" -eq "0"; then
 if test "$IS_SUN_OS" -eq "0"; then
@@ -1274,7 +1301,8 @@ if test "$IS_AIX_OS" -eq "0"; then
    LDFLAGS="-Wl,--as-needed"
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -1300,14 +1328,14 @@ typedef unsigned short word16;
 typedef unsigned int word32;
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
-	typedef unsigned __int64 word64;
-	#define W64LIT(x) x##ui64
+   typedef unsigned __int64 word64;
+   #define W64LIT(x) x##ui64
 #elif (_LP64 || __LP64__)
-	typedef unsigned long word64;
-	#define W64LIT(x) x##UL
+   typedef unsigned long word64;
+   #define W64LIT(x) x##UL
 #else
-	typedef unsigned long long word64;
-	#define W64LIT(x) x##ULL
+   typedef unsigned long long word64;
+   #define W64LIT(x) x##ULL
 #endif
 
 // define large word type, used for file offsets and such
@@ -1317,6 +1345,7 @@ EOT
 fi
 
 ## Without this 'make' uses out GNUmakefile, and not Makefile
+# AC_CONFIG_COMMANDS_PRE([rm -f config.h 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross 2>/dev/null])
 
