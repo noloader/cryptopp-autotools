@@ -93,6 +93,12 @@ IS_AARCH64=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
 IS_PPC=`echo $host | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 IS_SPARC=`echo $host | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
 
+## Bitness
+IS_64BIT=$(getconf LONG_BIT 2>&1 | grep -i -c 64)
+if [[ "$IS_64BIT" -eq "0" ]]; then
+    IS_64BIT=$(file /bin/ls 2>&1 | grep -i -c '64-bit')
+fi
+
 #############################################################################
 
 ## Determine the compiler's target. GCC '-dumpmachine' is the target,
@@ -139,13 +145,24 @@ LDNAME=`basename "$LD"`
 
 #############################################################################
 
-## An improved AC_COMPILE_IFELSE that's not so braindead.
+## An improved AC_COMPILE_IFELSE and XXX_LINK_IFELSE.
 ## Also see http://stackoverflow.com/q/47160617/608639 and
 ## http://lists.gnu.org/archive/html/autoconf/2009-03/msg00099.html.
 
 AC_DEFUN([XXX_COMPILE_IFELSE],
    [AC_REQUIRE([AC_PROG_EGREP])
    AC_COMPILE_IFELSE(
+      [$1],
+      [retval=0
+        if $EGREP -i -c -E "$BAD_RESULT" conftest.err >/dev/null; then retval=1; fi
+      ],[retval=1]
+   )
+   AS_IF([test $retval = 0],[$2],[$3])]
+)
+
+AC_DEFUN([XXX_LINK_IFELSE],
+   [AC_REQUIRE([AC_PROG_EGREP])
+   AC_LINK_IFELSE(
       [$1],
       [retval=0
         if $EGREP -i -c -E "$BAD_RESULT" conftest.err >/dev/null; then retval=1; fi
@@ -242,7 +259,7 @@ if test "$ac_enable_tls" = "yes"; then
 
    LDFLAGS="-pthread"
    AC_MSG_CHECKING([for linker pthread support])
-   AC_LINK_IFELSE(
+   XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_FAILURE(["--enable-tls=yes but pthreads are not available"])]
@@ -315,7 +332,7 @@ if true; then
 
       LDFLAGS="-Wl,-dead_strip"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      AC_LINK_IFELSE(
+      XXX_LINK_IFELSE(
         [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -329,7 +346,7 @@ if true; then
 
       LDFLAGS="-Wl,--gc-sections"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      AC_LINK_IFELSE(
+      XXX_LINK_IFELSE(
         [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -398,8 +415,7 @@ if true; then
       )
 
       if test "$tr_RESULT" -eq "1"; then
-         AC_DEFINE([_XOPEN_SOURCE], [600],
-            [Define to 600 if you are using Newlib as your runtime library.])
+         AC_DEFINE([_XOPEN_SOURCE], [600], [Set _XOPEN_SOURCE to 600])
          AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       fi
    fi
@@ -436,10 +452,9 @@ if test "$IS_GCC_COMPILER" -ne "0" && test "$IS_MACPORTS_COMPILER" -ne "0"; then
       fi
 
       HAVE_OPT=`echo $CXXFLAGS | $EGREP -i -c -E '\-DCRYPTOPP_CLANG_INTEGRATED_ASSEMBLER'`
-      if test "$tr_RESULT" -eq "1"; then
+      if test "$HAVE_OPT" -eq "1"; then
          AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_CLANG_INTEGRATED_ASSEMBLER=1"
-         AC_DEFINE([CRYPTOPP_CLANG_INTEGRATED_ASSEMBLER], [1],
-            [Define to 1 if you are using the Clang integrated assembler.])
+         AC_DEFINE([CRYPTOPP_CLANG_INTEGRATED_ASSEMBLER], [1], [Enable Clang integrated assembler.])
       fi
 
       ## Restore CXXFLAGS
@@ -461,7 +476,7 @@ if test "$IS_SUN_OS" -ne "0"; then
    if test "$IS_IA32" -ne "0"; then
       LDFLAGS="-Mcryptopp.mapfile"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      AC_LINK_IFELSE(
+      XXX_LINK_IFELSE(
         [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -474,7 +489,7 @@ if test "$IS_SUN_OS" -ne "0"; then
 
    LDFLAGS="-lnsl"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_LINK_IFELSE(
+   XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -486,7 +501,7 @@ if test "$IS_SUN_OS" -ne "0"; then
 
    LDFLAGS="-lsocket"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_LINK_IFELSE(
+   XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -545,11 +560,9 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SSE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SSE2 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Enable SSE2])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
-         [Define to 1 if you do not have IA-32 SSE2 instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disable SSE2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
@@ -570,19 +583,24 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SSSE3 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1], [Enable SSSE3])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1],
-         [Define to 1 if you do not have IA-32 SSSE3 instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [Disable SSSE3])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
-   ## SSE4.1
+   ## SSE4.1. Old BSD linkers don't support it.
    CXXFLAGS="-msse4.1"
+   XXX_PROGRAM="#include <smmintrin.h>
+      int main(int argc, char* argv[]) {
+         __m128i x;
+         x=_mm_blend_epi16 (x,x,0);
+         return 0;
+      }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -592,19 +610,23 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SSE4.1 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1], [Enable SSE4.1])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
-         [Define to 1 if you do not have IA-32 SSE4.1 instructions available.])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.1])
+	  AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
-   ## SSE4.2
+   ## SSE4.2. Old BSD linkers don't support it.
    CXXFLAGS="-msse4.2"
+   XXX_PROGRAM="#include <nmmintrin.h>
+      int main(int argc, char* argv[]) {
+         int x = _mm_crc32_u32(10,20);
+         return 0;
+      }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -612,87 +634,102 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -eq "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SSE42_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SSE4.2 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1], [Enable SSE4.2])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
-         [Define to 1 if you do not have IA-32 SSE4.2 instructions available.])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.2])
+	  AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
-   ## PCLMUL
+   ## PCLMUL. Some old compilers and linkers don't support it.
    CXXFLAGS="-mssse3 -mpclmul"
+   XXX_PROGRAM="#include <wmmintrin.h>
+      int main(int argc, char* argv[]) {
+         __m128i x;
+         x=_mm_clmulepi64_si128 (x,x,0);
+         return 0;
+      }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 CLMUL instructions available.])
+      AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], [Enable CLMUL])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1],
-         [Define to 1 if you do not have IA-32 CLMUL instructions available.])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
+      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [Disable CLMUL])
    fi
 
-   ## AES
+   ## AES. Some old compilers and linkers don't support it.
    CXXFLAGS="-mssse3 -maes"
+   XXX_PROGRAM="#include <wmmintrin.h>
+      int main(int argc, char* argv[]) {
+         __m128i x;
+         x=_mm_aesenc_si128(x,x);
+         x=_mm_aesenclast_si128(x,x);
+         return 0;
+      }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 AES-NI instructions available.])
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
-         [Define to 1 if you do not have IA-32 AES-NI instructions available.])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-   ## AES
+   ## AES. Some compilers and linkers don't support it.
    CXXFLAGS="-msse4.1 -maes"
+   XXX_PROGRAM="#include <wmmintrin.h>
+      int main(int argc, char* argv[]) {
+         __m128i x;
+         x=_mm_aesenc_si128(x,x);
+         x=_mm_aesenclast_si128(x,x);
+         return 0;
+      }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 AES-NI instructions available.])
+      AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1], [Enable AESNI])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
-         [Define to 1 if you do not have IA-32 AES-NI instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], [Disable AESNI])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-   ## SHA
-   CXXFLAGS="-msse4.2 -msha"
+   ## SHA. Some compilers and linkers don't support it.
+   CXXFLAGS="-msha"
+   XXX_PROGRAM="#include <immintrin.h>
+      int main(int argc, char* argv[]) {
+         __m128i x;
+          x=_mm_sha1rnds4_epu32(x,x,0);
+          return 0;
+      }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_SHANI_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SHA instructions available.])
+      AC_DEFINE([CRYPTOPP_SHANI_AVAILABLE], [1], [Enable SHANI])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
-         [Define to 1 if you do not have IA-32 SHA instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1], [Disable SHANI])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
    fi
 
@@ -719,12 +756,10 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE2__=1"
-      AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SSE2 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Enable SSE2])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse2"
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
-         [Define to 1 if you do not have IA-32 SSE2 instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disable SSE2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
@@ -745,12 +780,10 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
       AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSSE3__=1"
-      AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SSSE3 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1], [Enable SSSE3])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=ssse3"
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1],
-         [Define to 1 if you do not have IA-32 SSSE3 instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [Disable SSSE3])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
@@ -765,12 +798,10 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SSE41_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE4_1__=1"
-      AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SSE4.1 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1], [Enable SSE4.1])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_1"
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
-         [Define to 1 if you do not have IA-32 SSE4.1 instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.1])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
@@ -787,19 +818,25 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE4_2__=1"
-      AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SSE42 instructions available.])
+      AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1], [Enable SSE4.2])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_2"
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1],
-         [Define to 1 if you do not have IA-32 SSE4.2 instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
+
+   XXX_PROGRAM="#include <wmmintrin.h>
+      int main(int argc, char* argv[]) {
+         __m128i x;
+         x=_mm_aesenc_si128(x,x);
+	     x=_mm_aesenclast_si128(x,x);
+         return 0;
+      }"
 
    CXXFLAGS="-xarch=aes"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
@@ -809,47 +846,38 @@ if test "$IS_IA32" -ne "0" && test "$IS_SUN_COMPILER" -ne "0"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__AES__=1"
-      AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 CLMUL instructions available.])
-      AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 AES-NI instructions available.])
+      AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], "Enable CLMUL")
+      AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1], "Enable AESNI")
       AM_LDFLAGS="$AM_LDFLAGS -xarch=aes"
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1],
-         [Define to 1 if you do not have IA-32 CLMUL instructions available.])
-      AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1],
-         [Define to 1 if you do not have IA-32 AES-NI instructions available.])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
+      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], "Disable CLMUL")
+	  AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], "Disable AESNI")
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
+	  AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-   infile="in.$RANDOM$RANDOM.cxx"
-   outfile="out.$RANDOM$RANDOM"
-
-   echo '#include <immintrin.h>
-int main(int argc, char* argv[]) {
-    __m128i x;
-    x=_mm_sha1rnds4_epu32(x,x,0);
-    return 0;
-}' > "$infile"
-   echo "" >> "$infile"
+   XXX_PROGRAM="#include <immintrin.h>
+      int main(int argc, char* argv[]) {
+         __m128i x;
+         x=_mm_sha1rnds4_epu32(x,x,0);
+         return 0;
+   }"
 
    CXXFLAGS="-xarch=sha"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   SHA_ERROR=`$CXX $CXXFLAGS -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E "$BAD_RESULT"`
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
 
-   rm -f "$infile" "$outfile" 1>/dev/null 2>&1
-
-   if test "$SHA_ERROR" -eq "0"; then
-      AC_MSG_RESULT([yes])
+   if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SHA__=1"
-      AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1],
-         [Define to 1 if you have IA-32 SHA-NI instructions available.])
+      AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1], "Enable SHANI")
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sha"
    else
-      AC_MSG_RESULT([no])
-      AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1],
-         [Define to 1 if you do not have IA-32 SHA instructions available.])
+	  AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1], "Disable SHANI")
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
    fi
 
@@ -859,80 +887,6 @@ int main(int argc, char* argv[]) {
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
-fi
-
-#############################################################################
-## Assembler support on IA-32, i386, i586, i686, x86_64, etc.
-
-if test "$IS_IA32" -ne "0"; then
-
-   infile="in.$RANDOM$RANDOM.cxx"
-   outfile="out.$RANDOM$RANDOM"
-
-   ## SSE4.1. Old BSD linkers don't support it.
-   echo '#include <smmintrin.h>
-int main(int argc, char* argv[]) {
-    __m128i x;
-    x=_mm_blend_epi16 (x,x,0);
-    return 0;
-}' > "$infile"
-   echo "" >> "$infile"
-
-   AC_MSG_CHECKING([if assembler supports SSE4.1])
-   SSE4_ERROR=`$CXX $CRYPTOPP_SSE41_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E "$BAD_RESULT"`
-   if test "$SSE4_ERROR" -eq "0"; then
-      echo "yes"
-   else
-      echo "no"
-     COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_SSE4'`
-     if test "$COUNT" -eq "0"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
-     fi
-   fi
-
-   ## AES. Some old linkers don't support it.
-   echo '#include <wmmintrin.h>
-int main(int argc, char* argv[]) {
-    __m128i x;
-    x=_mm_aesenc_si128(x,x);
-    return 0;
-}' > "$infile"
-   echo "" >> "$infile"
-
-   AC_MSG_CHECKING([if assembler supports AES])
-   AES_ERROR=`$CXX $CRYPTOPP_AES_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E "$BAD_RESULT"`
-   if test "$AES_ERROR" -eq "0"; then
-      echo "yes"
-   else
-      echo "no"
-     COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_AESNI'`
-     if test "$COUNT" -eq "0"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
-     fi
-   fi
-
-   ## SHA. Some linkers don't support it.
-   echo '#include <immintrin.h>
-int main(int argc, char* argv[]) {
-    __m128i x;
-    x=_mm_sha1rnds4_epu32(x,x,0);
-    return 0;
-}' > "$infile"
-   echo "" >> "$infile"
-
-   AC_MSG_CHECKING([if assembler supports SHA])
-   SHA_ERROR=`$CXX $CRYPTOPP_SHA_FLAG -o "$outfile" "$infile" 2>&1 | $EGREP -i -c -E "$BAD_RESULT"`
-   if test "$SHA_ERROR" -eq "0"; then
-      echo "yes"
-   else
-      echo "no"
-     COUNT=`echo $AM_CXXFLAGS 2>&1 | $EGREP -i -c 'CRYPTOPP_DISABLE_SHANI'`
-     if test "$COUNT" -eq "0"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
-     fi
-   fi
-
-   rm -f "$infile" "$outfile" 1>/dev/null 2>&1
 fi
 
 #############################################################################
@@ -979,11 +933,9 @@ if test "$IS_ARM32" -ne "0" && test "$IS_ANDROID_OS" -eq "0"; then
       AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1],
-         [Define to 1 if you have the NEON instructions available.])
+      AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1], [Enable NEON])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
-         [Define to 1 if you do not have ARM NEON instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disbale NEON])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
@@ -1027,8 +979,7 @@ if test "$IS_AARCH64" -ne "0"; then
       AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1],
-         [Define to 1 if you do not have ARM NEON instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Enable NEON])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
@@ -1043,11 +994,9 @@ if test "$IS_AARCH64" -ne "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_ARM_CRC32_AVAILABLE], [1],
-         [Define to 1 if you have ARMv8-a CRC32 instructions available.])
+      AC_DEFINE([CRYPTOPP_ARM_CRC32_AVAILABLE], [1], [Enable ARMv8 CRC32])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_CRC32], [1],
-         [Define to 1 if you do not have ARMv8-a CRC32 instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_CRC32], [1], [Disable ARMv8 CRC32])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_CRC32"
    fi
 
@@ -1064,19 +1013,13 @@ if test "$IS_AARCH64" -ne "0"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_ARM_PMULL_AVAILABLE], [1],
-         [Define to 1 if you have ARMv8-a PMULL instructions available.])
-      AC_DEFINE([CRYPTOPP_ARM_AES_AVAILABLE], [1],
-         [Define to 1 if you have ARMv8-a AES instructions available.])
-      AC_DEFINE([CRYPTOPP_ARM_SHA_AVAILABLE], [1],
-         [Define to 1 if you have ARMv8-a SHA instructions available.])
+      AC_DEFINE([CRYPTOPP_ARM_PMULL_AVAILABLE], [1], [Enable ARMv8 PMULL])
+      AC_DEFINE([CRYPTOPP_ARM_AES_AVAILABLE], [1], [Enable ARMv8 AES])
+      AC_DEFINE([CRYPTOPP_ARM_SHA_AVAILABLE], [1], [Enable ARMv8 SHA])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ARM_PMULL], [1],
-         [Define to 1 if you do not have ARMv8-a PMULL instructions available.])
-      AC_DEFINE([CRYPTOPP_DISABLE_ARM_AES], [1],
-         [Define to 1 if you do not have ARMv8-a AES instructions available.])
-      AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA], [1],
-         [Define to 1 if you do not have ARMv8-a SHA instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_PMULL], [1], [Disable ARMv8 PMULL])
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_AES], [1], [Disable ARMv8 AES])
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA], [1], [Disable ARMv8 SHA])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_AES"
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
@@ -1101,7 +1044,7 @@ if test "$IS_XLC_COMPILER" -ne "0"; then
       CXXFLAGS="-qrtti"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-        [AC_LANG_PROGRAM([])],
+         [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -1133,7 +1076,6 @@ fi
 
 if test "$IS_PPC" -ne "0"; then
 
-   ## Hack: work around XXX_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
    if test "$IS_XLC_COMPILER" -ne "0"; then
       PPC_POWER4_FLAG="-qarch=pwr4 -qaltivec"
       PPC_POWER7_FLAG="-qarch=pwr7 -qaltivec"
@@ -1159,11 +1101,9 @@ if test "$IS_PPC" -ne "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1],
-         [Define to 1 if you have Altivec instructions available.])
+      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1],
-         [Define to 1 if you do not have the Altivec instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ALTIVEC=1"
    fi
 
@@ -1177,11 +1117,9 @@ if test "$IS_PPC" -ne "0"; then
 
    if test "$tr_RESULT" -eq "1"; then
       AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1],
-         [Define to 1 if you have Power7 instructions available.])
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1],
-         [Define to 1 if you do not have the Altivec instructions available.])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
    fi
 
@@ -1191,7 +1129,7 @@ if test "$IS_PPC" -ne "0"; then
       CXXFLAGS="$PPC_POWER8_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-        [AC_LANG_PROGRAM([])],
+         [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
          [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
       )
@@ -1201,23 +1139,15 @@ if test "$IS_PPC" -ne "0"; then
          AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
          AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
          AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
-         AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE], [1],
-            [Define to 1 if you have POWER8 instructions available.])
-         AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1],
-            [Define to 1 if you have POWER8 Crypto instructions available.])
-         AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1],
-            [Define to 1 if you have POWER8 Crypto instructions available.])
-         AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1],
-            [Define to 1 if you have POWER8 Crypto instructions available.])
+         AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE], [1], [Enable Power8])
+         AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1], [Enable Power8 CRC])
+         AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1], [Enable Power8 AES])
+         AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1], [Enable Power8 SHA])
       else
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1],
-            [Define to 1 if you do not have the Power8 instructions available.])
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1],
-            [Define to 1 if you do not have the Power8 PMULL instructions available.])
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1],
-            [Define to 1 if you do not have the Power8 AES instructions available.])
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1],
-            [Define to 1 if you do not have the Power8 SHA instructions available.])
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable Power8])
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1], [Disable Power8 CRC])
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1], [Disable Power8 AES])
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1], [Disable Power8 SHA])
          AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8=1"
          AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC=1"
          AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES=1"
@@ -1234,7 +1164,6 @@ fi
 
 ## Add -pipe for non-IoT gadgets to speedup the compile. IoT gadgets, like
 ## BeagleBoards and CubieTrucks, don't have swap files and run out of memory.
-## Hack: work around XXX_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$IS_IA32" -ne "0" || test "$IS_AARCH64" -ne "0" || test "$IS_PPC" -ne "0"; then
 if test "$IS_SUN_COMPILER" -eq "0"; then
@@ -1263,7 +1192,6 @@ fi
 
 ## Add -Wl,--exclude-libs,ALL for GNU linker to stops us from re-exporting
 ## symbols in other libraries. This keeps our ELF section header smaller.
-## Hack: work around XXX_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$enable_shared" = "yes"; then
 if test "$IS_APPLE_OS" -eq "0"; then
@@ -1274,7 +1202,7 @@ if test "$IS_AIX_OS" -eq "0"; then
    LDFLAGS="-Wl,--exclude-libs,ALL"
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_LINK_IFELSE(
+   XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -1291,7 +1219,6 @@ fi
 fi
 
 ## Add -Wl,--as-needed for GNU linker to avoid linking unneeded libraries.
-## Hack: work around XXX_COMPILE_IFELSE and AC_LINK_IFELSE misdetections
 
 if test "$IS_APPLE_OS" -eq "0"; then
 if test "$IS_SUN_OS" -eq "0"; then
@@ -1301,7 +1228,7 @@ if test "$IS_AIX_OS" -eq "0"; then
    LDFLAGS="-Wl,--as-needed"
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   AC_LINK_IFELSE(
+   XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
@@ -1454,7 +1381,7 @@ if test "$OPT_SYM" -eq "0"; then
    echo "to add debug symbols in case you have to analyze a crash."
 fi
 
-OPT_O3=`echo $CXXFLAGS | $EGREP -c -E '\-O3|\-O4|\-O5|\-Os|\-Ofast'`
+OPT_O3=`echo $CXXFLAGS | $EGREP -c -E '\-O3|\-O4|\-O5|\-xO3|\-xO4|\-xO5|\-Os|\-Ofast'`
 if test "$OPT_O3" -eq "0"; then
    echo ""
    echo "CXXFLAGS does not include -O3. You should consider building at -O3"
@@ -1462,13 +1389,6 @@ if test "$OPT_O3" -eq "0"; then
 fi
 
 HAVE_WIDTH=`echo $CXXFLAGS | $EGREP -i -c -E '\-m32|\-m64|\-q32|\-q64|\-march=native|\-native|\-arch x86_64|\-arch arm64'`
-IS_64BITS=`getconf LONG_BIT 2>&1 | $EGREP -i -c '64'`
-if test "$IS_64BITS" -eq "0"; then
-   IS_64BITS=`isainfo -b 2>/dev/null | $EGREP -i -c '64'`
-fi
-if test "$IS_64BITS" -eq "0"; then
-   IS_64BITS=`getconf KERNEL_BITMODE 2>/dev/null | $EGREP -i -c -E '64'`
-fi
 
 ## Don't print message for Aarch64
 if test "$IS_AARCH64" -eq "0"; then
