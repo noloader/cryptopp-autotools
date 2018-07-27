@@ -645,7 +645,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1], [Enable SSE4.1])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.1])
-	  AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
    ## SSE4.2. Old BSD linkers don't support it.
@@ -669,7 +669,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1], [Enable SSE4.2])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.2])
-	  AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
    ## PCLMUL. Some old compilers and linkers don't support it.
@@ -861,7 +861,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       int main(int argc, char** argv) {
          __m128i x;
          x=_mm_aesenc_si128(x,x);
-	     x=_mm_aesenclast_si128(x,x);
+         x=_mm_aesenclast_si128(x,x);
          return 0;
       }"
 
@@ -909,7 +909,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1], "Enable SHANI")
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sha"
    else
-	  AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1], "Disable SHANI")
+      AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1], "Disable SHANI")
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
    fi
 
