@@ -482,7 +482,7 @@ if test "$IS_GCC_COMPILER" != "0" && test "$IS_MACPORTS_COMPILER" != "0"; then
       HAVE_OPT=`echo $CXXFLAGS | $EGREP -i -c -E '\-DCRYPTOPP_CLANG_INTEGRATED_ASSEMBLER'`
       if test "$HAVE_OPT" = "1"; then
          AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_CLANG_INTEGRATED_ASSEMBLER=1"
-         AC_DEFINE([CRYPTOPP_CLANG_INTEGRATED_ASSEMBLER], [1], [Enable Clang integrated assembler.])
+         AC_DEFINE([CRYPTOPP_CLANG_INTEGRATED_ASSEMBLER], [1], [Enable Clang integrated assembler])
       fi
 
       ## Restore CXXFLAGS
@@ -571,7 +571,7 @@ fi
 ## IA-32, i386, i586, i686, x86_64, etc.
 
 ## This block handles GCC and friends. i86pc and SunCC is handled after this block
-if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" = "0"; then
+if test "$IS_IA32" != "0" && test "$IS_GNUC_COMPILER" != "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -988,7 +988,6 @@ if test "$IS_AARCH64" != "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## aria-simd.cpp, blake2-simd.cpp, neon-simd.cpp
    CXXFLAGS="-march=armv8-a"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -1011,7 +1010,6 @@ if test "$IS_AARCH64" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
-   ## crc-simd.cpp
    CXXFLAGS="-march=armv8-a+crc"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -1028,7 +1026,6 @@ if test "$IS_AARCH64" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_CRC32"
    fi
 
-   ## gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    CXXFLAGS="-march=armv8-a+crypto"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -1051,6 +1048,46 @@ if test "$IS_AARCH64" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_AES"
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
+   fi
+
+   CXXFLAGS="-march=armv8.4-a+sha3"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" = "1"; then
+      AC_SUBST([CRYPTOPP_SHA512_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SHA3_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_SHA512_AVAILABLE], [1], [Enable ARMv8 SHA-512])
+      AC_DEFINE([CRYPTOPP_ARM_SHA3_AVAILABLE], [1], [Enable ARMv8 SHA3])
+   #else
+      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA512], [1], [Disable ARMv8 SHA-512])
+      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA3], [1], [Disable ARMv8 SHA3])
+      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA512"
+      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA3"
+   fi
+
+   CXXFLAGS="-march=armv8.4-a+sm4"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" = "1"; then
+      AC_SUBST([CRYPTOPP_SM3_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_SM3_AVAILABLE], [1], [Enable ARMv8 SM3])
+      AC_DEFINE([CRYPTOPP_ARM_SM4_AVAILABLE], [1], [Enable ARMv8 SM4])
+   #else
+      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM3], [1], [Disable ARMv8 SM3])
+      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM4], [1], [Disable ARMv8 SM4])
+      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM3"
+      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM4"
    fi
 
    ## Restore CXXFLAGS
