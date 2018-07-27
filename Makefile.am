@@ -427,6 +427,7 @@ distclean-local:
 ## Automake does not properly uninstall the library test data and vectors
 uninstall-hook:
 	-rm -rf ${pkgdatadir}
+	-rm -rf ${pkghtmldir}
 
 ## https://www.gnu.org/software/automake/manual/html_node/Usage-of-Conditionals.html
 if CRYPTOPP_ARM32
