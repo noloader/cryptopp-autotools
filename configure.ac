@@ -307,8 +307,8 @@ fi
 AC_C_BIGENDIAN(
   AC_DEFINE(CRYPTOPP_BIG_ENDIAN, 1, [machine is big-endian]),
   AC_DEFINE(CRYPTOPP_LITTLE_ENDIAN, 1, [machine is little-endian]),
-  AC_MSG_ERROR(unknown endianess),
-  AC_MSG_ERROR(universial endianess not supported)
+  AC_MSG_ERROR([unknown endianess]),
+  AC_MSG_ERROR([universial endianess not supported])
 )
 
 #############################################################################
