@@ -311,6 +311,7 @@ cryptest_SOURCES = \
     regtest1.cpp \
     regtest2.cpp \
     regtest3.cpp \
+    regtest4.cpp \
     dlltest.cpp \
     fipsalgt.cpp
 
@@ -332,6 +333,7 @@ cryptestcwd_SOURCES = \
     regtest1.cpp \
     regtest2.cpp \
     regtest3.cpp \
+    regtest4.cpp \
     dlltest.cpp \
     fipsalgt.cpp
 
