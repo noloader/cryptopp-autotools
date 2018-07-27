@@ -620,7 +620,7 @@ if test "$IS_IA32" != "0" && test "$IS_GNUC_COMPILER" != "0"; then
    ## SSE4.1. Old BSD linkers don't support it.
    CXXFLAGS="-msse4.1"
    XXX_PROGRAM="#include <smmintrin.h>
-      int main(int argc, char* argv[]) {
+      int main(int argc, char** argv) {
          __m128i x;
          x=_mm_blend_epi16 (x,x,0);
          return 0;
@@ -647,7 +647,7 @@ if test "$IS_IA32" != "0" && test "$IS_GNUC_COMPILER" != "0"; then
    ## SSE4.2. Old BSD linkers don't support it.
    CXXFLAGS="-msse4.2"
    XXX_PROGRAM="#include <nmmintrin.h>
-      int main(int argc, char* argv[]) {
+      int main(int argc, char** argv) {
          int x = _mm_crc32_u32(10,20);
          return 0;
       }"
@@ -671,7 +671,7 @@ if test "$IS_IA32" != "0" && test "$IS_GNUC_COMPILER" != "0"; then
    ## PCLMUL. Some old compilers and linkers don't support it.
    CXXFLAGS="-mssse3 -mpclmul"
    XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char* argv[]) {
+      int main(int argc, char** argv) {
          __m128i x;
          x=_mm_clmulepi64_si128 (x,x,0);
          return 0;
@@ -694,7 +694,7 @@ if test "$IS_IA32" != "0" && test "$IS_GNUC_COMPILER" != "0"; then
    ## AES. Some old compilers and linkers don't support it.
    CXXFLAGS="-mssse3 -maes"
    XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char* argv[]) {
+      int main(int argc, char** argv) {
          __m128i x;
          x=_mm_aesenc_si128(x,x);
          x=_mm_aesenclast_si128(x,x);
@@ -715,7 +715,7 @@ if test "$IS_IA32" != "0" && test "$IS_GNUC_COMPILER" != "0"; then
    ## AES. Some compilers and linkers don't support it.
    CXXFLAGS="-msse4.1 -maes"
    XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char* argv[]) {
+      int main(int argc, char** argv) {
          __m128i x;
          x=_mm_aesenc_si128(x,x);
          x=_mm_aesenclast_si128(x,x);
@@ -740,7 +740,7 @@ if test "$IS_IA32" != "0" && test "$IS_GNUC_COMPILER" != "0"; then
    ## SHA. Some compilers and linkers don't support it.
    CXXFLAGS="-msha"
    XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char* argv[]) {
+      int main(int argc, char** argv) {
          __m128i x;
           x=_mm_sha1rnds4_epu32(x,x,0);
           return 0;
@@ -854,7 +854,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    fi
 
    XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char* argv[]) {
+      int main(int argc, char** argv) {
          __m128i x;
          x=_mm_aesenc_si128(x,x);
 	     x=_mm_aesenclast_si128(x,x);
@@ -885,7 +885,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    fi
 
    XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char* argv[]) {
+      int main(int argc, char** argv) {
          __m128i x;
          x=_mm_sha1rnds4_epu32(x,x,0);
          return 0;
