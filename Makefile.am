@@ -301,6 +301,7 @@ cryptest_SOURCES = \
     test.cpp \
     bench1.cpp \
     bench2.cpp \
+    bench3.cpp \
     validat0.cpp \
     validat1.cpp \
     validat2.cpp \
@@ -321,6 +322,7 @@ cryptestcwd_SOURCES = \
     test.cpp \
     bench1.cpp \
     bench2.cpp \
+    bench3.cpp \
     validat0.cpp \
     validat1.cpp \
     validat2.cpp \
