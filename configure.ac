@@ -136,13 +136,17 @@ fi
 IS_GCC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -v 'Clang' | $EGREP -i -c -E 'GCC|G\+\+'`
 IS_LLVM_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'LLVM|Clang'`
 IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
+IS_ICC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'ICC'`
 IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
 IS_MACPORTS_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'MacPorts'`
 
 ## A catch-all for compilers that claim to be GCC compatible. Each should be
 ## able to handle GCC syntax. It excludes XLC, SunCC and MSVC
-if test "$IS_GCC_COMPILER" != "0" || test "$IS_LLVM_COMPILER" != "0" || test "$IS_ICC_COMPILER" != "0"; then
+if test "$IS_GCC_COMPILER" != "0" || test "$IS_LLVM_COMPILER" != "0" || \
+   test "$IS_ICC_COMPILER" != "0"; then
    IS_GNUC_COMPILER=1
+else
+   IS_GNUC_COMPILER=0
 fi
 
 ## Friendly names for reporting
@@ -322,7 +326,7 @@ AC_C_BIGENDIAN(
 #############################################################################
 ## Dead code stripping
 
-if true; then
+if test "$IS_GNUC_COMPILER" != "0"; then
 
    ## Save FLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -415,7 +419,7 @@ fi
 #############################################################################
 ## Newlib and _XOPEN_SOURCE
 
-if true; then
+if test "$IS_GNUC_COMPILER" != "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -571,7 +575,7 @@ fi
 ## IA-32, i386, i586, i686, x86_64, etc.
 
 ## This block handles GCC and friends. i86pc and SunCC is handled after this block
-if test "$IS_IA32" != "0" && test "$IS_GNUC_COMPILER" != "0"; then
+if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
