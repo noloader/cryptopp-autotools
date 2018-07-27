@@ -742,7 +742,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    fi
 
    ## SHA. Some compilers and linkers don't support it.
-   CXXFLAGS="-msha"
+   CXXFLAGS="-msse4.2 -msha"
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
          __m128i x;
