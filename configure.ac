@@ -933,10 +933,10 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
    ## Most Linux are hard-float systems.
    IS_ARMHF=`echo $host | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
    if test "$IS_ARMHF" != "0"; then
-      AC_MSG_NOTICE([ARM hard-floats detected, using -mfloat-abi=hard.])
+      #AC_MSG_NOTICE([ARM hard-floats detected, using -mfloat-abi=hard.])
       FP_FLAG="hard"
    else
-      AC_MSG_NOTICE([ARM soft-floats detected, using -mfloat-abi=softfp.])
+      #AC_MSG_NOTICE([ARM soft-floats detected, using -mfloat-abi=softfp.])
       FP_FLAG="softfp"
    fi
 
@@ -976,12 +976,50 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
 fi
 
 #############################################################################
-## ARM A-32
+## ARM A-32 and aes-armv4.S
 
+# Used by Makefile.am to compile aes-armv4.S
 if test "$IS_ARM32" != "0"; then
-   AM_CONDITIONAL([CRYPTOPP_ARM32], [true])
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   CXXFLAGS="-march=armv7-a -Wa,--noexecstack"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" = "1"; then
+
+      AM_CONDITIONAL([CRYPTOGAMS_AES], [true])
+      AC_SUBST([CRYPTOPGAMS_FLAGS], [$CXXFLAGS])
+
+   else
+
+      CXXFLAGS="-march=armv7-a"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      )
+
+      if test "$tr_RESULT" = "1"; then
+         AM_CONDITIONAL([CRYPTOGAMS_AES], [true])
+         AC_SUBST([CRYPTOPGAMS_FLAGS], [$CXXFLAGS])
+      else
+         AM_CONDITIONAL([CRYPTOGAMS_AES], [false])
+      fi
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
 else
-   AM_CONDITIONAL([CRYPTOPP_ARM32], [false])
+   # Required for other platforms
+   AM_CONDITIONAL([CRYPTOGAMS_AES], [false])
 fi
 
 #############################################################################
@@ -1422,6 +1460,9 @@ if test x"$CRYPTOPP_SPECK_FLAG" != "x"; then
 fi
 if test x"$CRYPTOPP_SM4_FLAG" != "x"; then
    echo "CRYPTOPP_SM4_FLAG: $CRYPTOPP_SM4_FLAG"
+fi
+if test x"$CRYPTOPGAMS_FLAGS" != "x"; then
+   echo "CRYPTOPGAMS_FLAGS: $CRYPTOPGAMS_FLAGS"
 fi
 
 echo ""
