@@ -1378,6 +1378,11 @@ const lword LWORD_MAX = W64LIT(0xffffffffffffffff);
 EOT
 fi
 
+## Fix CCAS and CCASFLAGS
+## Also see https://stackoverflow.com/q/51575580/608639
+AC_SUBST([CCAS], [$CXX])
+AC_SUBST([CCASFLAGS], [$CXXFLAGS])
+
 ## Without this 'make' uses out GNUmakefile, and not Makefile
 # AC_CONFIG_COMMANDS_PRE([rm -f config.h 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])

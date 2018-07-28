@@ -30,14 +30,7 @@
 
 ## TODO:
 ##
-##  - Fix ARM A-32 compiles. We use GCC to drive the compile process for
-##    aes-armv4.S, not the asembler. Automake dies as it tries to do shit
-##    with the assembler. We need to figure out how to tell Automake to
-##    stop using the assembler.
-##
 ##  - Figure out what's going on with DragonFly and dependencies
-##
-##  - Figure out if we need noinst_LIBRARIES
 ##
 
 AUTOMAKE_OPTIONS = foreign
@@ -72,8 +65,15 @@ EXTRA_LTLIBRARIES = \
    libsimon_simd.la \
    libspeck_simd.la \
    libsm4_simd.la \
-   libsse_simd.la \
-   libothers.la
+   libsse_simd.la
+
+## ARMv7-a AES by Andy Polyakov
+if CRYPTOGAMS_AES
+   EXTRA_LTLIBRARIES += libaes_armv4.la
+endif
+
+## The remainder of the source files
+EXTRA_LTLIBRARIES += libothers.la
 
 ## libcryptopp_la_SOURCES is empty because we need to create the library
 ## artifact from disjoint libraries due to object file ordering and
@@ -105,8 +105,15 @@ libcryptopp_la_LIBADD = \
    $(libsimon_simd_la_OBJECTS) \
    $(libspeck_simd_la_OBJECTS) \
    $(libsm4_simd_la_OBJECTS) \
-   $(libsse_simd_la_OBJECTS) \
-   $(libothers_la_OBJECTS)
+   $(libsse_simd_la_OBJECTS)
+
+## ARMv7-a AES by Andy Polyakov
+if CRYPTOGAMS_AES
+   libcryptopp_la_LIBADD += $(libaes_armv4_la_OBJECTS)
+endif
+
+## The remainder of the object files
+libcryptopp_la_LIBADD += $(libothers_la_OBJECTS)
 
 ## Don't use EXTRA_ prefix for libcryptopp_la_DEPENDENCIES. It breaks Solaris.
 
@@ -129,8 +136,15 @@ libcryptopp_la_DEPENDENCIES = \
    $(libsimon_simd_la_OBJECTS) \
    $(libspeck_simd_la_OBJECTS) \
    $(libsm4_simd_la_OBJECTS) \
-   $(libsse_simd_la_OBJECTS) \
-   $(libothers_la_OBJECTS)
+   $(libsse_simd_la_OBJECTS)
+
+## ARMv7-a AES by Andy Polyakov
+if CRYPTOGAMS_AES
+   libcryptopp_la_DEPENDENCIES += $(libaes_armv4_la_OBJECTS)
+endif
+
+## The remainder of the object files
+libcryptopp_la_DEPENDENCIES += $(libothers_la_OBJECTS)
 
 ## Very important... Version number of the library
 libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 7:1:0
@@ -211,6 +225,13 @@ libsm4_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SM4_FLAG)
 libsse_simd_la_SOURCES = sse-simd.cpp
 libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE_FLAG)
 
+## ARMv7-a AES by Andy Polyakov
+## Also see https://stackoverflow.com/q/51575580/608639
+if CRYPTOGAMS_AES
+libaes_armv4_la_SOURCES = aes-armv4.S
+libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
+endif
+
 # This is the list of remaining sources files that don't need special order
 # and don't need special flags. It is formed by removing cryptlib.cpp,
 # cpu.cpp, integer.cpp and *-simd.cpp files. It is sorted in alphabetical
@@ -268,7 +289,8 @@ noinst_HEADERS = \
     bench.h \
     factory.h \
     resource.h \
-    validate.h
+    validate.h \
+    aes-armv4.h
 
 bin_PROGRAMS = cryptest
 noinst_PROGRAMS = cryptestcwd
@@ -409,17 +431,6 @@ distclean-local:
 uninstall-hook:
 	-rm -rf ${pkgdatadir}
 	-rm -rf ${pkghtmldir}
-
-## https://www.gnu.org/software/automake/manual/html_node/Usage-of-Conditionals.html
-if CRYPTOGAMS_AES
-
-  libothers_la_SOURCES += aes-armv4.S
-  pkginclude_HEADERS += aes-armv4.h
-
-aes-armv4.o : aes-armv4.S
-	$(AM_CXX) $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS) $<
-
-endif
 
 ## Doxygen is available but not built by default
 ## TODO: copy docs to ${pkghtmldir} if built
