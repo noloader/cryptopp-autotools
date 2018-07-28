@@ -284,11 +284,14 @@ cryptest_SOURCES = \
     validat2.cpp \
     validat3.cpp \
     validat4.cpp \
-    datatest.cpp \
+    validat5.cpp \
+    validat6.cpp \
+    validat7.cpp \
     regtest1.cpp \
     regtest2.cpp \
     regtest3.cpp \
     regtest4.cpp \
+    datatest.cpp \
     dlltest.cpp \
     fipsalgt.cpp
 
@@ -306,11 +309,14 @@ cryptestcwd_SOURCES = \
     validat2.cpp \
     validat3.cpp \
     validat4.cpp \
-    datatest.cpp \
+    validat5.cpp \
+    validat6.cpp \
+    validat7.cpp \
     regtest1.cpp \
     regtest2.cpp \
     regtest3.cpp \
     regtest4.cpp \
+    datatest.cpp \
     dlltest.cpp \
     fipsalgt.cpp
 
