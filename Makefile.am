@@ -440,7 +440,7 @@ if CRYPTOPP_ARM32
   pkginclude_HEADERS += aes-armv4.h
 
 aes-armv4.o : aes-armv4.S
-	$(AM_CXX) $(AM_CXXFLAGS) -march=armv7-a -marm $<
+	$(AM_CXX) $(AM_CXXFLAGS) -march=armv7-a $<
 
 endif
 
