@@ -256,22 +256,18 @@ fi
 ## pthreads for thread local storage
 
 if test "$IS_SUN_COMPILER" = "1"; then
-
-   AC_ARG_ENABLE(tls,
-      AS_HELP_STRING([--enable-tls], [enable thread storage (default is no)]),
-      ac_enable_tls=$enableval,
-      ac_enable_tls=no)
-   AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
-
+   DEF_VALUE_TLS=no
+   m4_define([HELP_STRING_TLS], [enable thread storage (default is no)])
 else
-
-   AC_ARG_ENABLE(tls,
-      AS_HELP_STRING([--enable-tls], [enable thread storage (default is yes)]),
-      ac_enable_tls=$enableval,
-      ac_enable_tls=yes)
-   AM_CONDITIONAL(HAS_PTHREADS, test $ac_enable_tls = yes)
-
+   DEF_VALUE_TLS=yes
+   m4_define([HELP_STRING_TLS], [enable thread storage (default is yes)])
 fi
+
+AC_ARG_ENABLE(tls,
+   AS_HELP_STRING([--enable-tls], [HELP_STRING_TLS]),
+   ac_enable_tls=$enableval,
+   ac_enable_tls=$DEF_VALUE_TLS)
+AM_CONDITIONAL(HAVE_PTHREADS, test $ac_enable_tls = yes)
 
 if test "$ac_enable_tls" = "yes"; then
 
@@ -279,7 +275,7 @@ if test "$ac_enable_tls" = "yes"; then
    SAVED_LDFLAGS="$LDFLAGS"
 
    CXXFLAGS="-pthread"
-   AC_MSG_CHECKING([for C++ compiler pthread support])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
@@ -287,7 +283,7 @@ if test "$ac_enable_tls" = "yes"; then
    )
 
    LDFLAGS="-pthread"
-   AC_MSG_CHECKING([for linker pthread support])
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
