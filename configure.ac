@@ -115,9 +115,13 @@ if test x"$CXX" != "x"; then
    fi
 fi
 
-## Compiler is valid. Try to detect the target and vendor
+## Compiler is valid. Try to detect the target and vendor.
+## SunCC is empty, so we just use $host
 
 COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
+if test -z "$COMPILER_TARGET"; then
+   COMPILER_TARGET="$host"
+fi
 
 ## Determine the compiler's vendor. We need to work around some Autoconf bugs.
 
