@@ -309,6 +309,9 @@ cryptest_SOURCES = \
     validat5.cpp \
     validat6.cpp \
     validat7.cpp \
+    validat8.cpp \
+    validat9.cpp \
+    validat10.cpp \
     regtest1.cpp \
     regtest2.cpp \
     regtest3.cpp \
@@ -334,6 +337,9 @@ cryptestcwd_SOURCES = \
     validat5.cpp \
     validat6.cpp \
     validat7.cpp \
+    validat8.cpp \
+    validat9.cpp \
+    validat10.cpp \
     regtest1.cpp \
     regtest2.cpp \
     regtest3.cpp \
