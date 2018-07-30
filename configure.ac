@@ -781,8 +781,11 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
    )
 
+   ## GCM should be overwritten with CLMUL if available. If not
+   ## available then need -xarch=sse2 due to GCM_Xor16_SSE2.
    if test "$tr_RESULT" = "1"; then
       AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE2__=1"
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Enable SSE2])
       AM_LDFLAGS="$AM_LDFLAGS -xarch=sse2"
