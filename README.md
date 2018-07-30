@@ -27,7 +27,8 @@ The general workflow is clone Wei Dai's crypto++, add Autotools as a submodule, 
 
 Once the submodule is added or updated, then run the following. Our testing showed `autoupdate` produced bad results on some versions of Autotools, so be careful of running it before `autoreconf`.
 
-    autoreconf --force --install --warnings=all
+    autoupdate
+    autoreconf --force --install
     ./configure <options>
 
     make
@@ -56,9 +57,10 @@ Despite our efforts we have not been able to add the submodule to Crypto++ for s
 
 Before running the Autotools project please ensure you have the following installed:
 
-1. autoconf
-2. automake
-3. libtool
+1. autoupdate
+2. autoconf
+3. automake
+4. libtool
 
 You may also need `libltdl-dev` on Debian and Ubuntu; and may need `libtool-ltdl-devel` on Fedora. MinGW and family need the Autoconf and Automake *wrappers* in addition to the Autoconf and Automake binaries.
 
