@@ -7,6 +7,13 @@
 ##   http://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
 ##
 
+## To generate the configure file perform the following. The extra steps are needed
+## because the Autotools on some machines, like a PowerMac or Solaris, are not modern
+## enough for macros like AC_PROG_LIBTOOL and AC_ENABLE_SHARED.
+##
+##   autoupdate && libtoolize -fi && autoreconf -fi
+##
+
 ## TODO
 ##
 ## - Figure out how to make Autoconf stop using the fucking C compiler for tasks.
@@ -45,6 +52,7 @@
 ##
 
 #############################################################################
+
 AC_INIT([Crypto++], [7.1], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
 AM_INIT_AUTOMAKE
 
@@ -54,7 +62,7 @@ AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
 AC_CONFIG_SRCDIR([configure.ac])
 
 AM_PROG_AS
-AC_PROG_LIBTOOL
+#AC_PROG_LIBTOOL
 LT_INIT
 
 AC_PROG_CXX
@@ -67,7 +75,7 @@ AC_LANG_ASSERT([C++])
 ## Used for our test compile and link to detect failures. It is more
 ## robust than Autotools and catches XL C/C++ and SunCC problems.
 
-BAD_RESULT="fatal|error|unknown|unrecognized|illegal|ignored|not found|not exist|cannot find"
+BAD_RESULT="fatal|error|unknown|unrecognized|illegal|ignored|not found|not exist|cannot find|not supported"
 
 #############################################################################
 
@@ -158,9 +166,10 @@ CXXNAME=`basename "$CXX"`
 LDNAME=`basename "$LD"`
 
 ## Small fixup
-if test "$LDNAME" = "ld -m elf_x86_64"; then
-   LDNAME=ld
-fi
+case "$LDNAME" in
+	"ld -m"*) LDNAME=ld
+	;;
+esac
 
 #############################################################################
 
@@ -207,8 +216,8 @@ fi
 
 if true; then
 
+   ## Cant use AC_ENABLE_STATIC and AC_ENABLE_SHARED. AIX Autotools is too old.
    AC_MSG_RESULT([checking if static libraries should be enabled... yes])
-   AC_ENABLE_STATIC
 
    ## http://stackoverflow.com/a/21455267/608639
    case $host_os in
@@ -218,7 +227,7 @@ if true; then
          ;;
       *)
          AC_MSG_RESULT([checking if shared libraries should be enabled... yes])
-         AC_ENABLE_SHARED
+         enable_shared=yes; enable_static=yes;
          ;;
    esac
 fi
@@ -253,51 +262,6 @@ if test "$IS_SUN_COMPILER" = "0" && test "$OPT_ANY" = "0"; then
       [AC_MSG_FAILURE([no])]
    )
    AM_CXXFLAGS="$AM_CXXFLAGS -O2"
-   CXXFLAGS="$SAVED_CXXFLAGS"
-fi
-
-#############################################################################
-## pthreads for thread local storage
-
-if test "$IS_SUN_COMPILER" = "1"; then
-   DEF_VALUE_TLS=no
-   m4_define([HELP_STRING_TLS], [enable thread storage (default is no)])
-else
-   DEF_VALUE_TLS=yes
-   m4_define([HELP_STRING_TLS], [enable thread storage (default is yes)])
-fi
-
-AC_ARG_ENABLE(tls,
-   AS_HELP_STRING([--enable-tls], [HELP_STRING_TLS]),
-   ac_enable_tls=$enableval,
-   ac_enable_tls=$DEF_VALUE_TLS)
-AM_CONDITIONAL(HAVE_PTHREADS, test $ac_enable_tls = yes)
-
-if test "$ac_enable_tls" = "yes"; then
-
-   SAVED_CXXFLAGS="$CXXFLAGS"
-   SAVED_LDFLAGS="$LDFLAGS"
-
-   CXXFLAGS="-pthread"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_FAILURE(["--enable-tls=yes but pthreads are not available"])]
-   )
-
-   LDFLAGS="-pthread"
-   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_FAILURE(["--enable-tls=yes but pthreads are not available"])]
-   )
-
-   AM_CXXFLAGS="$AM_CXXFLAGS -pthread"
-   AM_LDFLAGS="$AM_LDFLAGS -pthread"
-
-   LDFLAGS="$SAVED_LDFLAGS"
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -1184,6 +1148,32 @@ if test "$IS_XLC_COMPILER" != "0"; then
 fi
 
 #############################################################################
+# More stupid LLVM games. Clang pretending to be three different compilers.
+# https://lists.tetaneutral.net/pipermail/cfarm-users/2018-July/000331.html
+
+if test "$IS_XLC_COMPILER" != "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   CXXFLAGS="-qxlcompatmacros"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
+      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+   )
+
+   if test "$tr_RESULT" = "1"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+
+fi
+
+#############################################################################
 ## PowerPC and PowerPC-64
 
 if test "$IS_PPC" != "0"; then
@@ -1200,6 +1190,7 @@ if test "$IS_PPC" != "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
+   tr_RESULT="0"
 
    ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
    ## Altivec needs Power4, but the VSX loads and stores needs Power7.
@@ -1207,65 +1198,76 @@ if test "$IS_PPC" != "0"; then
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [4])],
+      [AC_MSG_RESULT([no])                             ]
    )
-
-   if test "$tr_RESULT" = "1"; then
-      AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ALTIVEC=1"
-   fi
 
    CXXFLAGS="$PPC_POWER7_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-      [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [7])],
+      [AC_MSG_RESULT([no])                             ]
    )
 
-   if test "$tr_RESULT" = "1"; then
+   CXXFLAGS="$PPC_POWER8_FLAG"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [8])],
+      [AC_MSG_RESULT([no])                             ]
+   )
+
+   ## Power8 and Crypto
+   if test "$tr_RESULT" = "8"; then
       AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE],  [1], [Enable Power7])
+      AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE],  [1], [Enable Power8])
+      AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1], [Enable Power8 CRC])
+      AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1], [Enable Power8 AES])
+      AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1], [Enable Power8 SHA])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
-   fi
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable Power8])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1], [Disable Power8 CRC])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1], [Disable Power8 AES])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1], [Disable Power8 SHA])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8=1"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC=1"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES=1"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA=1"
 
-   ## Power7 and Altivec is available. Test for Power8 and Crypto extensions.
-   if test "$tr_RESULT" = "1"; then
-
-      CXXFLAGS="$PPC_POWER8_FLAG"
-      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-      XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([tr_RESULT], [1])],
-         [AC_MSG_RESULT([no]);  AC_SUBST([tr_RESULT], [0])]
-      )
-
-      if test "$tr_RESULT" = "1"; then
+      ## Power7 and VSX
+      if test "$tr_RESULT" = "7"; then
          AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-         AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
-         AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-         AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
-         AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE], [1], [Enable Power8])
-         AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1], [Enable Power8 CRC])
-         AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1], [Enable Power8 AES])
-         AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1], [Enable Power8 SHA])
+         AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
       else
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable Power8])
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1], [Disable Power8 CRC])
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1], [Disable Power8 AES])
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1], [Disable Power8 SHA])
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8=1"
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC=1"
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES=1"
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA=1"
+         AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
+
+         ## Power4 and Altivec
+         if test "$tr_RESULT" = "1"; then
+            AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
+            AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
+         else
+            AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
+            AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ALTIVEC=1"
+         fi
       fi
    fi
+
+   ## These are much higher ISA's than needed and may break distros. The
+   ## problem is LLVM on GCC119. It is a Power8 machine but Clang rejects
+   ## -qarch=pwr4 and -qarch=pwr7. The only option we have is -qarch=pwr8.
+   AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CRYPTOPP_PPC_FLAG])
+   AC_SUBST([CRYPTOPP_LEA_FLAG], [$CRYPTOPP_PPC_FLAG])
+   AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$CRYPTOPP_PPC_FLAG])
+   AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CRYPTOPP_PPC_FLAG])
+   AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CRYPTOPP_PPC_FLAG])
+   AC_SUBST([CRYPTOPP_SM4_FLAG], [$CRYPTOPP_PPC_FLAG])
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"

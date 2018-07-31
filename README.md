@@ -25,9 +25,10 @@ The general workflow is clone Wei Dai's crypto++, add Autotools as a submodule, 
     cp "$PWD/autotools/libcryptopp.pc.in" "$PWD"
     mkdir -p "$PWD/m4/"
 
-Once the submodule is added or updated, then run the following. Our testing showed `autoupdate` produced bad results on some versions of Autotools, so be careful of running it before `autoreconf`.
+Once the submodule is added or updated, then run the following. Our testing showed `autoupdate` produced bad results on some versions of Autotools, so it is hit or miss whether it should be run.
 
     autoupdate
+    libtoolize --force --install
     autoreconf --force --install
     ./configure <options>
 
