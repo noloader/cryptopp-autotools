@@ -320,13 +320,12 @@ AC_C_BIGENDIAN(
 #fi
 
 #############################################################################
-## Dead code stripping
+## Dead code stripping for compilers. Linkers are towards the end of script.
 
-if test "$IS_GNUC_COMPILER" != "0"; then
+if true; then
 
    ## Save FLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
-   SAVED_LDFLAGS="$LDFLAGS"
 
    CXXFLAGS="-fdata-sections"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -352,40 +351,8 @@ if test "$IS_GNUC_COMPILER" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
-   ## -Wl,-dead_strip is an OS X.
-   if test "$IS_APPLE_OS" != "0"; then
-
-      LDFLAGS="-Wl,-dead_strip"
-      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      XXX_LINK_IFELSE(
-         [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes])],
-         [AC_MSG_RESULT([no])]
-      )
-
-      if test "$retval" = "0"; then
-         AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-      fi
-
-   else
-
-      LDFLAGS="-Wl,--gc-sections"
-      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      XXX_LINK_IFELSE(
-         [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes])],
-         [AC_MSG_RESULT([no])]
-      )
-
-      if test "$retval" = "0"; then
-         AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-      fi
-
-   fi
-
    ## Restore FLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
-   LDFLAGS="$SAVED_LDFLAGS"
 fi
 
 #############################################################################
@@ -489,58 +456,6 @@ if test "$IS_GCC_COMPILER" != "0" && test "$IS_MACPORTS_COMPILER" != "0"; then
       CXXFLAGS="$SAVED_CXXFLAGS"
    fi
 fi
-fi
-
-#############################################################################
-## Solaris, map file and libraries
-
-if test "$IS_SUN_OS" != "0"; then
-
-   ## Save LDFLAGS
-   SAVED_LDFLAGS="$LDFLAGS"
-
-   ## IA-32 gets a Mapfile for capabilities. Due to libtool stripping
-   ## -M arguments, we need to escape it with -XCClinker in AM_LDFLAGS.
-   if test "$IS_IA32" != "0"; then
-      LDFLAGS="-Mcryptopp.mapfile"
-      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-      XXX_LINK_IFELSE(
-        [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes])],
-         [AC_MSG_RESULT([no])]
-      )
-
-      if test "$retval" = "0"; then
-         AM_LDFLAGS="$AM_LDFLAGS -XCClinker -Mcryptopp.mapfile"
-      fi
-   fi
-
-   LDFLAGS="-lnsl"
-   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-      if test "$retval" = "0"; then
-      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-   fi
-
-   LDFLAGS="-lsocket"
-   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" = "0"; then
-      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-   fi
-
-   ## Restore LDFLAGS
-   LDFLAGS="$SAVED_LDFLAGS"
 fi
 
 #############################################################################
@@ -1346,6 +1261,96 @@ if test "$MEM_SIZE" -ge "2"; then
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## Dead code stripping for linkers. Compilers are towards the head of script.
+
+if true; then
+
+   ## Save FLAGS
+   SAVED_LDFLAGS="$LDFLAGS"
+
+   # OS X uses -Wl,-dead_strip
+   LDFLAGS="-Wl,-dead_strip"
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   # Linux uses 
+   LDFLAGS="-Wl,--gc-sections"
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   ## Restore FLAGS
+   LDFLAGS="$SAVED_LDFLAGS"
+fi
+
+#############################################################################
+## Solaris, map file and libraries
+
+if test "$IS_SUN_OS" != "0"; then
+
+   ## Save LDFLAGS
+   SAVED_LDFLAGS="$LDFLAGS"
+
+   ## IA-32 gets a Mapfile for capabilities. Due to libtool stripping
+   ## -M arguments, we need to escape it with -XCClinker in AM_LDFLAGS.
+   if test "$IS_IA32" != "0"; then
+      LDFLAGS="-Mcryptopp.mapfile"
+      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+      XXX_LINK_IFELSE(
+        [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" = "0"; then
+         AM_LDFLAGS="$AM_LDFLAGS -XCClinker -Mcryptopp.mapfile"
+      fi
+   fi
+
+   LDFLAGS="-lnsl"
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+      if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   LDFLAGS="-lsocket"
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   ## Restore LDFLAGS
+   LDFLAGS="$SAVED_LDFLAGS"
 fi
 
 #############################################################################
