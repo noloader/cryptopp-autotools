@@ -1438,7 +1438,7 @@ fi
 ## threshold. Anything with less than 2GB will not use -pipe.
 
 # Unix, Linux and family
-MEM_SIZE=`$EGREP "MemTotal" /proc/meminfo 2>/dev/null | $AWK '{print int($2/1024); exit;}'`
+MEM_SIZE=`$EGREP "MemTotal" /proc/meminfo 2>/dev/null | $AWK '{print int($2/1024/1024); exit;}'`
 
 # Darwin
 if test "$IS_APPLE_OS" != "0"; then
