@@ -404,12 +404,36 @@ fi
 #############################################################################
 ## Solaris, GCC and -Wa,--divide
 
-if test "$IS_SUN_OS" != "0" && test "$IS_SUN_COMPILER" = "0"; then
+if test "$IS_SUN_OS" != "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    CXXFLAGS="-Wa,--divide"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## Solaris, SunCC compiler options
+
+if test "$IS_SUN_OS" != "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   CXXFLAGS="-template=no%extdef"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
@@ -465,30 +489,6 @@ fi
 fi
 
 #############################################################################
-## Solaris, SunCC compiler options
-
-if test "$IS_SUN_OS" != "0" && test "$IS_SUN_COMPILER" != "0"; then
-
-   ## Save CXXFLAGS
-   SAVED_CXXFLAGS="$CXXFLAGS"
-
-   CXXFLAGS="-template=no%extdef"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" = "0"; then
-      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-   fi
-
-   ## Restore CXXFLAGS
-   CXXFLAGS="$SAVED_CXXFLAGS"
-fi
-
-#############################################################################
 ## IA-32, i386, i586, i686, x86_64, etc.
 
 ## This block handles GCC and friends. i86pc and SunCC is handled after this block
@@ -513,6 +513,22 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disable SSE2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+   fi
+
+   ## SSE3
+   CXXFLAGS="-msse3"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_DEFINE([CRYPTOPP_SSE3_AVAILABLE], [1], [Enable SSE3])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [Disable SSE3])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
    fi
 
    ## SSSE3
