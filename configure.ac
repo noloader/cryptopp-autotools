@@ -1007,8 +1007,9 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
          return 0;
    }"
 
-   CXXFLAGS="-xarch=sha"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   ##CXXFLAGS="-xarch=sha"
+   CXXFLAGS="-xarch=avx2_i"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (sha?)])
    XXX_COMPILE_IFELSE(
       [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes])],
