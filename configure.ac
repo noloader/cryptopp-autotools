@@ -338,7 +338,9 @@ fi
 ## Clang and GCC does not use standard Intel header. Just make it up as you go...
 if test "$IS_IA32" = "1"; then
 
-   AC_CHECK_HEADER([x86intrin.h])
+   ## Must use AC_CHECK_HEADERS, not AC_CHECK_HEADER
+   ## https://stackoverflow.com/a/51639786/608639
+   AC_CHECK_HEADERS([x86intrin.h])
 fi
 
 #############################################################################
