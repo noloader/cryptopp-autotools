@@ -248,13 +248,6 @@ AC_C_BIGENDIAN(
 )
 
 #############################################################################
-## Clang and GCC does not use standard Intel header. Just make it up as you go...
-if test "$IS_IA32" = "1"; then
-
-   AC_CHECK_HEADER([x86intrin.h])
-fi
-
-#############################################################################
 ## Newlib and _XOPEN_SOURCE
 
 if true; then
@@ -339,6 +332,13 @@ if test "$IS_DEBUG" = "1"; then
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## Clang and GCC does not use standard Intel header. Just make it up as you go...
+if test "$IS_IA32" = "1"; then
+
+   AC_CHECK_HEADER([x86intrin.h])
 fi
 
 #############################################################################
@@ -969,7 +969,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_SUBST([CRYPTOPP_RDRAND_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__RDRND__=1"
       AC_DEFINE([CRYPTOPP_RDRAND_AVAILABLE], [1], "Enable RDRAND")
-	  AM_LDFLAGS="$AM_LDFLAGS -xarch=avx_i"
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=avx_i"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_RDRAND], [1], "Disable RDRAND")
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_RDRAND"
@@ -994,7 +994,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_SUBST([CRYPTOPP_RDSEED_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__RDSEED__=1"
       AC_DEFINE([CRYPTOPP_RDSEED_AVAILABLE], [1], "Enable RDSEED")
-	  AM_LDFLAGS="$AM_LDFLAGS -xarch=avx2_i"
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=avx2_i"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_RDSEED], [1], "Disable RDSEED")
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_RDSEED"
