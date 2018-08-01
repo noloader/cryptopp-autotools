@@ -257,9 +257,9 @@ if true; then
    XXX_PROGRAM="#include <string>
       int main(int argc, char** argv) {
          #ifndef __NEWLIB__
-	     #  error
-	     #endif
-		 return 0;
+         #  error
+         #endif
+         return 0;
       }"
 
    AC_MSG_CHECKING([whether runtime library is Newlib])
