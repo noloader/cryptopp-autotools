@@ -250,7 +250,7 @@ if true; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    fi
@@ -275,7 +275,7 @@ if test "$OPT_ANY" = "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    else
 
@@ -288,7 +288,7 @@ if test "$OPT_ANY" = "0"; then
          [AC_MSG_RESULT([no])]
       )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
          AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       fi
    fi
@@ -335,7 +335,7 @@ if test "$IS_GNUC_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
@@ -347,7 +347,7 @@ if test "$IS_GNUC_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
@@ -362,7 +362,7 @@ if test "$IS_GNUC_COMPILER" != "0"; then
          [AC_MSG_RESULT([no])]
       )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
          AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
       fi
 
@@ -376,7 +376,7 @@ if test "$IS_GNUC_COMPILER" != "0"; then
          [AC_MSG_RESULT([no])]
       )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
          AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
       fi
 
@@ -403,7 +403,7 @@ if test "$IS_SUN_OS" != "0" && test "$IS_SUN_COMPILER" = "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
@@ -441,7 +441,7 @@ if test "$IS_GNUC_COMPILER" != "0"; then
          [AC_MSG_RESULT([no])]
       )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
          AC_DEFINE([_XOPEN_SOURCE], [600], [Enable _XOPEN_SOURCE])
          AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       fi
@@ -474,7 +474,7 @@ if test "$IS_GCC_COMPILER" != "0" && test "$IS_MACPORTS_COMPILER" != "0"; then
          [AC_MSG_RESULT([no])]
       )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
          AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       fi
 
@@ -509,7 +509,7 @@ if test "$IS_SUN_OS" != "0"; then
          [AC_MSG_RESULT([no])]
       )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
          AM_LDFLAGS="$AM_LDFLAGS -XCClinker -Mcryptopp.mapfile"
       fi
    fi
@@ -522,7 +522,7 @@ if test "$IS_SUN_OS" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
@@ -534,7 +534,7 @@ if test "$IS_SUN_OS" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
@@ -558,7 +558,7 @@ if test "$IS_SUN_OS" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
@@ -584,7 +584,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Enable SSE2])
@@ -602,7 +602,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
@@ -632,7 +632,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSE41_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CXXFLAGS])
@@ -658,7 +658,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSE42_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1], [Enable SSE4.2])
@@ -683,7 +683,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], [Enable CLMUL])
    else
@@ -707,7 +707,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
    fi
 
@@ -728,7 +728,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1], [Enable AESNI])
    else
@@ -752,7 +752,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SHANI_AVAILABLE], [1], [Enable SHANI])
    else
@@ -782,7 +782,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ## GCM AES and SHA should be overwritten with CLMUL, AES and SHA if available.
    ## If not available then need -xarch=sse2 due to SSE2, GCM_Xor16_SSE2, etc.
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
@@ -803,7 +803,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
@@ -827,7 +827,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSE41_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE4_1__=1"
       AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1], [Enable SSE4.1])
@@ -845,7 +845,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSE42_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
@@ -873,7 +873,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
@@ -903,7 +903,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SHA__=1"
       AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1], "Enable SHANI")
@@ -951,7 +951,7 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
@@ -992,7 +992,7 @@ if test "$IS_ARM32" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
 
       AM_CONDITIONAL([CRYPTOGAMS_AES], [true])
       AC_SUBST([CRYPTOPGAMS_FLAGS], [$CXXFLAGS])
@@ -1007,7 +1007,7 @@ if test "$IS_ARM32" != "0"; then
          [AC_MSG_RESULT([no])]
       )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
          AM_CONDITIONAL([CRYPTOGAMS_AES], [true])
          AC_SUBST([CRYPTOPGAMS_FLAGS], [$CXXFLAGS])
       else
@@ -1038,7 +1038,7 @@ if test "$IS_AARCH64" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
@@ -1060,7 +1060,7 @@ if test "$IS_AARCH64" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_ARM_CRC32_AVAILABLE], [1], [Enable ARMv8 CRC32])
    else
@@ -1076,7 +1076,7 @@ if test "$IS_AARCH64" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
@@ -1100,7 +1100,7 @@ if test "$IS_AARCH64" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SHA512_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SHA3_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_ARM_SHA512_AVAILABLE], [1], [Enable ARMv8 SHA-512])
@@ -1120,7 +1120,7 @@ if test "$IS_AARCH64" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SM3_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_ARM_SM3_AVAILABLE], [1], [Enable ARMv8 SM3])
@@ -1156,7 +1156,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
          [AC_MSG_RESULT([no])]
       )
 
-      if test "$retval" = "yes"; then
+      if test "$retval" = "0"; then
          AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       fi
    fi
@@ -1170,7 +1170,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
@@ -1195,7 +1195,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
@@ -1280,7 +1280,7 @@ if test "$IS_PPC" != "0"; then
          AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
 
          ## Power4 and Altivec
-         if test "$retval" = "yes"; then
+         if test "$retval" = "0"; then
             AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
             AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
          else
@@ -1325,7 +1325,7 @@ if test "$IS_XLC_COMPILER" = "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
@@ -1350,7 +1350,7 @@ if test "$enable_shared" = "yes"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
@@ -1371,7 +1371,7 @@ if test "$IS_APPLE_OS" = "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" = "yes"; then
+   if test "$retval" = "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
