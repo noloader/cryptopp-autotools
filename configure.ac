@@ -248,6 +248,13 @@ AC_C_BIGENDIAN(
 )
 
 #############################################################################
+## Clang and GCC does not use standard Intel header. Just make it up as you go...
+if test "$IS_IA32" = "1"; then
+
+   AC_CHECK_HEADER([x86intrin.h])
+fi
+
+#############################################################################
 ## Newlib and _XOPEN_SOURCE
 
 if true; then
@@ -719,6 +726,59 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
+   ## RDRAND. Some compilers and linkers don't support it.
+   CXXFLAGS="-mrdrnd"
+   XXX_PROGRAM="#include <immintrin.h>
+      #ifdef HAVE_X86INTRIN_H
+      # include <x86intrin.h>
+      #endif
+      int main(int argc, char** argv) {
+         unsigned int x;
+         return _rdrand32_step(&x);
+      }"
+
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_RDRAND_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_RDRAND_AVAILABLE], [1], [Enable RDRAND])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_RDRAND], [1], [Disable RDRAND])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_RDRAND"
+   fi
+
+   ## RDSEED. Some compilers and linkers don't support it.
+   CXXFLAGS="-mrdseed"
+   XXX_PROGRAM="#include <immintrin.h>
+      #ifdef HAVE_X86INTRIN_H
+      # include <x86intrin.h>
+      #endif
+      int main(int argc, char** argv) {
+         unsigned int x;
+         return _rdseed32_step(&x);
+      }"
+
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   ## TODO: Figure out why this is failing
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_RDSEED_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_RDSEED_AVAILABLE], [1], [Enable RDSEED])
+   else
+      #AC_DEFINE([CRYPTOPP_DISABLE_RDSEED], [1], [Disable RDSEED])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_RDSEED"
+   fi
+
    ## SHA. Some compilers and linkers don't support it.
    CXXFLAGS="-msse4.2 -msha"
    XXX_PROGRAM="#include <immintrin.h>
@@ -888,6 +948,56 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], "Disable AESNI")
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
+   fi
+
+   XXX_PROGRAM="#include <immintrin.h>
+      int main(int argc, char** argv) {
+         unsigned int x;
+         return _rdrand32_step(&x);
+      }"
+
+   ## https://docs.oracle.com/cd/E77782_01/html/E77792/gqexw.html
+   CXXFLAGS="-xarch=avx_i"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (rdrand)])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_RDRAND_FLAG], [$CXXFLAGS])
+      SSE_DEFINES="$SSE_DEFINES -D__RDRND__=1"
+      AC_DEFINE([CRYPTOPP_RDRAND_AVAILABLE], [1], "Enable RDRAND")
+	  AM_LDFLAGS="$AM_LDFLAGS -xarch=avx_i"
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_RDRAND], [1], "Disable RDRAND")
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_RDRAND"
+   fi
+
+   XXX_PROGRAM="#include <immintrin.h>
+      int main(int argc, char** argv) {
+         unsigned int x;
+         return _rdseed32_step(&x);
+      }"
+
+   ## https://docs.oracle.com/cd/E60778_01/html/E60745/bjapr.html
+   CXXFLAGS="-xarch=avx2_i"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (rdseed)])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_RDSEED_FLAG], [$CXXFLAGS])
+      SSE_DEFINES="$SSE_DEFINES -D__RDSEED__=1"
+      AC_DEFINE([CRYPTOPP_RDSEED_AVAILABLE], [1], "Enable RDSEED")
+	  AM_LDFLAGS="$AM_LDFLAGS -xarch=avx2_i"
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_RDSEED], [1], "Disable RDSEED")
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_RDSEED"
    fi
 
    XXX_PROGRAM="#include <immintrin.h>
@@ -1657,6 +1767,12 @@ if test x"$CRYPTOPP_GCM_FLAG" != "x"; then
 fi
 if test x"$CRYPTOPP_AES_FLAG" != "x"; then
    echo "CRYPTOPP_AES_FLAG: $CRYPTOPP_AES_FLAG"
+fi
+if test x"$CRYPTOPP_RDRAND_FLAG" != "x"; then
+   echo "CRYPTOPP_RDRAND_FLAG: $CRYPTOPP_RDRAND_FLAG"
+fi
+if test x"$CRYPTOPP_RDSEED_FLAG" != "x"; then
+   echo "CRYPTOPP_RDSEED_FLAG: $CRYPTOPP_RDSEED_FLAG"
 fi
 if test x"$CRYPTOPP_SHA_FLAG" != "x"; then
    echo "CRYPTOPP_SHA_FLAG: $CRYPTOPP_SHA_FLAG"
