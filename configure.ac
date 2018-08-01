@@ -95,6 +95,7 @@ IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
 IS_APPLE_OS=`echo "$host" | $EGREP -i -c -E 'apple|darwin'`
 IS_ANDROID_OS=`echo $host | $EGREP -i -c -E 'android'`
 IS_CYGWIN_OS=`echo $host | $EGREP -i -c -E 'cygwin'`
+IS_MINGW_OS=`echo $host | $EGREP -i -c -E 'mingw'`
 
 IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
 IS_ARM32=`echo $host | $EGREP -i -c 'arm|armhf|arm7l|eabihf'`
@@ -1452,6 +1453,60 @@ if test "$IS_SUN_OS" != "0"; then
 
    ## Restore LDFLAGS
    LDFLAGS="$SAVED_LDFLAGS"
+fi
+
+#############################################################################
+## MinGW libraries
+## Automake does not follow Make conventions and use AM_LDLIBS. Instead
+## it stuffs libraries in the flags which messes up pkg-config *.pc files.
+
+if test "$IS_MINGW_OS" = "1"; then
+
+   SAVED_LDFLAGS="$LDFLAGS"
+
+   LDFLAGS="-lws2_32"
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   ## Restore LDFLAGS
+   LDFLAGS="$SAVED_LDFLAGS"
+fi
+
+#############################################################################
+## OpenMP libraries
+## Automake does not follow Make conventions and use AM_LDLIBS. Instead
+## it stuffs libraries in the flags which messes up pkg-config *.pc files.
+
+if true; then
+
+   COUNT1=`echo $CXXFLAGS | $EGREP -c -E '\-fopenmp'`
+   COUNT2=`echo $LDFLAGS | $EGREP -c -E '\-lgomp'`
+   if test "$COUNT1" != "0" && test "$COUNT2" = "0"; then
+
+      SAVED_LDFLAGS="$LDFLAGS"
+
+      LDFLAGS="-lgomp"
+      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+      XXX_LINK_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" = "0"; then
+         AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+      fi
+
+      LDFLAGS="$SAVED_LDFLAGS"
+   fi
 fi
 
 #############################################################################
