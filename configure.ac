@@ -108,6 +108,9 @@ if [[ "$IS_64BIT" = "0" ]]; then
     IS_64BIT=$(file /bin/ls 2>&1 | grep -i -c '64-bit')
 fi
 
+## Debug builds add more goodies to help break things. I like breaking things.
+IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '-DDEBUG'`
+
 #############################################################################
 
 ## Determine the compiler's target. GCC '-dumpmachine' is the target,
@@ -281,6 +284,47 @@ if true; then
 
       if test "$retval" = "0"; then
          AC_DEFINE([_XOPEN_SOURCE], [600], [Enable _XOPEN_SOURCE])
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## libstdc++ and _GLIBCXX_DEBUG
+if test "$IS_DEBUG" = "1"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   XXX_PROGRAM="#include <string>
+      int main(int argc, char** argv) {
+         #ifndef __GLIBCXX__
+         #  error
+         #endif
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([whether runtime library is libstdc++])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+
+      CXXFLAGS="-D_GLIBCXX_DEBUG"
+      AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" = "0"; then
          AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       fi
    fi
@@ -1131,6 +1175,22 @@ if test "$IS_XLC_COMPILER" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
+   if test "$IS_DEBUG" != "0"; then
+
+      # Finds alias violations
+      CXXFLAGS="-qalias=noansi"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" = "0"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
@@ -1467,12 +1527,15 @@ const lword LWORD_MAX = W64LIT(0xffffffffffffffff);
 EOT
 fi
 
+#############################################################################
+## Miscellaneous items
+
 ## Fix CCAS and CCASFLAGS
 ## Also see https://stackoverflow.com/q/51575580/608639
 AC_SUBST([CCAS], [$CXX])
 AC_SUBST([CCASFLAGS], [$CXXFLAGS])
 
-## Without this 'make' uses out GNUmakefile, and not Makefile
+## Without this 'make' uses our GNUmakefile, and not Makefile
 # AC_CONFIG_COMMANDS_PRE([rm -f config.h 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross 2>/dev/null])
