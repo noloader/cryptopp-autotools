@@ -202,7 +202,7 @@ AC_DEFUN([XXX_LINK_IFELSE],
 #############################################################################
 ## Doxygen documentation
 ## This only provides a 'make html-doc' recipe in the Makefile.
-## If Docygen is available the user still must issue the command.
+## If Doxygen is available the user still must issue the command.
 
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN"; then
@@ -233,6 +233,27 @@ if true; then
 fi
 
 #############################################################################
+## Pthread library
+
+if true; then
+
+   ## Add to both CXXFLAGS and LDFLAGS if supported.
+   ## https://stackoverflow.com/q/2127797/608639.
+ 
+   SAVED_CXXFLAGS="$CXXFLAGS"
+   CXXFLAGS="-pthread"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_FAILURE([no])]
+   )
+   AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
 ## Solaris, SunCC and missing optimizations
 
 OPT_ANY=`echo $CXXFLAGS | $EGREP -c -E '\-O0|\-O1|\-O2|\-O3|\-O4|\-O5|\-xO0|\-xO1|\-xO2|\-xO3|\-xO4|\-xO5|\-Os|\-Og|\-Ofast'`
@@ -241,13 +262,13 @@ if test "$IS_SUN_COMPILER" = "1" && test "$OPT_ANY" = "0"; then
 
    SAVED_CXXFLAGS="$CXXFLAGS"
    CXXFLAGS="-xO2"
-   AC_MSG_CHECKING([for -xO2 support])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_FAILURE([no])]
    )
-   AM_CXXFLAGS="$AM_CXXFLAGS -xO2"
+   AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -255,13 +276,13 @@ if test "$IS_SUN_COMPILER" = "0" && test "$OPT_ANY" = "0"; then
 
    SAVED_CXXFLAGS="$CXXFLAGS"
    CXXFLAGS="-O2"
-   AC_MSG_CHECKING([for -O2 support])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_FAILURE([no])]
    )
-   AM_CXXFLAGS="$AM_CXXFLAGS -O2"
+   AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
