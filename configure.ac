@@ -68,6 +68,7 @@ LT_INIT
 AC_PROG_CXX
 AC_LANG([C++])
 AC_PROG_GREP
+AC_PROG_AWK
 
 ## Assert this once to avoid surprises
 AC_LANG_ASSERT([C++])
@@ -167,7 +168,7 @@ LDNAME=`basename "$LD"`
 
 ## Small fixup
 case "$LDNAME" in
-	"ld -m"*) LDNAME=ld
+	"ld "*) LDNAME=ld
 	;;
 esac
 
@@ -1305,14 +1306,28 @@ if test "$IS_PPC" != "0"; then
 fi
 
 #############################################################################
-## Other fodder
+## Add -pipe for non-IoT gadgets to speedup compiles. We use 2GB RAM as
+## threshold. Anything with less than 2GB will not use -pipe.
 
-## Add -pipe for non-IoT gadgets to speedup the compile. IoT gadgets, like
-## BeagleBoards and CubieTrucks, don't have swap files and run out of memory.
+# Unix, Linux and family
+MEM_SIZE=`$EGREP "MemTotal" /proc/meminfo 2>/dev/null | $AWK '{print int($2/1024); exit;}'`
 
-if test "$IS_IA32" != "0" || test "$IS_AARCH64" != "0" || test "$IS_PPC" != "0"; then
-if test "$IS_SUN_COMPILER" = "0"; then
-if test "$IS_XLC_COMPILER" = "0"; then
+# Darwin
+if test "$IS_APPLE_OS" != "0"; then
+   MEM_SIZE=`sysctl -a 2>&1 | $EGREP "hw.memsize" 2>/dev/null | $AWK '{print int($3/1024/1024); exit;}'`
+fi
+
+# Solaris
+if test "$IS_SUN_OS" != "0"; then
+   MEM_SIZE=`prtconf 2>/dev/null | $EGREP "Memory" | $AWK '{print int($3/1024); exit;}'`
+fi
+
+# AIX
+if test "$IS_AIX_OS" != "0"; then
+   MEM_SIZE=`prtconf -m 2>/dev/null | $EGREP "MB" | $AWK '{print int($3/1024); exit;}'`
+fi
+
+if test "$MEM_SIZE" -ge "2"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -1332,10 +1347,9 @@ if test "$IS_XLC_COMPILER" = "0"; then
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
-fi
-fi
 
-## Add -Wl,--exclude-libs,ALL for GNU linker to stops us from re-exporting
+#############################################################################
+## Add -Wl,--exclude-libs,ALL for GNU linker to stop us from re-exporting
 ## symbols in other libraries. This keeps our ELF section header smaller.
 
 if test "$enable_shared" = "yes"; then
@@ -1357,9 +1371,10 @@ if test "$enable_shared" = "yes"; then
    LDFLAGS="$SAVED_LDFLAGS"
 fi
 
+#############################################################################
 ## Add -Wl,--as-needed for linker to avoid linking unneeded libraries.
 
-if test "$IS_APPLE_OS" = "0"; then
+if true; then
 
    SAVED_LDFLAGS="$LDFLAGS"
    LDFLAGS="-Wl,--as-needed"
