@@ -234,6 +234,62 @@ if true; then
 fi
 
 #############################################################################
+## Big endian/little endian
+
+AC_C_BIGENDIAN(
+  AC_DEFINE(CRYPTOPP_BIG_ENDIAN, 1, [machine is big-endian]),
+  AC_DEFINE(CRYPTOPP_LITTLE_ENDIAN, 1, [machine is little-endian]),
+  AC_MSG_ERROR([unknown endianess]),
+  AC_MSG_ERROR([universial endianess not supported])
+)
+
+#############################################################################
+## Newlib and _XOPEN_SOURCE
+
+if true; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## This test may need to be changed if the Newlib folks provide directions.
+   ## Also see http://www.sourceware.org/ml/newlib/2017/msg01095.html.
+
+   XXX_PROGRAM="#include <string>
+      int main(int argc, char** argv) {
+         #ifndef __NEWLIB__
+	     #  error
+	     #endif
+		 return 0;
+      }"
+
+   AC_MSG_CHECKING([whether runtime library is Newlib])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+
+      CXXFLAGS="-D_XOPEN_SOURCE=600"
+      AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" = "0"; then
+         AC_DEFINE([_XOPEN_SOURCE], [600], [Enable _XOPEN_SOURCE])
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
 ## Pthread library
 
 if true; then
@@ -296,16 +352,6 @@ if test "$OPT_ANY" = "0"; then
 
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
-
-#############################################################################
-## Big endian/little endian
-
-AC_C_BIGENDIAN(
-  AC_DEFINE(CRYPTOPP_BIG_ENDIAN, 1, [machine is big-endian]),
-  AC_DEFINE(CRYPTOPP_LITTLE_ENDIAN, 1, [machine is little-endian]),
-  AC_MSG_ERROR([unknown endianess]),
-  AC_MSG_ERROR([universial endianess not supported])
-)
 
 #############################################################################
 ## Fix AR on iOS and OS X
@@ -373,46 +419,6 @@ if test "$IS_SUN_OS" != "0" && test "$IS_SUN_COMPILER" = "0"; then
 
    if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-   fi
-
-   ## Restore CXXFLAGS
-   CXXFLAGS="$SAVED_CXXFLAGS"
-fi
-
-#############################################################################
-## Newlib and _XOPEN_SOURCE
-
-if test "$IS_GNUC_COMPILER" != "0"; then
-
-   ## Save CXXFLAGS
-   SAVED_CXXFLAGS="$CXXFLAGS"
-
-   ## This test may need to be changed if the Newlib folks provide directions.
-   ## Also see http://www.sourceware.org/ml/newlib/2017/msg01095.html.
-
-   COUNT=`echo "#include <string>" | $CXX $CXXFLAGS -x c++ -dM -E - | grep -i -c newlib`
-   if test "$COUNT" != "0"; then
-      AC_MSG_CHECKING([if runtime library is Newlib])
-      AC_MSG_RESULT([yes])
-   else
-      AC_MSG_CHECKING([if runtime library is Newlib])
-      AC_MSG_RESULT([no])
-   fi
-
-   if test "$COUNT" != "0"; then
-
-      CXXFLAGS="-D_XOPEN_SOURCE=600"
-      AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
-      XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes])],
-         [AC_MSG_RESULT([no])]
-      )
-
-      if test "$retval" = "0"; then
-         AC_DEFINE([_XOPEN_SOURCE], [600], [Enable _XOPEN_SOURCE])
-         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-      fi
    fi
 
    ## Restore CXXFLAGS
@@ -709,6 +715,25 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disable SSE2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+   fi
+
+   ## Nothing pivots around SSE3 specifically, but we do use
+   ## insns from the ISA. Sun requires it as a linker flag.
+   CXXFLAGS="-xarch=sse3"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      SSE_DEFINES="$SSE_DEFINES -D__SSE3__=1"
+      AC_DEFINE([CRYPTOPP_SSE3_AVAILABLE], [1], [Enable SSE3])
+      AM_LDFLAGS="$AM_LDFLAGS -xarch=sse3"
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [Disable SSE3])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
    fi
 
    CXXFLAGS="-xarch=ssse3"
