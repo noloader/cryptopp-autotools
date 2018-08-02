@@ -110,7 +110,7 @@ if [[ "$IS_64BIT" = "0" ]]; then
 fi
 
 ## Debug builds add more goodies to help break things. I like breaking things.
-IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '-DDEBUG'`
+IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-DDEBUG'`
 
 #############################################################################
 
@@ -1340,96 +1340,107 @@ fi
 
 if test "$IS_PPC" != "0"; then
 
-   if test "$IS_XLC_COMPILER" != "0"; then
-      PPC_POWER4_FLAG="-qarch=pwr4 -qaltivec"
-      PPC_POWER7_FLAG="-qarch=pwr7 -qaltivec"
+   if test "$IS_XLC_COMPILER" = "1"; then
       PPC_POWER8_FLAG="-qarch=pwr8 -qaltivec"
+      PPC_POWER7_FLAG="-qarch=pwr7 -qaltivec"
+      PPC_POWER4_FLAG="-qarch=pwr4 -qaltivec"
    else
-      PPC_POWER4_FLAG="-mcpu=power4 -maltivec"
-      PPC_POWER7_FLAG="-mcpu=power7 -maltivec"
       PPC_POWER8_FLAG="-mcpu=power8 -maltivec"
+      PPC_POWER7_FLAG="-mcpu=power7 -maltivec"
+      PPC_POWER4_FLAG="-mcpu=power4 -maltivec"
    fi
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
-   pwr_value="0"
 
-   ## ppc-simd.cpp, gcm-simd.cpp, rijndael-simd.cpp, sha-simd.cpp
-   ## Altivec needs Power4, but the VSX loads and stores needs Power7.
-   CXXFLAGS="$PPC_POWER4_FLAG"
+   CXXFLAGS="$PPC_POWER8_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([pwr_value], [4])],
-      [AC_MSG_RESULT([no])                             ]
+      [AC_MSG_RESULT([yes]); AC_SUBST([pwr8_value], [8])],
+      [AC_MSG_RESULT([no])                              ]
    )
 
    CXXFLAGS="$PPC_POWER7_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([pwr_value], [7])],
-      [AC_MSG_RESULT([no])                             ]
+      [AC_MSG_RESULT([yes]); AC_SUBST([pwr7_value], [7])],
+      [AC_MSG_RESULT([no])                              ]
    )
 
-   CXXFLAGS="$PPC_POWER8_FLAG"
+   CXXFLAGS="$PPC_POWER4_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([pwr_value], [8])],
-      [AC_MSG_RESULT([no])                             ]
+      [AC_MSG_RESULT([yes]); AC_SUBST([pwr4_value], [4])],
+      [AC_MSG_RESULT([no])                              ]
    )
 
-   ## Power8 and Crypto
-   if test "$pwr_value" = "8"; then
-      AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
-      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE],  [1], [Enable Power7])
-      AC_DEFINE([CRYPTOPP_POWER8_AVAILABLE],  [1], [Enable Power8])
+   ## Power8 and VSX. In-core crypto.
+   if test "$pwr8_value" = "8"; then
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$PPC_POWER8_FLAG])
       AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1], [Enable Power8 CRC])
       AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1], [Enable Power8 AES])
+      AC_DEFINE([CRYPTOPP_POWER8_PMULL_AVAILABLE], [1], [Enable Power8 PMULL])
       AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1], [Enable Power8 SHA])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable Power8])
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1], [Disable Power8 CRC])
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1], [Disable Power8 AES])
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1], [Disable Power8 SHA])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8=1"
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_CRC], [1], [Disable Power8 CRC])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_CRC=1"
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1], [Disable Power8 AES])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES=1"
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_PMULL], [1], [Disable Power8 PMULL])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_PMULL=1"
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA], [1], [Disable Power8 SHA])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA=1"
-
-      ## Power7 and VSX
-      if test "$pwr_value" = "7"; then
-         AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-         AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
-      else
-         AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
-
-         ## Power4 and Altivec
-         if test "$retval" = "0"; then
-            AC_SUBST([CRYPTOPP_PPC_FLAG], [$CXXFLAGS])
-            AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
-         else
-            AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
-            AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ALTIVEC=1"
-         fi
-      fi
    fi
 
-   ## These are much higher ISA's than needed and may break distros. The
-   ## problem is LLVM on GCC119. It is a Power8 machine but Clang rejects
-   ## -qarch=pwr4 and -qarch=pwr7. The only option we have is -qarch=pwr8.
-   AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CRYPTOPP_PPC_FLAG])
-   AC_SUBST([CRYPTOPP_LEA_FLAG], [$CRYPTOPP_PPC_FLAG])
-   AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$CRYPTOPP_PPC_FLAG])
-   AC_SUBST([CRYPTOPP_SIMON_FLAG], [$CRYPTOPP_PPC_FLAG])
-   AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CRYPTOPP_PPC_FLAG])
-   AC_SUBST([CRYPTOPP_SM4_FLAG], [$CRYPTOPP_PPC_FLAG])
+   ## Power7 and VSX. Unaligned loads and stores. These are sorted
+   ## in preferred order. XLC 13.1 with LLVM backend only provides
+   ## PWR8. It creates problems because we only want PWR4 and PWR7
+   ## on some files. The unwanted higher ISA could lead to a SIGILL.
+   if test "$pwr7_value" = "7"; then
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
+      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_LEA_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SPECK_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$PPC_POWER7_FLAG])
+   elif test "$pwr8_value" = "8"; then
+      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_LEA_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_SPECK_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$PPC_POWER8_FLAG])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
+   fi
+
+   ## Power4 and Altivec. These are sorted in preferred order.
+   ## XLC 13.1 with LLVM backend only provides PWR8. It creates
+   ## problems because we only want PWR4 and PWR7 on some files.
+   ## The unwanted higher ISA could lead to a SIGILL.
+   if test "$pwr4_value" = "4"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER4_FLAG])
+      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
+   elif test "$pwr7_value" = "7"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER7_FLAG])
+      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
+   elif test "$pwr8_value" = "8"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER8_FLAG])
+      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
+      AM_CXXFLAGS="$AM_CXXFLAGS -CRYPTOPP_DISABLE_ALTIVEC=1"
+   fi
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
@@ -1499,7 +1510,7 @@ if true; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
-   # Linux uses 
+   # Linux uses --gc-sections
    LDFLAGS="-Wl,--gc-sections"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
