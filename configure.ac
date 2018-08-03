@@ -378,6 +378,12 @@ fi
 #############################################################################
 ## Init priorities
 
+## The tests below should be in two separate source file violating
+## init order. One object file should perform the Foo or Bar static
+## init, and the second source would have a static object using
+## Foo::s_x or Bar::s_x. The problem is, we don't know how to do it.
+## Also see https://stackoverflow.com/q/51662985/608639.
+
 ## GCC-style
 if true; then
 
@@ -399,9 +405,11 @@ if true; then
          int m_x;
       };
       int Foo::s_x = -1;
+      static Foo unused __attribute__ ((init_priority (250))) = Foo::s_x;
       // This should be in a separate source file violating init order.
-      // The problem is, we don't know how to do it with Autotools.
-      Foo f __attribute__ ((init_priority (250))) = Foo::s_x;"
+      // The separate file should have a main() and be linked first.
+      // static Foo f = Foo::s_x;
+      // bool success = f.m_x == -1;"
 
    AC_MSG_CHECKING([if $CXXNAME supports init_priority])
    XXX_COMPILE_IFELSE(
@@ -445,9 +453,11 @@ if true; then
       };
       #pragma init_seg(".CRT$XCU")
       int Bar::s_x = -1;
+      static Bar unused __attribute__ ((init_priority (250))) = Bar::s_x;
       // This should be in a separate source file violating init order.
-      // The problem is, we don't know how to do it with Autotools.
-      Bar f = Bar::s_x;"
+      // The separate file should have a main() and be linked first.
+      // static Bar b = Bar::s_x;
+      // bool success = b.m_x == -1;"
 
    AC_MSG_CHECKING([if $CXXNAME supports init_seg])
    XXX_COMPILE_IFELSE(
