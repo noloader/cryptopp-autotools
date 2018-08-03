@@ -1450,13 +1450,13 @@ fi
 if test "$IS_PPC" != "0"; then
 
    if test "$IS_XLC_COMPILER" = "1"; then
-      PPC_POWER8_FLAG="-qarch=pwr8 -qaltivec"
-      PPC_POWER7_FLAG="-qarch=pwr7 -qaltivec"
       PPC_POWER4_FLAG="-qarch=pwr4 -qaltivec"
+      PPC_POWER7_FLAG="-qarch=pwr7 -qaltivec"
+      PPC_POWER8_FLAG="-qarch=pwr8 -qaltivec"
    else
-      PPC_POWER8_FLAG="-mcpu=power8 -maltivec"
-      PPC_POWER7_FLAG="-mcpu=power7 -maltivec"
       PPC_POWER4_FLAG="-mcpu=power4 -maltivec"
+      PPC_POWER7_FLAG="-mcpu=power7 -maltivec"
+      PPC_POWER8_FLAG="-mcpu=power8 -maltivec"
    fi
 
    ## Save CXXFLAGS
@@ -1486,12 +1486,43 @@ if test "$IS_PPC" != "0"; then
       [AC_MSG_RESULT([no])                              ]
    )
 
+   ## Power4 and Altivec. These are sorted in preferred order.
+   ## XLC 13.1 with LLVM backend only provides PWR8. It creates
+   ## problems because we only want PWR4 and PWR7 on some files.
+   ## The unwanted higher ISA could lead to a SIGILL.
+   if test "$pwr4_value" = "4"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER4_FLAG])
+      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
+      AM_CXXFLAGS="$AM_CXXFLAGS -CRYPTOPP_DISABLE_ALTIVEC=1"
+   fi
+
+   ## Power7 and VSX. Unaligned loads and stores. These are sorted
+   ## in preferred order. XLC 13.1 with LLVM backend only provides
+   ## PWR8. It creates problems because we only want PWR4 and PWR7
+   ## on some files. The unwanted higher ISA could lead to a SIGILL.
+   if test "$pwr7_value" = "7"; then
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
+      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_LEA_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SPECK_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER7_FLAG])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
+   fi
+
    ## Power8 and VSX. In-core crypto.
    if test "$pwr8_value" = "8"; then
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER8_FLAG])
       AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1], [Enable Power8 CRC])
       AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1], [Enable Power8 AES])
       AC_DEFINE([CRYPTOPP_POWER8_PMULL_AVAILABLE], [1], [Enable Power8 PMULL])
@@ -1509,47 +1540,6 @@ if test "$IS_PPC" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA=1"
    fi
 
-   ## Power7 and VSX. Unaligned loads and stores. These are sorted
-   ## in preferred order. XLC 13.1 with LLVM backend only provides
-   ## PWR8. It creates problems because we only want PWR4 and PWR7
-   ## on some files. The unwanted higher ISA could lead to a SIGILL.
-   if test "$pwr7_value" = "7"; then
-      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
-      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_LEA_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_SPECK_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_SM4_FLAG], [$PPC_POWER7_FLAG])
-   elif test "$pwr8_value" = "8"; then
-      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$PPC_POWER8_FLAG])
-      AC_SUBST([CRYPTOPP_LEA_FLAG], [$PPC_POWER8_FLAG])
-      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$PPC_POWER8_FLAG])
-      AC_SUBST([CRYPTOPP_SIMON_FLAG], [$PPC_POWER8_FLAG])
-      AC_SUBST([CRYPTOPP_SPECK_FLAG], [$PPC_POWER8_FLAG])
-      AC_SUBST([CRYPTOPP_SM4_FLAG], [$PPC_POWER8_FLAG])
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
-   fi
-
-   ## Power4 and Altivec. These are sorted in preferred order.
-   ## XLC 13.1 with LLVM backend only provides PWR8. It creates
-   ## problems because we only want PWR4 and PWR7 on some files.
-   ## The unwanted higher ISA could lead to a SIGILL.
-   if test "$pwr4_value" = "4"; then
-      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER4_FLAG])
-      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
-   elif test "$pwr7_value" = "7"; then
-      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER7_FLAG])
-      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
-   elif test "$pwr8_value" = "8"; then
-      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER8_FLAG])
-      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
-      AM_CXXFLAGS="$AM_CXXFLAGS -CRYPTOPP_DISABLE_ALTIVEC=1"
-   fi
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
