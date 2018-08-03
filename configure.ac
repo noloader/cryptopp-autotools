@@ -65,7 +65,7 @@ AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
 AC_CONFIG_SRCDIR([configure.ac])
 
 AM_PROG_AS
-#AC_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 LT_INIT
 
 AC_PROG_CXX
@@ -250,10 +250,10 @@ fi
 ## Big endian/little endian
 
 AC_C_BIGENDIAN(
-  AC_DEFINE(CRYPTOPP_BIG_ENDIAN, 1, [machine is big-endian]),
-  AC_DEFINE(CRYPTOPP_LITTLE_ENDIAN, 1, [machine is little-endian]),
-  AC_MSG_ERROR([unknown endianess]),
-  AC_MSG_ERROR([universial endianess not supported])
+   AC_DEFINE(CRYPTOPP_BIG_ENDIAN, 1, [machine is big-endian]),
+   AC_DEFINE(CRYPTOPP_LITTLE_ENDIAN, 1, [machine is little-endian]),
+   AC_MSG_ERROR([unknown endianess]),
+   AC_MSG_ERROR([universial endianess not supported])
 )
 
 #############################################################################
@@ -882,7 +882,6 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
-   ## TODO: Figure out why this is failing
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_RDSEED_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_RDSEED_AVAILABLE], [1], [Enable RDSEED])
