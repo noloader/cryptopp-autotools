@@ -44,6 +44,11 @@
 ## - Fix static initialization order fiasco tests. We don't know how to craft the tests because
 ##   we don't know how to compile two files at once using Autotools.
 ##
+## - Fix -xarch for SHA when using SunCC. We don't know the arch value at the moment.
+##
+## - Fix LDFLAGS on AIX. Autotools is adding unwanted flags to LDFLAGS and it is causing
+##   a runtime crash in startup code. See https://stackoverflow.com/q/51680113/608639.
+##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
@@ -882,7 +887,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE2__=1"
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Enable SSE2])
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=sse2"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disable SSE2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
@@ -901,7 +906,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    if test "$retval" = "0"; then
       SSE_DEFINES="$SSE_DEFINES -D__SSE3__=1"
       AC_DEFINE([CRYPTOPP_SSE3_AVAILABLE], [1], [Enable SSE3])
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=sse3"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [Disable SSE3])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
@@ -925,7 +930,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_SUBST([CRYPTOPP_SPECK_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSSE3__=1"
       AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1], [Enable SSSE3])
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=ssse3"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [Disable SSSE3])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
@@ -943,7 +948,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_SUBST([CRYPTOPP_SSE41_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE4_1__=1"
       AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1], [Enable SSE4.1])
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_1"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.1])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
@@ -963,7 +968,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_SUBST([CRYPTOPP_BLAKE2_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SSE4_2__=1"
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1], [Enable SSE4.2])
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=sse4_2"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
@@ -992,7 +997,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       SSE_DEFINES="$SSE_DEFINES -D__AES__=1"
       AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], "Enable CLMUL")
       AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1], "Enable AESNI")
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=aes"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], "Disable CLMUL")
       AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], "Disable AESNI")
@@ -1012,7 +1017,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ## It is not clear if we can avoid the linker option for Solaris
    ## Also see https://stackoverflow.com/q/51678753/608639
    if test "$retval" = "0"; then
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=avx_i"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    fi
 
    ## https://docs.oracle.com/cd/E60778_01/html/E60745/bjapr.html
@@ -1027,18 +1032,19 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ## It is not clear if we can avoid the linker option for Solaris
    ## Also see https://stackoverflow.com/q/51678753/608639
    if test "$retval" = "0"; then
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=avx2_i"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    fi
 
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
          __m128i x;
-         x=_mm_sha1rnds4_epu32(x,x,0);
+         x=_mm_sha1msg1_epu32(x,x);
+         x=_mm_sha256msg1_epu32(x,x);
          return 0;
    }"
 
-   ##CXXFLAGS="-xarch=sha"
-   CXXFLAGS="-xarch=avx2_i"
+   ##CXXFLAGS="-xarch=avx2_i"
+   CXXFLAGS="-xarch=sha"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (sha?)])
    XXX_COMPILE_IFELSE(
       [AC_LANG_SOURCE([$XXX_PROGRAM])],
@@ -1050,7 +1056,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       SSE_DEFINES="$SSE_DEFINES -D__SHA__=1"
       AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1], "Enable SHANI")
-      AM_LDFLAGS="$AM_LDFLAGS -xarch=sha"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1], "Disable SHANI")
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
