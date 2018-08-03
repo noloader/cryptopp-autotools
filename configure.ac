@@ -41,6 +41,9 @@
 ##   I'm guessing this has something to do with libtool, but I have no idea how to fix it at
 ##   the moment. Also see http://lists.gnu.org/archive/html/bug-libtool/2017-11/msg00002.html.
 ##
+## - Fix static initialization order fiasco tests. We don't know how to craft the tests because
+##   we don't know how to compile two files at once using Autotools.
+##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
