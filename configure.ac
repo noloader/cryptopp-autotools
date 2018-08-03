@@ -1000,54 +1000,34 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-   XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char** argv) {
-         unsigned int x;
-         return _rdrand32_step(&x);
-      }"
-
    ## https://docs.oracle.com/cd/E77782_01/html/E77792/gqexw.html
    CXXFLAGS="-xarch=avx_i"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (rdrand)])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   AC_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
 
+   ## It is not clear if we can avoid the linker option for Solaris
+   ## Also see https://stackoverflow.com/q/51678753/608639
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_RDRAND_FLAG], [$CXXFLAGS])
-      SSE_DEFINES="$SSE_DEFINES -D__RDRND__=1"
-      AC_DEFINE([CRYPTOPP_RDRAND_AVAILABLE], [1], "Enable RDRAND")
       AM_LDFLAGS="$AM_LDFLAGS -xarch=avx_i"
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_RDRAND], [1], "Disable RDRAND")
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_RDRAND"
    fi
-
-   XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char** argv) {
-         unsigned int x;
-         return _rdseed32_step(&x);
-      }"
 
    ## https://docs.oracle.com/cd/E60778_01/html/E60745/bjapr.html
    CXXFLAGS="-xarch=avx2_i"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (rdseed)])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   AC_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
 
+   ## It is not clear if we can avoid the linker option for Solaris
+   ## Also see https://stackoverflow.com/q/51678753/608639
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_RDSEED_FLAG], [$CXXFLAGS])
-      SSE_DEFINES="$SSE_DEFINES -D__RDSEED__=1"
-      AC_DEFINE([CRYPTOPP_RDSEED_AVAILABLE], [1], "Enable RDSEED")
       AM_LDFLAGS="$AM_LDFLAGS -xarch=avx2_i"
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_RDSEED], [1], "Disable RDSEED")
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_RDSEED"
    fi
 
    XXX_PROGRAM="#include <immintrin.h>
