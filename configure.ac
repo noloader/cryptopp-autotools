@@ -150,7 +150,13 @@ if test x"$COMPILER_VERSION" = "x"; then
    COMPILER_VERSION=`"$CXX" -V 2>&1 | head -n 1`
 fi
 
+## Microsoft test for COMPILER_VERSION
+if test `basename "$CXX"` = "cl.exe"; then
+   COMPILER_VERSION=`"$CXX" /? 2>&1 | head -n 1`
+fi
+
 IS_GCC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -v 'Clang' | $EGREP -i -c -E 'GCC|G\+\+'`
+IS_MSC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'Microsoft'`
 IS_LLVM_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'LLVM|Clang'`
 IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
 IS_ICC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'ICC'`
@@ -364,6 +370,97 @@ if true; then
    if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+   fi
+
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## Init priorities
+
+## GCC-style
+if true; then
+
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## -Wall -Werror are GCC and friends specific. The problem is,
+   ## Autotools lacks a cross-platform AC_TREAT_WARNINGS_AS_ERRORS.
+   if test "$IS_MSC_COMPILER" = "0"; then
+      THIS_CXXFLAGS="-Wall -Werror"
+   fi
+
+   CXXFLAGS="$THIS_CXXFLAGS"
+   XXX_PROGRAM="#include <string>
+      struct Foo {
+         Foo(int x) : m_x(x) {}
+         Foo(const Foo& o) : m_x(o.m_x) {}
+         Foo& operator=(const Foo& o) {m_x=o.m_x; return *this;}
+         static int s_x;
+         int m_x;
+      };
+      int Foo::s_x = -1;
+      // This should be in a separate source file violating init order.
+      // The problem is, we don't know how to do it with Autotools.
+      Foo f __attribute__ ((init_priority (250))) = Foo::s_x;"
+
+   AC_MSG_CHECKING([if $CXXNAME supports init_priority])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([HAVE_GCC_INIT_PRIORITY], [1])
+      AC_DEFINE([CRYPTOPP_INIT_PRIORITY], [250], [Enable init_priority])
+   else
+      AC_DEFINE([CRYPTOPP_INIT_PRIORITY], [0], [Disable init_priority])
+   fi
+
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+## MSC-style
+if true; then
+
+   ## The problem is, Autotools lacks a cross-platform
+   ## AC_TREAT_WARNINGS_AS_ERRORS. Clang, GCC, and friends will see
+   ## "pragma init_seg" and issue an an unknown pragma warning.
+   ## Adding -Wall or -Werror will cause MSC and friends to fail on
+   ## the illegal flag.
+   if test "$IS_MSC_COMPILER" = "1"; then
+      THIS_CXXFLAGS="/WX"
+   else
+      THIS_CXXFLAGS="-Wall -Werror"
+   fi
+
+   CXXFLAGS="$THIS_CXXFLAGS"
+   XXX_PROGRAM="#include <string>
+      struct Bar {
+         Bar(int x) : m_x(x) {}
+         Bar(const Bar& o) : m_x(o.m_x) {}
+         Bar& operator=(const Bar& o) {m_x=o.m_x; return *this;}
+         static int s_x;
+         int m_x;
+      };
+      #pragma init_seg(".CRT$XCU")
+      int Bar::s_x = -1;
+      // This should be in a separate source file violating init order.
+      // The problem is, we don't know how to do it with Autotools.
+      Bar f = Bar::s_x;"
+
+   AC_MSG_CHECKING([if $CXXNAME supports init_seg])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([HAVE_MSC_INIT_PRIORITY], [1])
+      AC_DEFINE([CRYPTOPP_INIT_PRIORITY], [250], [Enable init_seg])
+   else
+      AC_DEFINE([CRYPTOPP_INIT_PRIORITY], [0], [Disable init_seg])
    fi
 
    CXXFLAGS="$SAVED_CXXFLAGS"
