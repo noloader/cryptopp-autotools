@@ -11,7 +11,7 @@
 ## because the Autotools on some machines, like a PowerMac or Solaris, are not modern
 ## enough for macros like AC_PROG_LIBTOOL and AC_ENABLE_SHARED.
 ##
-##   autoupdate && libtoolize -fi && autoreconf -fi
+##   autoupdate && libtoolize && autoreconf
 ##
 
 ## TODO
@@ -357,8 +357,10 @@ if true; then
    ## https://stackoverflow.com/q/2127797/608639.
 
    SAVED_CXXFLAGS="$CXXFLAGS"
+   SAVED_LDFLAGS="$LDFLAGS"
 
    CXXFLAGS="-pthread"
+   LDFLAGS="-pthread"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
@@ -368,9 +370,10 @@ if true; then
 
    if test "$retval" = "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
+   LDFLAGS="$SAVED_LDFLAGS"
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
@@ -1595,6 +1598,50 @@ if test "$IS_SUN_OS" != "0"; then
 fi
 
 #############################################################################
+## Add -O1 to linker to optimize the elf binary.
+
+if true; then
+
+   SAVED_LDFLAGS="$LDFLAGS"
+   LDFLAGS="-Wl,-O1"
+
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   LDFLAGS="$SAVED_LDFLAGS"
+fi
+
+#############################################################################
+## Demangle output names if possible for friendlier err messages
+
+if true; then
+
+   SAVED_LDFLAGS="$LDFLAGS"
+   LDFLAGS="-Wl,--demangle"
+
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   LDFLAGS="$SAVED_LDFLAGS"
+fi
+
+#############################################################################
 ## MinGW libraries
 ## Automake does not follow Make conventions and use AM_LDLIBS. Instead
 ## it stuffs libraries in the flags which messes up pkg-config *.pc files.
@@ -1796,12 +1843,6 @@ if test x"$CRYPTOPP_GCM_FLAG" != "x"; then
 fi
 if test x"$CRYPTOPP_AES_FLAG" != "x"; then
    echo "CRYPTOPP_AES_FLAG: $CRYPTOPP_AES_FLAG"
-fi
-if test x"$CRYPTOPP_RDRAND_FLAG" != "x"; then
-   echo "CRYPTOPP_RDRAND_FLAG: $CRYPTOPP_RDRAND_FLAG"
-fi
-if test x"$CRYPTOPP_RDSEED_FLAG" != "x"; then
-   echo "CRYPTOPP_RDSEED_FLAG: $CRYPTOPP_RDSEED_FLAG"
 fi
 if test x"$CRYPTOPP_SHA_FLAG" != "x"; then
    echo "CRYPTOPP_SHA_FLAG: $CRYPTOPP_SHA_FLAG"
