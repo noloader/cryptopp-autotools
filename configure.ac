@@ -83,8 +83,9 @@ AC_LANG_ASSERT([C++])
 
 ## Used for our test compile and link to detect failures. It is more
 ## robust than Autotools and catches XL C/C++ and SunCC problems.
+## When searching for elements in BAD_RESULT use case-insensitivity.
 
-BAD_RESULT="fatal|error|unknown|unrecognized|illegal|ignored|not found|not exist|cannot find|not supported"
+BAD_RESULT="fatal|error|unknown|unrecognized|illegal|ignored|incorrect|not found|not exist|cannot find|not supported"
 
 #############################################################################
 
@@ -530,6 +531,8 @@ fi
 
 #############################################################################
 ## Dead code stripping for compilers. Linkers are towards the end of script.
+## We have to use XXX_LINK_IFELSE because some compilers don't reject
+## -fdata-sections or -ffunction-sections like they should.
 
 if true; then
 
@@ -538,7 +541,7 @@ if true; then
 
    CXXFLAGS="-fdata-sections"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
+   XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
@@ -550,7 +553,7 @@ if true; then
 
    CXXFLAGS="-ffunction-sections"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
+   XXX_LINK_IFELSE(
       [AC_LANG_PROGRAM([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
