@@ -1316,8 +1316,38 @@ if test "$IS_XLC_COMPILER" != "0"; then
       fi
    fi
 
+   ## -qpic must be present for some xlC compilers
+   HAS_PIC=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-qpic'`
+   if test "$HAS_PIC" = "0"; then
+
+      CXXFLAGS="-qpic"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" = "0"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
    # Promotes optimizations
    CXXFLAGS="-qmaxmem=-1"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
+   # Promotes optimizations
+   CXXFLAGS="-qthreaded"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
