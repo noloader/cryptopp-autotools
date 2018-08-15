@@ -62,8 +62,10 @@ EXTRA_LTLIBRARIES = \
    libsha_simd.la \
    libshacal2_simd.la \
    libsimeck_simd.la \
-   libsimon_simd.la \
-   libspeck_simd.la \
+   libsimon64_simd.la \
+   libsimon128_simd.la \
+   libspeck64_simd.la \
+   libspeck128_simd.la \
    libsm4_simd.la \
    libsse_simd.la
 
@@ -102,8 +104,10 @@ libcryptopp_la_LIBADD = \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
    $(libsimeck_simd_la_OBJECTS) \
-   $(libsimon_simd_la_OBJECTS) \
-   $(libspeck_simd_la_OBJECTS) \
+   $(libsimon64_simd_la_OBJECTS) \
+   $(libsimon128_simd_la_OBJECTS) \
+   $(libspeck64_simd_la_OBJECTS) \
+   $(libspeck128_simd_la_OBJECTS) \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
 
@@ -133,8 +137,10 @@ libcryptopp_la_DEPENDENCIES = \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
    $(libsimeck_simd_la_OBJECTS) \
-   $(libsimon_simd_la_OBJECTS) \
-   $(libspeck_simd_la_OBJECTS) \
+   $(libsimon64_simd_la_OBJECTS) \
+   $(libsimon128_simd_la_OBJECTS) \
+   $(libspeck64_simd_la_OBJECTS) \
+   $(libspeck128_simd_la_OBJECTS) \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
 
@@ -209,13 +215,21 @@ libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 libsimeck_simd_la_SOURCES = simeck-simd.cpp
 libsimeck_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMECK_FLAG)
 
-## CRYPTOPP_SIMON_FLAG set in configure.ac
-libsimon_simd_la_SOURCES = simon-simd.cpp
-libsimon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON_FLAG)
+## CRYPTOPP_SIMON64_FLAG set in configure.ac
+libsimon64_simd_la_SOURCES = simon64-simd.cpp
+libsimon64_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON64_FLAG)
+
+## CRYPTOPP_SIMON128_FLAG set in configure.ac
+libsimon128_simd_la_SOURCES = simon128-simd.cpp
+libsimon128_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON128_FLAG)
+
+## CRYPTOPP_SPECK64_FLAG set in configure.ac
+libspeck64_simd_la_SOURCES = speck64-simd.cpp
+libspeck64_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK64_FLAG)
 
 ## CRYPTOPP_SPECK_FLAG set in configure.ac
-libspeck_simd_la_SOURCES = speck-simd.cpp
-libspeck_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK_FLAG)
+libspeck128_simd_la_SOURCES = speck128-simd.cpp
+libspeck128_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK128_FLAG)
 
 ## CRYPTOPP_SM4_FLAG set in configure.ac
 libsm4_simd_la_SOURCES = sm4-simd.cpp
