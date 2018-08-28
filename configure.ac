@@ -1639,12 +1639,12 @@ if test "$IS_SUN_OS" != "0"; then
 fi
 
 #############################################################################
-## Add -O1 to linker to optimize the elf binary.
+## Add --build-id to linker for debug symbols.
 
 if true; then
 
    SAVED_LDFLAGS="$LDFLAGS"
-   LDFLAGS="-Wl,-O1"
+   LDFLAGS="-Wl,--build-id"
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
