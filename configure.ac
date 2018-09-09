@@ -611,6 +611,19 @@ if test "$IS_SUN_OS" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
+   # https://docs.oracle.com/cd/E18659_01/html/821-1383/bkamt.html
+   CXXFLAGS="-xregs=no%appl"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+   fi
+
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
@@ -1640,6 +1653,7 @@ fi
 
 #############################################################################
 ## Add --build-id to linker for debug symbols.
+## https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
 
 if true; then
 
