@@ -1101,8 +1101,8 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
 fi
 
 AC_CHECK_HEADERS(arm_acle.h,
-    AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available]),
-    AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [0], [arm_acle.h is not available])]
+    [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available])],
+    [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [0], [arm_acle.h is not available])]
 )
 
 if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
