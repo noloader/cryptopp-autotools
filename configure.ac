@@ -1100,6 +1100,11 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
    AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
 fi
 
+AC_CHECK_HEADERS(arm_acle.h,
+    [AC_SUBST([CRYPTOPP_ARM_ACLE_AVAILABLE], [1])],
+    [AC_SUBST([CRYPTOPP_ARM_ACLE_AVAILABLE], [0])]
+)
+
 if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
 
    ## Most Linux are hard-float systems.
