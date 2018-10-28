@@ -1507,6 +1507,7 @@ if test "$IS_PPC" != "0"; then
 
    ## Power8 and VSX. In-core crypto.
    if test "$pwr8_value" = "8"; then
+      AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$PPC_POWER8_FLAG])
