@@ -1439,47 +1439,140 @@ fi
 if test "$IS_PPC" != "0"; then
 
    if test "$IS_XLC_COMPILER" = "1"; then
-      PPC_POWER4_FLAG="-qarch=pwr4 -qaltivec"
-      PPC_POWER7_FLAG="-qarch=pwr7 -qaltivec"
-      PPC_POWER8_FLAG="-qarch=pwr8 -qaltivec"
+      TEST_POWER4_FLAG="-qarch=pwr4 -qaltivec"
+      TEST_POWER5_FLAG="-qarch=pwr5 -qaltivec"
+      TEST_POWER6_FLAG="-qarch=pwr6 -qaltivec"
+      TEST_POWER7_FLAG="-qarch=pwr7 -qaltivec"
+      TEST_POWER8_FLAG="-qarch=pwr8 -qaltivec"
+      TEST_POWER9_FLAG="-qarch=pwr9 -qaltivec"
    else
-      PPC_POWER4_FLAG="-mcpu=power4 -maltivec"
-      PPC_POWER7_FLAG="-mcpu=power7 -maltivec"
-      PPC_POWER8_FLAG="-mcpu=power8 -maltivec"
+      TEST_POWER4_FLAG="-mcpu=power4 -maltivec"
+      TEST_POWER5_FLAG="-mcpu=power5 -maltivec"
+      TEST_POWER6_FLAG="-mcpu=power6 -maltivec"
+      TEST_POWER7_FLAG="-mcpu=power7 -maltivec"
+      TEST_POWER8_FLAG="-mcpu=power8 -maltivec"
+      TEST_POWER9_FLAG="-mcpu=power9 -maltivec"
    fi
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   CXXFLAGS="$PPC_POWER8_FLAG"
+   ## Find the lowest flag for Altivec. GCC it is Power4.
+   ## XLC and LLVM may be as high as Power8 or Power9.
+   CXXFLAGS="$TEST_POWER4_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([pwr8_value], [8])],
-      [AC_MSG_RESULT([no])                              ]
+      [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER4_FLAG])],
+      [AC_MSG_RESULT([no])]
    )
 
-   CXXFLAGS="$PPC_POWER7_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([pwr7_value], [7])],
-      [AC_MSG_RESULT([no])                              ]
-   )
+   if test x"$PPC_POWER4" = "x"; then
+      CXXFLAGS="$TEST_POWER5_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER5_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
 
-   CXXFLAGS="$PPC_POWER4_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([pwr4_value], [4])],
-      [AC_MSG_RESULT([no])                              ]
-   )
+   if test x"$PPC_POWER4" = "x"; then
+      CXXFLAGS="$TEST_POWER6_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER6_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
 
-   ## Power4 and Altivec. These are sorted in preferred order.
-   ## XLC 13.1 with LLVM backend only provides PWR8. It creates
-   ## problems because we only want PWR4 and PWR7 on some files.
-   ## The unwanted higher ISA could lead to a SIGILL.
-   if test "$pwr4_value" = "4"; then
+   if test x"$PPC_POWER4" = "x"; then
+      CXXFLAGS="$TEST_POWER7_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER7_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
+
+   if test x"$PPC_POWER4" = "x"; then
+      CXXFLAGS="$TEST_POWER8_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER8_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
+
+   if test x"$PPC_POWER4" = "x"; then
+      CXXFLAGS="$TEST_POWER9_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER9_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
+
+   ## Find the lowest flag for Power7. GCC it is Power7.
+   ## XLC and LLVM may be as high as Power8 or Power9.
+   if test x"$PPC_POWER7" = "x"; then
+      CXXFLAGS="$TEST_POWER7_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7], [$TEST_POWER7_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
+
+   if test x"$PPC_POWER7" = "x"; then
+      CXXFLAGS="$TEST_POWER8_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7], [$TEST_POWER8_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
+
+   if test x"$PPC_POWER7" = "x"; then
+      CXXFLAGS="$TEST_POWER9_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7], [$TEST_POWER9_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
+
+   ## Find the lowest flag for Power8. GCC it is Power8.
+   ## XLC and LLVM may be as high as Power9.
+   if test x"$PPC_POWER8" = "x"; then
+      CXXFLAGS="$TEST_POWER8_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER8], [$TEST_POWER8_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
+
+   if test x"$PPC_POWER8" = "x"; then
+      CXXFLAGS="$TEST_POWER9_FLAG"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER8], [$TEST_POWER9_FLAG])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
+
+   ## Power4 and Altivec.
+   if test x"$PPC_POWER4" != "x"; then
       AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER4_FLAG])
       AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
    else
@@ -1487,11 +1580,7 @@ if test "$IS_PPC" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -CRYPTOPP_DISABLE_ALTIVEC=1"
    fi
 
-   ## Power7 and VSX. Unaligned loads and stores. These are sorted
-   ## in preferred order. XLC 13.1 with LLVM backend only provides
-   ## PWR8. It creates problems because we only want PWR4 and PWR7
-   ## on some files. The unwanted higher ISA could lead to a SIGILL.
-   if test "$pwr7_value" = "7"; then
+   if test x"$PPC_POWER7" != "x"; then
       AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$PPC_POWER7_FLAG])
       AC_SUBST([CRYPTOPP_LEA_FLAG], [$PPC_POWER7_FLAG])
@@ -1506,7 +1595,7 @@ if test "$IS_PPC" != "0"; then
    fi
 
    ## Power8 and VSX. In-core crypto.
-   if test "$pwr8_value" = "8"; then
+   if test x"$PPC_POWER8" != "x"; then
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$PPC_POWER8_FLAG])
