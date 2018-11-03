@@ -51,7 +51,8 @@ EXTRA_LTLIBRARIES = \
    libcpu.la \
    libinteger.la \
    libaria_simd.la \
-   libblake2_simd.la \
+   libblake2s_simd.la \
+   libblake2b_simd.la \
    libchacha_simd.la \
    libcham_simd.la \
    libcrc_simd.la \
@@ -94,7 +95,8 @@ libcryptopp_la_LIBADD = \
    $(libcpu_la_OBJECTS) \
    $(libinteger_la_OBJECTS) \
    $(libaria_simd_la_OBJECTS) \
-   $(libblake2_simd_la_OBJECTS) \
+   $(libblake2s_simd_la_OBJECTS) \
+   $(libblake2b_simd_la_OBJECTS) \
    $(libchacha_simd_la_OBJECTS) \
    $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
@@ -128,7 +130,8 @@ libcryptopp_la_DEPENDENCIES = \
    $(libcpu_la_OBJECTS) \
    $(libinteger_la_OBJECTS) \
    $(libaria_simd_la_OBJECTS) \
-   $(libblake2_simd_la_OBJECTS) \
+   $(libblake2s_simd_la_OBJECTS) \
+   $(libblake2b_simd_la_OBJECTS) \
    $(libchacha_simd_la_OBJECTS) \
    $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
@@ -175,8 +178,12 @@ libaria_simd_la_SOURCES = aria-simd.cpp
 libaria_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_ARIA_FLAG)
 
 ## CRYPTOPP_BLAKE2_FLAG set in configure.ac
-libblake2_simd_la_SOURCES = blake2-simd.cpp
-libblake2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2_FLAG)
+libblake2s_simd_la_SOURCES = blake2s-simd.cpp
+libblake2s_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2S_FLAG)
+
+## CRYPTOPP_BLAKE2_FLAG set in configure.ac
+libblake2b_simd_la_SOURCES = blake2b-simd.cpp
+libblake2b_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2B_FLAG)
 
 ## CRYPTOPP_CHACHA_FLAG set in configure.ac
 libchacha_simd_la_SOURCES = chacha-simd.cpp
