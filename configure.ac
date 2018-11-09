@@ -1243,12 +1243,12 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
    AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
 fi
 
-AC_CHECK_HEADERS(arm_acle.h,
-    [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available])],
-    [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [0], [arm_acle.h is not available])]
-)
-
 if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
+
+   AC_CHECK_HEADERS(arm_acle.h,
+      [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available])],
+      [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [0], [arm_acle.h is not available])]
+   )
 
    ## Most Linux are hard-float systems.
    IS_ARMHF=`echo $host | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
@@ -1350,6 +1350,11 @@ fi
 ## ARM Aarch32 and Aarch64
 
 if test "$IS_AARCH64" != "0"; then
+
+   AC_CHECK_HEADERS(arm_acle.h,
+      [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available])],
+      [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [0], [arm_acle.h is not available])]
+   )
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
