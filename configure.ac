@@ -868,7 +868,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-   ##### AVX2 #####
+   ##### AVX #####
 
    ## Some compilers and linkers don't support it.
    CXXFLAGS="-mavx"
@@ -959,6 +959,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ## SunCC does not pass GCC-like defines through the compiler
    SSE_DEFINES=""
 
+   ##### SSE2 #####
+
    CXXFLAGS="-xarch=sse2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -983,6 +985,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
+   ##### SSE3 #####
+
    ## Nothing pivots around SSE3 specifically, but we do use
    ## insns from the ISA. Sun requires it as a linker flag.
    CXXFLAGS="-xarch=sse3"
@@ -1001,6 +1005,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [Disable SSE3])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
    fi
+
+   ##### SSSE3 #####
 
    CXXFLAGS="-xarch=ssse3"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -1026,6 +1032,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
+   ##### SSE4.1 #####
+
    CXXFLAGS="-xarch=sse4_1"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -1045,6 +1053,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.1])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
+
+   ##### SSE4.2 #####
 
    CXXFLAGS="-xarch=sse4_2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -1066,6 +1076,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
+
+   ##### AES #####
 
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
@@ -1098,6 +1110,63 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
+   ##### AVX #####
+
+   CXXFLAGS="-xarch=avx"
+   XXX_PROGRAM="#include <immintrin.h>
+      int main(int argc, char** argv) {
+         __m256d x;
+         x=_mm256_add_pd(x,x);
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      SSE_DEFINES="$SSE_DEFINES -D__AVX__=1"
+      AC_SUBST([CRYPTOPP_CHACHA_AVX_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_AVX_AVAILABLE], [1], [Enable AVX])
+	  AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_AVX], [1], [Disable AVX])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX"
+   fi
+
+   ##### AVX2 #####
+
+   CXXFLAGS="-xarch=avx2"
+   XXX_PROGRAM="#include <immintrin.h>
+      int main(int argc, char** argv) {
+         __m256i x;
+         x=_mm256_xor_si256(x,x);
+         x=_mm256_add_epi32(x,x);
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      SSE_DEFINES="$SSE_DEFINES -D__AVX2__=1"
+      AC_SUBST([CRYPTOPP_CHACHA_AVX2_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_AVX2_AVAILABLE], [1], [Enable AVX2])
+	  AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_AVX2], [1], [Disable AVX2])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX2"
+   fi
+
+   ##### RDRAND #####
+
    ## https://docs.oracle.com/cd/E77782_01/html/E77792/gqexw.html
    CXXFLAGS="-xarch=avx_i"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (rdrand)])
@@ -1113,6 +1182,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    fi
 
+   ##### RDSEED #####
+
    ## https://docs.oracle.com/cd/E60778_01/html/E60745/bjapr.html
    CXXFLAGS="-xarch=avx2_i"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (rdseed)])
@@ -1127,6 +1198,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    if test "$retval" = "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    fi
+
+   ##### SHA #####
 
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
