@@ -1019,6 +1019,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_LEA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$CXXFLAGS])
@@ -1129,7 +1130,6 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    if test "$retval" = "0"; then
       SSE_DEFINES="$SSE_DEFINES -D__AVX__=1"
-      AC_SUBST([CRYPTOPP_CHACHA_AVX_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_AVX_AVAILABLE], [1], [Enable AVX])
 	  AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
