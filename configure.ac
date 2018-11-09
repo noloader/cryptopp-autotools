@@ -1846,6 +1846,20 @@ if true; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
+   # Solaris uses -z discard-unused
+   # https://docs.oracle.com/cd/E26502_01/html/E26507/glmth.html
+   LDFLAGS="-Wl,-z,discard-unused"
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
    ## Restore FLAGS
    LDFLAGS="$SAVED_LDFLAGS"
 fi
@@ -1862,7 +1876,7 @@ if test "$IS_SUN_OS" != "0"; then
    ## -M arguments, we need to escape it with -XCClinker in AM_LDFLAGS.
    if test "$IS_IA32" != "0"; then
       LDFLAGS="-Mcryptopp.mapfile"
-      AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+      AC_MSG_CHECKING([if $LDNAME supports -Mcryptopp.mapfile])
       XXX_LINK_IFELSE(
         [AC_LANG_PROGRAM([])],
          [AC_MSG_RESULT([yes])],
