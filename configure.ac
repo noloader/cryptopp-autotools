@@ -970,11 +970,12 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ## GCM AES and SHA should be overwritten with CLMUL, AES and SHA if available.
    ## If not available then need -xarch=sse2 due to SSE2, GCM_Xor16_SSE2, etc.
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS -D__SSE2__=1])
-      AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGS -D__SSE2__=1])
-      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS -D__SSE2__=1])
-      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS -D__SSE2__=1])
-      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS -D__SSE2__=1])
+      CXXFLAGSX="$CXXFLAGS -D__SSE2__=1"
+      AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Enable SSE2])
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
@@ -995,6 +996,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
+      CXXFLAGSX="$CXXFLAGS -D__SSE3__=1"
       AC_DEFINE([CRYPTOPP_SSE3_AVAILABLE], [1], [Enable SSE3])
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
@@ -1013,14 +1015,15 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGS -D__SSSE3__=1])
-      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS -D__SSSE3__=1])
-      AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGS -D__SSSE3__=1])
-      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS -D__SSSE3__=1])
-      AC_SUBST([CRYPTOPP_LEA_FLAG], [$CXXFLAGS -D__SSSE3__=1])
-      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$CXXFLAGS -D__SSSE3__=1])
-      AC_SUBST([CRYPTOPP_SIMON128_FLAG], [$CXXFLAGS -D__SSSE3__=1])
-      AC_SUBST([CRYPTOPP_SPECK128_FLAG], [$CXXFLAGS -D__SSSE3__=1])
+      CXXFLAGSX="$CXXFLAGS -D__SSSE3__=1"
+      AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_LEA_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_SIMON128_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_SPECK128_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1], [Enable SSSE3])
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
@@ -1039,9 +1042,10 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_SSE41_FLAG], [$CXXFLAGS -D__SSE4_1__=1])
-      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$CXXFLAGS -D__SSE4_1__=1])
-      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$CXXFLAGS -D__SSE4_1__=1])
+      CXXFLAGSX="$CXXFLAGS -D__SSE4_1__=1"
+      AC_SUBST([CRYPTOPP_SSE41_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1], [Enable SSE4.1])
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
@@ -1060,15 +1064,43 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_SSE42_FLAG], [$CXXFLAGS -D__SSE4_2__=1])
-      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS -D__SSE4_2__=1])
-      AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$CXXFLAGS -D__SSE4_2__=1])
-      AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$CXXFLAGS -D__SSE4_2__=1])
+      CXXFLAGSX="$CXXFLAGS -D__SSE4_2__=1"
+      AC_SUBST([CRYPTOPP_SSE42_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1], [Enable SSE4.2])
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+   fi
+
+   ##### CLMUL #####
+
+   XXX_PROGRAM="#include <wmmintrin.h>
+      int main(int argc, char** argv) {
+         __m128i x;
+         x=_mm_clmulepi64_si128 (x,x,0);
+         return 0;
+      }"
+
+   CXXFLAGS="-xarch=aes"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      CXXFLAGSX="$CXXFLAGS -D__CLMUL__=1"
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGSX])
+      AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], "Enable CLMUL")
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], "Disable CLMUL")
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
    fi
 
    ##### AES #####
@@ -1090,16 +1122,13 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS -D__CLMUL__=1])
-      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS -D__AES__=1])
-      AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS -D__AES__=1])
-      AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], "Enable CLMUL")
+      CXXFLAGSX="$CXXFLAGS -D__AES__=1"
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1], "Enable AESNI")
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], "Disable CLMUL")
       AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], "Disable AESNI")
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
@@ -1121,6 +1150,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
+      CXXFLAGSX="$CXXFLAGS -D__AVX__=1"
       AC_DEFINE([CRYPTOPP_AVX_AVAILABLE], [1], [Enable AVX])
 	  AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
@@ -1147,7 +1177,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_CHACHA_AVX2_FLAG], [$CXXFLAGS -D__AVX2__=1])
+      CXXFLAGSX="$CXXFLAGS -D__AVX2__=1"
+      AC_SUBST([CRYPTOPP_CHACHA_AVX2_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_AVX2_AVAILABLE], [1], [Enable AVX2])
 	  AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
@@ -1168,9 +1199,10 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ## It is not clear if we can avoid the linker option for Solaris
    ## Also see https://stackoverflow.com/q/51678753/608639
-   if test "$retval" = "0"; then
-      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
-   fi
+   #if test "$retval" = "0"; then
+   #   CXXFLAGS="$CXXFLAGS -D__RDRND__=1"
+   #   AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+   #fi
 
    ##### RDSEED #####
 
@@ -1185,9 +1217,10 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ## It is not clear if we can avoid the linker option for Solaris
    ## Also see https://stackoverflow.com/q/51678753/608639
-   if test "$retval" = "0"; then
-      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
-   fi
+   #if test "$retval" = "0"; then
+   #   CXXFLAGS="$CXXFLAGS -D__RDSEED__=1"
+   #   AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+   #fi
 
    ##### SHA #####
 
@@ -1209,7 +1242,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS -D__SHA__=1])
+      CXXFLAGS="$CXXFLAGS -D__SHA__=1"
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1], "Enable SHANI")
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
