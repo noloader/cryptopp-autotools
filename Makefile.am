@@ -54,6 +54,7 @@ EXTRA_LTLIBRARIES = \
    libblake2s_simd.la \
    libblake2b_simd.la \
    libchacha_simd.la \
+   libchacha_avx.la \
    libcham_simd.la \
    libcrc_simd.la \
    libgcm_simd.la \
@@ -98,6 +99,7 @@ libcryptopp_la_LIBADD = \
    $(libblake2s_simd_la_OBJECTS) \
    $(libblake2b_simd_la_OBJECTS) \
    $(libchacha_simd_la_OBJECTS) \
+   $(libchacha_avx_la_OBJECTS) \
    $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
@@ -133,6 +135,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(libblake2s_simd_la_OBJECTS) \
    $(libblake2b_simd_la_OBJECTS) \
    $(libchacha_simd_la_OBJECTS) \
+   $(libchacha_avx_la_OBJECTS) \
    $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
    $(liblea_simd_la_OBJECTS) \
@@ -188,6 +191,10 @@ libblake2b_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2B_FLAG)
 ## CRYPTOPP_CHACHA_FLAG set in configure.ac
 libchacha_simd_la_SOURCES = chacha-simd.cpp
 libchacha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHACHA_FLAG)
+
+## CRYPTOPP_CHACHA_AVX2_FLAG set in configure.ac
+libchacha_avx_la_SOURCES = chacha-avx.cpp
+libchacha_avx_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHACHA_AVX2_FLAG)
 
 ## CRYPTOPP_CHAM_FLAG set in configure.ac
 libcham_simd_la_SOURCES = cham-simd.cpp

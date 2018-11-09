@@ -676,7 +676,8 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   ## SSE2
+   ##### SSE2 #####
+
    CXXFLAGS="-msse2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -695,7 +696,8 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
-   ## SSE3
+   ##### SSE3 #####
+
    CXXFLAGS="-msse3"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -711,7 +713,8 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
    fi
 
-   ## SSSE3
+   ##### SSSE3 #####
+
    CXXFLAGS="-mssse3"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -734,7 +737,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
-   ## SSE4.1. Old BSD linkers don't support it.
+   ##### SSE4.1 #####
+
+   ## Old BSD linkers don't support it.
    CXXFLAGS="-msse4.1"
    XXX_PROGRAM="#include <smmintrin.h>
       int main(int argc, char** argv) {
@@ -762,7 +767,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
-   ## SSE4.2. Old BSD linkers don't support it.
+   ##### SSE4.2 #####
+
+   ## Old BSD linkers don't support it.
    CXXFLAGS="-msse4.2"
    XXX_PROGRAM="#include <nmmintrin.h>
       int main(int argc, char** argv) {
@@ -786,7 +793,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
-   ## PCLMUL. Some old compilers and linkers don't support it.
+   ##### PCLMUL #####
+
+   ## Some old compilers and linkers don't support it.
    CXXFLAGS="-mssse3 -mpclmul"
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
@@ -809,7 +818,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [Disable CLMUL])
    fi
 
-   ## AES. Some old compilers and linkers don't support it.
+   ##### SSSE3+AES #####
+
+   ## Some old compilers and linkers don't support it.
    CXXFLAGS="-mssse3 -maes"
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
@@ -830,7 +841,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
    fi
 
-   ## AES. Some compilers and linkers don't support it.
+   ##### SSE4.1+AES #####
+
+   ## Some compilers and linkers don't support it.
    CXXFLAGS="-msse4.1 -maes"
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
@@ -855,7 +868,62 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
-   ## SHA. Some compilers and linkers don't support it.
+   ##### AVX2 #####
+
+   ## Some compilers and linkers don't support it.
+   CXXFLAGS="-mavx"
+   XXX_PROGRAM="#include <immintrin.h>
+      int main(int argc, char** argv) {
+         __m256d x;
+         x=_mm256_add_pd(x,x);
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_CHACHA_AVX_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_AVX_AVAILABLE], [1], [Enable AVX])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_AVX], [1], [Disable AVX])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX"
+   fi
+
+   ##### AVX2 #####
+
+   ## Some compilers and linkers don't support it.
+   CXXFLAGS="-mavx2"
+   XXX_PROGRAM="#include <immintrin.h>
+      int main(int argc, char** argv) {
+         __m256i x;
+         x=_mm256_xor_si256(x,x);
+         x=_mm256_add_epi32(x,x);
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_CHACHA_AVX2_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_AVX2_AVAILABLE], [1], [Enable AVX2])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_AVX2], [1], [Disable AVX2])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX2"
+   fi
+
+   ##### SHA #####
+
+   ## Some compilers and linkers don't support it.
    CXXFLAGS="-msse4.2 -msha"
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
@@ -1995,6 +2063,9 @@ fi
 if test x"$CRYPTOPP_CHACHA_FLAG" != "x"; then
    echo "CRYPTOPP_CHACHA_FLAG: $CRYPTOPP_CHACHA_FLAG"
 fi
+if test x"$CRYPTOPP_CHACHA_AVX2_FLAG" != "x"; then
+   echo "CRYPTOPP_CHACHA_AVX2_FLAG: $CRYPTOPP_CHACHA_AVX2_FLAG"
+fi
 if test x"$CRYPTOPP_CHAM_FLAG" != "x"; then
    echo "CRYPTOPP_CHAM_FLAG: $CRYPTOPP_CHAM_FLAG"
 fi
@@ -2072,9 +2143,11 @@ HAVE_WIDTH=`echo $CXXFLAGS | $EGREP -i -c -E '\-m32|\-m64|\-q32|\-q64|\-march=na
 
 ## Don't print message for Aarch64
 if test "$IS_AARCH64" = "0"; then
-if test "$IS_64BITS" != "0" && test "$HAVE_WIDTH" = "0"; then
+if test "$IS_64BITS" = "0"; then
+if test "$HAVE_WIDTH" = "0"; then
    echo ""
-   echo "The machine is 64-bit capable but -m64 is not present in CXXFLAGS."
+   echo "The machine is 64-bit capable but not present in CXXFLAGS."
+fi
 fi
 fi
 
