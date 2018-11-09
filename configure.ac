@@ -1200,7 +1200,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ## It is not clear if we can avoid the linker option for Solaris
    ## Also see https://stackoverflow.com/q/51678753/608639
    #if test "$retval" = "0"; then
-   #   CXXFLAGS="$CXXFLAGS -D__RDRND__=1"
+   #   CXXFLAGSX="$CXXFLAGS -D__RDRND__=1"
    #   AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    #fi
 
@@ -1218,7 +1218,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ## It is not clear if we can avoid the linker option for Solaris
    ## Also see https://stackoverflow.com/q/51678753/608639
    #if test "$retval" = "0"; then
-   #   CXXFLAGS="$CXXFLAGS -D__RDSEED__=1"
+   #   CXXFLAGSX="$CXXFLAGS -D__RDSEED__=1"
    #   AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    #fi
 
@@ -1242,8 +1242,8 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      CXXFLAGS="$CXXFLAGS -D__SHA__=1"
-      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      CXXFLAGSX="$CXXFLAGS -D__SHA__=1"
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_SHA_AVAILABLE], [1], "Enable SHANI")
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
