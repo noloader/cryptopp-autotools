@@ -448,3 +448,13 @@ doc docs html htmldoc:
 	$(DOXYGEN) Doxyfile -d CRYPTOPP_DOXYGEN_PROCESSING
 
 endif
+
+# Restore GNUmakefile
+.PHONY: checkout
+checkout:
+	git checkout master -f
+
+# Restore GNUmakefile
+.PHONY: reset
+reset:
+	git reset --hard HEAD
