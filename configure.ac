@@ -1319,9 +1319,9 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
 fi
 
 #############################################################################
-## ARM A-32 and aes-armv4.S
+## ARM A-32 and aes_armv4.S
 
-# Used by Makefile.am to compile aes-armv4.S
+# Used by Makefile.am to compile aes_armv4.S
 if test "$IS_ARM32" != "0"; then
 
    ## Save CXXFLAGS

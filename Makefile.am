@@ -177,93 +177,93 @@ libinteger_la_SOURCES = integer.cpp
 libinteger_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_INTEGER_FLAG)
 
 ## CRYPTOPP_ARIA_FLAG set in configure.ac
-libaria_simd_la_SOURCES = aria-simd.cpp
+libaria_simd_la_SOURCES = aria_simd.cpp
 libaria_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_ARIA_FLAG)
 
 ## CRYPTOPP_BLAKE2_FLAG set in configure.ac
-libblake2s_simd_la_SOURCES = blake2s-simd.cpp
+libblake2s_simd_la_SOURCES = blake2s_simd.cpp
 libblake2s_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2S_FLAG)
 
 ## CRYPTOPP_BLAKE2_FLAG set in configure.ac
-libblake2b_simd_la_SOURCES = blake2b-simd.cpp
+libblake2b_simd_la_SOURCES = blake2b_simd.cpp
 libblake2b_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2B_FLAG)
 
 ## CRYPTOPP_CHACHA_FLAG set in configure.ac
-libchacha_simd_la_SOURCES = chacha-simd.cpp
+libchacha_simd_la_SOURCES = chacha_simd.cpp
 libchacha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHACHA_FLAG)
 
 ## CRYPTOPP_CHACHA_AVX2_FLAG set in configure.ac
-libchacha_avx_la_SOURCES = chacha-avx.cpp
+libchacha_avx_la_SOURCES = chacha_avx.cpp
 libchacha_avx_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHACHA_AVX2_FLAG)
 
 ## CRYPTOPP_CHAM_FLAG set in configure.ac
-libcham_simd_la_SOURCES = cham-simd.cpp
+libcham_simd_la_SOURCES = cham_simd.cpp
 libcham_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHAM_FLAG)
 
 ## CRYPTOPP_CRC_FLAG set in configure.ac
-libcrc_simd_la_SOURCES = crc-simd.cpp
+libcrc_simd_la_SOURCES = crc_simd.cpp
 libcrc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CRC_FLAG)
 
 ## CRYPTOPP_GCM_FLAG set in configure.ac
-libgcm_simd_la_SOURCES = gcm-simd.cpp
+libgcm_simd_la_SOURCES = gcm_simd.cpp
 libgcm_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GCM_FLAG)
 
 ## CRYPTOPP_LEA_FLAG set in configure.ac
-liblea_simd_la_SOURCES = lea-simd.cpp
+liblea_simd_la_SOURCES = lea_simd.cpp
 liblea_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LEA_FLAG)
 
 ## CRYPTOPP_NEON_FLAG set in configure.ac
-libneon_simd_la_SOURCES = neon-simd.cpp
+libneon_simd_la_SOURCES = neon_simd.cpp
 libneon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_NEON_FLAG)
 
 ## CRYPTOPP_PPC_FLAG set in configure.ac
-libppc_simd_la_SOURCES = ppc-simd.cpp
+libppc_simd_la_SOURCES = ppc_simd.cpp
 libppc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_PPC_FLAG)
 
 ## CRYPTOPP_AES_FLAG set in configure.ac
-librijndael_simd_la_SOURCES = rijndael-simd.cpp
+librijndael_simd_la_SOURCES = rijndael_simd.cpp
 librijndael_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_AES_FLAG)
 
 ## CRYPTOPP_SHA_FLAG set in configure.ac
-libsha_simd_la_SOURCES = sha-simd.cpp
+libsha_simd_la_SOURCES = sha_simd.cpp
 libsha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
 ## CRYPTOPP_SHA_FLAG set in configure.ac
-libshacal2_simd_la_SOURCES = shacal2-simd.cpp
+libshacal2_simd_la_SOURCES = shacal2_simd.cpp
 libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
 ## CRYPTOPP_SIMECK_FLAG set in configure.ac
-libsimeck_simd_la_SOURCES = simeck-simd.cpp
+libsimeck_simd_la_SOURCES = simeck_simd.cpp
 libsimeck_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMECK_FLAG)
 
 ## CRYPTOPP_SIMON64_FLAG set in configure.ac
-libsimon64_simd_la_SOURCES = simon64-simd.cpp
+libsimon64_simd_la_SOURCES = simon64_simd.cpp
 libsimon64_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON64_FLAG)
 
 ## CRYPTOPP_SIMON128_FLAG set in configure.ac
-libsimon128_simd_la_SOURCES = simon128-simd.cpp
+libsimon128_simd_la_SOURCES = simon128_simd.cpp
 libsimon128_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON128_FLAG)
 
 ## CRYPTOPP_SPECK64_FLAG set in configure.ac
-libspeck64_simd_la_SOURCES = speck64-simd.cpp
+libspeck64_simd_la_SOURCES = speck64_simd.cpp
 libspeck64_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK64_FLAG)
 
 ## CRYPTOPP_SPECK_FLAG set in configure.ac
-libspeck128_simd_la_SOURCES = speck128-simd.cpp
+libspeck128_simd_la_SOURCES = speck128_simd.cpp
 libspeck128_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK128_FLAG)
 
 ## CRYPTOPP_SM4_FLAG set in configure.ac
-libsm4_simd_la_SOURCES = sm4-simd.cpp
+libsm4_simd_la_SOURCES = sm4_simd.cpp
 libsm4_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SM4_FLAG)
 
 ## CRYPTOPP_SSE_FLAG set in configure.ac
-libsse_simd_la_SOURCES = sse-simd.cpp
+libsse_simd_la_SOURCES = sse_simd.cpp
 libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE_FLAG)
 
 ## ARMv7-a AES by Andy Polyakov
 ## Also see https://stackoverflow.com/q/51575580/608639
 if CRYPTOGAMS_AES
-libaes_armv4_la_SOURCES = aes-armv4.S
+libaes_armv4_la_SOURCES = aes_armv4.S
 libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
 endif
 
@@ -295,9 +295,9 @@ libothers_la_SOURCES = \
     tigertab.cpp ttmac.cpp tweetnacl.cpp twofish.cpp vmac.cpp wake.cpp \
     whrlpool.cpp xtr.cpp xtrcrypt.cpp zdeflate.cpp zinflate.cpp zlib.cpp
 
-# Don't include aes-armv4.h here
+# Don't include aes_armv4.h here
 pkginclude_HEADERS = \
-    3way.h adler32.h adv-simd.h aes-armv4.h aes.h algebra.h algparam.h arc4.h \
+    3way.h adler32.h adv_simd.h aes_armv4.h aes.h algebra.h algparam.h arc4.h \
     argnames.h aria.h asn.h authenc.h base32.h base64.h basecode.h blake2.h \
     blowfish.h blumshub.h camellia.h cast.h cbcmac.h ccm.h chacha.h cham.h \
     channels.h cmac.h config.h cpu.h crc.h cryptlib.h default.h des.h dh.h \
@@ -309,7 +309,7 @@ pkginclude_HEADERS = \
     lubyrack.h luc.h mars.h md2.h md4.h md5.h mdc.h mersenne.h misc.h \
     modarith.h modes.h modexppc.h mqueue.h mqv.h naclite.h nbtheory.h nr.h \
     oaep.h oids.h osrng.h ossig.h padlkrng.h panama.h pch.h pkcspad.h \
-    poly1305.h polynomi.h ppc-simd.h pssr.h pubkey.h pwdbased.h queue.h \
+    poly1305.h polynomi.h ppc_simd.h pssr.h pubkey.h pwdbased.h queue.h \
     rabbit.h rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h rijndael.h ripemd.h \
     rng.h rsa.h rw.h safer.h salsa.h scrypt.h seal.h secblock.h seckey.h \
     seed.h serpent.h serpentp.h sha.h sha3.h shacal2.h shark.h simeck.h \
@@ -324,7 +324,7 @@ noinst_HEADERS = \
     factory.h \
     resource.h \
     validate.h \
-    aes-armv4.h
+    aes_armv4.h
 
 bin_PROGRAMS = cryptest
 noinst_PROGRAMS = cryptestcwd
