@@ -85,7 +85,7 @@ AC_LANG_ASSERT([C++])
 ## robust than Autotools and catches XL C/C++ and SunCC problems.
 ## When searching for elements in BAD_RESULT use case-insensitivity.
 
-BAD_RESULT="fatal|error|unknown|unrecognized|illegal|ignored|incorrect|not found|not exist|cannot find|not supported"
+BAD_RESULT="fatal|error|unknown|unrecognized|illegal|ignored|incorrect|not found|not exist|cannot find|not supported|not compatible|no such instruction|invalid mnemonic"
 
 #############################################################################
 
