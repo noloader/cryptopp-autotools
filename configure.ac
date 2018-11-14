@@ -187,8 +187,8 @@ LDNAME=`basename "$LD"`
 
 ## Small fixup
 case "$LDNAME" in
-	"ld "*) LDNAME=ld
-	;;
+    "ld "*) LDNAME=ld
+    ;;
 esac
 
 #############################################################################
@@ -1152,7 +1152,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    if test "$retval" = "0"; then
       CXXFLAGSX="$CXXFLAGS -D__AVX__=1"
       AC_DEFINE([CRYPTOPP_AVX_AVAILABLE], [1], [Enable AVX])
-	  AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_AVX], [1], [Disable AVX])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX"
@@ -1180,7 +1180,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       CXXFLAGSX="$CXXFLAGS -D__AVX2__=1"
       AC_SUBST([CRYPTOPP_CHACHA_AVX2_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_AVX2_AVAILABLE], [1], [Enable AVX2])
-	  AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_AVX2], [1], [Disable AVX2])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX2"
@@ -1632,149 +1632,128 @@ if test "$IS_PPC" != "0"; then
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER4_FLAG])],
+      [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4_FLAG], [$TEST_POWER4_FLAG])],
       [AC_MSG_RESULT([no])]
    )
 
-   if test x"$PPC_POWER4" = "x"; then
+   if test x"$PPC_POWER4_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER5_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER5_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4_FLAG], [$TEST_POWER5_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
-   if test x"$PPC_POWER4" = "x"; then
+   if test x"$PPC_POWER4_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER6_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER6_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4_FLAG], [$TEST_POWER6_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
-   if test x"$PPC_POWER4" = "x"; then
+   if test x"$PPC_POWER4_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER7_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER7_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4_FLAG], [$TEST_POWER7_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
-   if test x"$PPC_POWER4" = "x"; then
+   if test x"$PPC_POWER4_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER8_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER8_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4_FLAG], [$TEST_POWER8_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
-   if test x"$PPC_POWER4" = "x"; then
+   if test x"$PPC_POWER4_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER9_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4], [$TEST_POWER9_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER4_FLAG], [$TEST_POWER9_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
    ## Find the lowest flag for Power7. GCC it is Power7.
    ## XLC and LLVM may be as high as Power8 or Power9.
-   if test x"$PPC_POWER7" = "x"; then
+   if test x"$PPC_POWER7_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER7_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7], [$TEST_POWER7_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7_FLAG], [$TEST_POWER7_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
-   if test x"$PPC_POWER7" = "x"; then
+   if test x"$PPC_POWER7_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER8_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7], [$TEST_POWER8_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7_FLAG], [$TEST_POWER8_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
-   if test x"$PPC_POWER7" = "x"; then
+   if test x"$PPC_POWER7_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER9_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7], [$TEST_POWER9_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER7_FLAG], [$TEST_POWER9_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
    ## Find the lowest flag for Power8. GCC it is Power8.
    ## XLC and LLVM may be as high as Power9.
-   if test x"$PPC_POWER8" = "x"; then
+   if test x"$PPC_POWER8_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER8_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER8], [$TEST_POWER8_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER8_FLAG], [$TEST_POWER8_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
-   if test x"$PPC_POWER8" = "x"; then
+   if test x"$PPC_POWER8_FLAG" = "x"; then
       CXXFLAGS="$TEST_POWER9_FLAG"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER8], [$TEST_POWER9_FLAG])],
+         [AC_MSG_RESULT([yes]); AC_SUBST([PPC_POWER8_FLAG], [$TEST_POWER9_FLAG])],
          [AC_MSG_RESULT([no])]
       )
    fi
 
-   ## Power4 and Altivec.
-   if test x"$PPC_POWER4" != "x"; then
-      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER4_FLAG])
-      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
-      AM_CXXFLAGS="$AM_CXXFLAGS -CRYPTOPP_DISABLE_ALTIVEC=1"
-   fi
-
-   if test x"$PPC_POWER7" != "x"; then
-      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
-      AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_LEA_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_SM4_FLAG], [$PPC_POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER7_FLAG])
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
-   fi
-
    ## Power8 and VSX. In-core crypto.
-   if test x"$PPC_POWER8" != "x"; then
+   if test x"$PPC_POWER8_FLAG" != "x"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$PPC_POWER8_FLAG])
-      AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SIMON128_FLAG], [$PPC_POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SPECK128_FLAG], [$PPC_POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$PPC_POWER8_FLAG])
       AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1], [Enable Power8 CRC])
       AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1], [Enable Power8 AES])
       AC_DEFINE([CRYPTOPP_POWER8_PMULL_AVAILABLE], [1], [Enable Power8 PMULL])
@@ -1782,6 +1761,30 @@ if test "$IS_PPC" != "0"; then
    else
       AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable Power8])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8=1"
+   fi
+
+   if test x"$PPC_POWER7_FLAG" != "x"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_LEA_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$PPC_POWER7_FLAG])
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$PPC_POWER7_FLAG])
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
+   fi
+
+   ## Power4 and Altivec.
+   if test x"$PPC_POWER4_FLAG" != "x"; then
+      AC_SUBST([CRYPTOPP_PPC_FLAG], [$PPC_POWER4_FLAG])
+      AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
+      AM_CXXFLAGS="$AM_CXXFLAGS -CRYPTOPP_DISABLE_ALTIVEC=1"
    fi
 
    ## Restore CXXFLAGS
