@@ -167,10 +167,10 @@ fi
 IS_GCC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -v 'Clang' | $EGREP -i -c -E 'GCC|G\+\+'`
 IS_MSC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'Microsoft'`
 IS_LLVM_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'LLVM|Clang'`
-IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C\+\+'`
+IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C'`
 IS_ICC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'ICC'`
-IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'IBM XL C/C\+\+'`
-IS_MACPORTS_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'MacPorts'`
+IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'IBM XL'`
+IS_PORTS_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'MacPorts|Homebrew'`
 
 ## A catch-all for compilers that claim to be GCC compatible. Each should be
 ## able to handle GCC syntax. It excludes XLC, SunCC and MSVC
@@ -635,7 +635,7 @@ fi
 ## Apple assembler cannot handle much more than SSE3 or so
 
 if test "$IS_APPLE_OS" != "0"; then
-if test "$IS_GCC_COMPILER" != "0" && test "$IS_MACPORTS_COMPILER" != "0"; then
+if test "$IS_GCC_COMPILER" != "0" && test "$IS_PORTS_COMPILER" != "0"; then
 
    HAVE_OPT=`echo $CXXFLAGS | $EGREP -i -c -E '\-Wa,-q'`
    if test "$HAVE_OPT" = "0"; then
