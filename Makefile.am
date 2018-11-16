@@ -124,7 +124,7 @@ endif
 
 ## cpufeatures library on Android
 if ANDROID_CPU_FEATURES
-   libcryptopp_la_LIBADD += $(libcpufeatures_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libcpu_features_la_OBJECTS)
 endif
 
 ## The remainder of the object files
@@ -165,7 +165,7 @@ endif
 
 ## cpufeatures library on Android
 if ANDROID_CPU_FEATURES
-   libcryptopp_la_DEPENDENCIES += $(libcpufeatures_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libcpu_features_la_OBJECTS)
 endif
 
 ## The remainder of the object files
@@ -279,7 +279,7 @@ endif
 
 ## cpufeatures library on Android
 if ANDROID_CPU_FEATURES
-libcpufeatures_la_SOURCES = cpu-features.c
+libcpu_features_la_SOURCES = cpu-features.c
 endif
 
 # This is the list of remaining sources files that don't need special order
