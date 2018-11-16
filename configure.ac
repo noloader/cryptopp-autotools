@@ -195,6 +195,24 @@ case "$LDNAME" in
 esac
 
 #############################################################################
+## Die early on Android
+
+if test "$IS_ANDROID_OS" != "0"; then
+
+   AC_MSG_CHECKING([if ANDROID_NDK_ROOT is set])
+
+   # http://gnu-autoconf.7623.n7.nabble.com/How-can-I-check-an-environment-variable-td13092.html
+   if test x"$ANDROID_NDK_ROOT" != "x"; then
+      AC_MSG_RESULT([yes])
+   else
+      AC_MSG_RESULT([no])
+      AC_MSG_ERROR([ANDROID_NDK_ROOT is not set. Please set ANDROID_NDK_ROOT])
+   fi
+
+   AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
+fi
+
+#############################################################################
 
 ## An improved AC_COMPILE_IFELSE and XXX_LINK_IFELSE.
 ## Also see http://stackoverflow.com/q/47160617/608639 and
@@ -228,7 +246,7 @@ AC_DEFUN([XXX_LINK_IFELSE],
 ## If Doxygen is available the user still must issue the command.
 
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
-if test -z "$DOXYGEN"; then
+if test x"$DOXYGEN" = "x"; then
    AM_CONDITIONAL([CRYPTOPP_DOXYGEN_AVAILABLE], [false])
 else
    AM_CONDITIONAL([CRYPTOPP_DOXYGEN_AVAILABLE], [true])
@@ -2098,33 +2116,24 @@ fi
 #############################################################################
 ## Android cpu-features library
 
-if false; then
-# if test "$IS_ANDROID_OS" != "0"; then
-
-   # http://gnu-autoconf.7623.n7.nabble.com/How-can-I-check-an-environment-variable-td13092.html
-   if test "${ANDROID_NDK_ROOT+set}" != set; then
-     AC_MSG_ERROR([ANDROID_NDK_ROOT is not set. Please set ANDROID_NDK_ROOT])
-   fi
+if test "$IS_ANDROID_OS" != "0"; then
 
    THIS_FILE="$ANDROID_NDK_ROOT/sources/android/cpufeatures/cpu-features.h"
    AC_CHECK_FILE([$THIS_FILE],
-      [cp "$THIS_FILE" "$ac_srcdir"],
-	  AC_MSG_RESULT([cpu-features.h does not exist in ANDROID_NDK_ROOT, skipping])
+      [cp "$THIS_FILE" "$ac_srcdir"]
    )
 
    THIS_FILE="$ANDROID_NDK_ROOT/sources/android/cpufeatures/cpu-features.c"
    AC_CHECK_FILE([$THIS_FILE],
-      [cp "$THIS_FILE" "$ac_srcdir"],
-	  AC_MSG_RESULT([cpu-features.c does not exist in ANDROID_NDK_ROOT, skipping])
+      [cp "$THIS_FILE" "$ac_srcdir"]
    )
 
    # And set the flag so Makefile adds the recipes
    THIS_FILE="$ac_srcdir/cpu-features.c"
    AC_CHECK_FILE([$THIS_FILE],
-      AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])
+      [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])],
+      [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])]
    )
-
-   AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
 fi
 
 #############################################################################
