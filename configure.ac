@@ -49,6 +49,9 @@
 ## - Fix LDFLAGS on AIX. Autotools is adding unwanted flags to LDFLAGS and it is causing
 ##   a runtime crash in startup code. See https://stackoverflow.com/q/51680113/608639.
 ##
+## - Fix Android cpufeatures library copy and compile. Autotools is producing an error
+##   message that I don't understand. See https://stackoverflow.com/q/53331197/608639.
+##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
@@ -108,7 +111,7 @@ IS_MINGW_OS=`echo $host | $EGREP -i -c -E 'mingw'`
 
 IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
 IS_ARM32=`echo $host | $EGREP -i -c 'arm|armhf|arm7l|eabihf'`
-IS_AARCH64=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
+IS_ARMV8=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
 IS_PPC=`echo $host | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 IS_SPARC=`echo $host | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
 
@@ -1259,15 +1262,11 @@ fi
 ## ARM A-32, including NEON, soft floats and hard floats
 
 if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
+
    AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
 fi
 
 if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
-
-   AC_CHECK_HEADERS(arm_acle.h,
-      [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available])],
-      [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [0], [arm_acle.h is not available])]
-   )
 
    ## Most Linux are hard-float systems.
    IS_ARMHF=`echo $host | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
@@ -1368,7 +1367,7 @@ fi
 #############################################################################
 ## ARM Aarch32 and Aarch64
 
-if test "$IS_AARCH64" != "0"; then
+if test "$IS_ARMV8" != "0"; then
 
    AC_CHECK_HEADERS(arm_acle.h,
       [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available])],
@@ -2097,6 +2096,37 @@ if true; then
 fi
 
 #############################################################################
+## Android cpu-features library
+
+if false; then
+# if test "$IS_ANDROID_OS" != "0"; then
+
+   # http://gnu-autoconf.7623.n7.nabble.com/How-can-I-check-an-environment-variable-td13092.html
+   if test "${ANDROID_NDK_ROOT+set}" != set; then
+     AC_MSG_ERROR([ANDROID_NDK_ROOT is not set. Please set ANDROID_NDK_ROOT])
+   fi
+
+   THIS_FILE="$ANDROID_NDK_ROOT/sources/android/cpufeatures/cpu-features.h"
+   AC_CHECK_FILE([$THIS_FILE],
+      [cp "$THIS_FILE" "$ac_srcdir"],
+	  AC_MSG_RESULT([cpu-features.h does not exist in ANDROID_NDK_ROOT, skipping])
+   )
+
+   THIS_FILE="$ANDROID_NDK_ROOT/sources/android/cpufeatures/cpu-features.c"
+   AC_CHECK_FILE([$THIS_FILE],
+      [cp "$THIS_FILE" "$ac_srcdir"],
+	  AC_MSG_RESULT([cpu-features.c does not exist in ANDROID_NDK_ROOT, skipping])
+   )
+
+   # And set the flag so Makefile adds the recipes
+   AC_CHECK_FILE([$THIS_FILE],
+      AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])
+   )
+
+   AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
+fi
+
+#############################################################################
 ## It is too bad this does not work. If we could write directly
 ## to the config file we could do away with the library one.
 
@@ -2270,7 +2300,7 @@ fi
 HAVE_WIDTH=`echo $CXXFLAGS | $EGREP -i -c -E '\-m32|\-m64|\-q32|\-q64|\-march=native|\-native|\-arch x86_64|\-arch arm64'`
 
 ## Don't print message for Aarch64
-if test "$IS_AARCH64" = "0"; then
+if test "$IS_ARMV8" = "0"; then
 if test "$IS_64BITS" = "0"; then
 if test "$HAVE_WIDTH" = "0"; then
    echo ""

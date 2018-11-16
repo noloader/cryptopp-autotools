@@ -122,6 +122,11 @@ if CRYPTOGAMS_AES
    libcryptopp_la_LIBADD += $(libaes_armv4_la_OBJECTS)
 endif
 
+## cpufeatures library on Android
+if ANDROID_CPU_FEATURES
+   libcryptopp_la_LIBADD += $(libcpufeatures_la_OBJECTS)
+endif
+
 ## The remainder of the object files
 libcryptopp_la_LIBADD += $(libothers_la_OBJECTS)
 
@@ -156,6 +161,11 @@ libcryptopp_la_DEPENDENCIES = \
 ## ARMv7-a AES by Andy Polyakov
 if CRYPTOGAMS_AES
    libcryptopp_la_DEPENDENCIES += $(libaes_armv4_la_OBJECTS)
+endif
+
+## cpufeatures library on Android
+if ANDROID_CPU_FEATURES
+   libcryptopp_la_DEPENDENCIES += $(libcpufeatures_la_OBJECTS)
 endif
 
 ## The remainder of the object files
@@ -265,6 +275,11 @@ libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE_FLAG)
 if CRYPTOGAMS_AES
 libaes_armv4_la_SOURCES = aes_armv4.S
 libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
+endif
+
+## cpufeatures library on Android
+if ANDROID_CPU_FEATURES
+libcpufeatures_la_SOURCES = cpu-features.c
 endif
 
 # This is the list of remaining sources files that don't need special order
