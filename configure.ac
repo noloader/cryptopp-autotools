@@ -49,9 +49,6 @@
 ## - Fix LDFLAGS on AIX. Autotools is adding unwanted flags to LDFLAGS and it is causing
 ##   a runtime crash in startup code. See https://stackoverflow.com/q/51680113/608639.
 ##
-## - Fix Android cpufeatures library copy and compile. Autotools is producing an error
-##   message that I don't understand. See https://stackoverflow.com/q/53331197/608639.
-##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
@@ -200,8 +197,6 @@ esac
 if test "$IS_ANDROID_OS" != "0"; then
 
    AC_MSG_CHECKING([if ANDROID_NDK_ROOT is set])
-
-   # http://gnu-autoconf.7623.n7.nabble.com/How-can-I-check-an-environment-variable-td13092.html
    if test x"$ANDROID_NDK_ROOT" != "x"; then
       AC_MSG_RESULT([yes])
    else
