@@ -2119,6 +2119,7 @@ if false; then
    )
 
    # And set the flag so Makefile adds the recipes
+   THIS_FILE="$ac_srcdir/cpu-features.c"
    AC_CHECK_FILE([$THIS_FILE],
       AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])
    )
