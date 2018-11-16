@@ -2129,6 +2129,8 @@ if test "$IS_ANDROID_OS" != "0"; then
       [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])],
       [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])]
    )
+else
+   [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])]
 fi
 
 #############################################################################
