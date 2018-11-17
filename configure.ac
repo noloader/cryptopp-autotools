@@ -1772,7 +1772,7 @@ if test "$IS_PPC" != "0"; then
       AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1], [Enable Power8 SHA])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable Power8])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8=1"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8"
    fi
 
    if test x"$PPC_POWER7_FLAG" != "x"; then
@@ -1787,7 +1787,7 @@ if test "$IS_PPC" != "0"; then
       AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7=1"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7"
    fi
 
    ## Power4 and Altivec.
@@ -1796,23 +1796,19 @@ if test "$IS_PPC" != "0"; then
       AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
-      AM_CXXFLAGS="$AM_CXXFLAGS -CRYPTOPP_DISABLE_ALTIVEC=1"
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ALTIVEC"
    fi
 
-   # Drop GCM to Power7 if Power8 is not available.
+   # Drop to Power7 if Power8 is not available.
    if test x"$PPC_POWER8_FLAG" = "x"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$PPC_POWER7_FLAG])
    fi
 
-   Drop SIMON64 and SPECK64 to Power4 if Power7 not available
-   if test x"$PPC_POWER7_FLAG" = "x"; then
-      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$PPC_POWER4_FLAG])
-      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$PPC_POWER4_FLAG])
-   fi
-
-   Drop ChaCha to Power4 if Power7 not available
+   Drop to Power4 if Power7 not available
    if test x"$PPC_POWER7_FLAG" = "x"; then
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$PPC_POWER4_FLAG])
+      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$PPC_POWER4_FLAG])
+      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$PPC_POWER4_FLAG])
    fi
 
    ## Restore CXXFLAGS
