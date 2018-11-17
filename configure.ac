@@ -1799,6 +1799,22 @@ if test "$IS_PPC" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -CRYPTOPP_DISABLE_ALTIVEC=1"
    fi
 
+   # Drop GCM to Power7 if Power8 is not available.
+   if test x"$PPC_POWER8_FLAG" = "x"; then
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$PPC_POWER7_FLAG])
+   fi
+
+   Drop SIMON64 and SPECK64 to Power4 if Power7 not available
+   if test x"$PPC_POWER7_FLAG" = "x"; then
+      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$PPC_POWER4_FLAG])
+      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$PPC_POWER4_FLAG])
+   fi
+
+   Drop ChaCha to Power4 if Power7 not available
+   if test x"$PPC_POWER7_FLAG" = "x"; then
+      AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$PPC_POWER4_FLAG])
+   fi
+
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
