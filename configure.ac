@@ -112,12 +112,6 @@ IS_ARMV8=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
 IS_PPC=`echo $host | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 IS_SPARC=`echo $host | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
 
-## Bitness
-IS_64BIT=$(getconf LONG_BIT 2>&1 | grep -i -c 64)
-if [[ "$IS_64BIT" = "0" ]]; then
-    IS_64BIT=$(file /bin/ls 2>&1 | grep -i -c '64-bit')
-fi
-
 ## Debug builds add more goodies to help break things. I like breaking things.
 IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-DDEBUG'`
 
@@ -2142,7 +2136,7 @@ if test "$IS_ANDROID_OS" != "0"; then
       [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])]
    )
 else
-   [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])]
+   AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])
 fi
 
 #############################################################################
@@ -2314,18 +2308,6 @@ if test "$OPT_O3" = "0"; then
    echo ""
    echo "CXXFLAGS does not include -O3. You should consider building at -O3"
    echo "to engage compiler vectorizations and enhance performance."
-fi
-
-HAVE_WIDTH=`echo $CXXFLAGS | $EGREP -i -c -E '\-m32|\-m64|\-q32|\-q64|\-march=native|\-native|\-arch x86_64|\-arch arm64'`
-
-## Don't print message for Aarch64
-if test "$IS_ARMV8" = "0"; then
-if test "$IS_64BITS" = "0"; then
-if test "$HAVE_WIDTH" = "0"; then
-   echo ""
-   echo "The machine is 64-bit capable but not present in CXXFLAGS."
-fi
-fi
 fi
 
 echo "***********************************************************************"
