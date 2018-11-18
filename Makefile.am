@@ -61,6 +61,8 @@ EXTRA_LTLIBRARIES = \
    liblea_simd.la \
    libneon_simd.la \
    libppc_simd.la \
+   libppc_power7.la \
+   libppc_power8.la \
    librijndael_simd.la \
    libsha_simd.la \
    libshacal2_simd.la \
@@ -106,6 +108,8 @@ libcryptopp_la_LIBADD = \
    $(liblea_simd_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
+   $(libppc_power7_la_OBJECTS) \
+   $(libppc_power8_la_OBJECTS) \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
@@ -147,6 +151,8 @@ libcryptopp_la_DEPENDENCIES = \
    $(libgcm_simd_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
+   $(libppc_power7_la_OBJECTS) \
+   $(libppc_power8_la_OBJECTS) \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
@@ -228,7 +234,15 @@ libneon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_NEON_FLAG)
 
 ## CRYPTOPP_PPC_FLAG set in configure.ac
 libppc_simd_la_SOURCES = ppc_simd.cpp
-libppc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_PPC_FLAG)
+libppc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_ALTIVEC_FLAG)
+
+## CRYPTOPP_PPC_FLAG set in configure.ac
+libppc_power7_la_SOURCES = ppc_power7.cpp
+libppc_power7_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER7_FLAG)
+
+## CRYPTOPP_PPC_FLAG set in configure.ac
+libppc_power8_la_SOURCES = ppc_power8.cpp
+libppc_power8_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER8_FLAG)
 
 ## CRYPTOPP_AES_FLAG set in configure.ac
 librijndael_simd_la_SOURCES = rijndael_simd.cpp
