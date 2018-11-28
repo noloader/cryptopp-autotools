@@ -2177,6 +2177,9 @@ fi
 if test x"$CRYPTOPP_POWER8_FLAG" != "x"; then
    echo "CRYPTOPP_POWER8_FLAG: $CRYPTOPP_POWER8_FLAG"
 fi
+if test x"$CRYPTOPP_POWER9_FLAG" != "x"; then
+   echo "CRYPTOPP_POWER9_FLAG: $CRYPTOPP_POWER9_FLAG"
+fi
 if test x"$CRYPTOPP_ARIA_FLAG" != "x"; then
    echo "CRYPTOPP_ARIA_FLAG: $CRYPTOPP_ARIA_FLAG"
 fi
