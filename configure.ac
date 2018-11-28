@@ -1679,6 +1679,7 @@ if test "$IS_PPC" != "0"; then
    # Power9 and DARN random number generator
    if test x"$POWER9_FLAG" != "x"; then
       AC_SUBST([CRYPTOPP_POWER9_FLAG], [$POWER9_FLAG])
+      AC_SUBST([CRYPTOPP_DARN_FLAG], [$POWER9_FLAG])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_POWER9], [1], [Disable Power9])
    fi
