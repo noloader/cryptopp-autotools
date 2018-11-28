@@ -63,6 +63,7 @@ EXTRA_LTLIBRARIES = \
    libppc_simd.la \
    libppc_power7.la \
    libppc_power8.la \
+   libppc_power9.la \
    librijndael_simd.la \
    libsha_simd.la \
    libshacal2_simd.la \
@@ -110,6 +111,7 @@ libcryptopp_la_LIBADD = \
    $(libppc_simd_la_OBJECTS) \
    $(libppc_power7_la_OBJECTS) \
    $(libppc_power8_la_OBJECTS) \
+   $(libppc_power9_la_OBJECTS) \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
@@ -153,6 +155,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(libppc_simd_la_OBJECTS) \
    $(libppc_power7_la_OBJECTS) \
    $(libppc_power8_la_OBJECTS) \
+   $(libppc_power9_la_OBJECTS) \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
@@ -244,6 +247,10 @@ libppc_power7_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER7_FLAG)
 libppc_power8_la_SOURCES = ppc_power8.cpp
 libppc_power8_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER8_FLAG)
 
+## CRYPTOPP_PPC_FLAG set in configure.ac
+libppc_power9_la_SOURCES = ppc_power9.cpp
+libppc_power9_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER9_FLAG)
+
 ## CRYPTOPP_AES_FLAG set in configure.ac
 librijndael_simd_la_SOURCES = rijndael_simd.cpp
 librijndael_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_AES_FLAG)
@@ -306,7 +313,7 @@ libothers_la_SOURCES = \
     algparam.cpp arc4.cpp aria.cpp ariatab.cpp asn.cpp authenc.cpp \
     base32.cpp base64.cpp basecode.cpp bfinit.cpp blake2.cpp blowfish.cpp \
     blumshub.cpp camellia.cpp cast.cpp casts.cpp cbcmac.cpp ccm.cpp \
-    chacha.cpp cham.cpp channels.cpp cmac.cpp crc.cpp \
+    chacha.cpp cham.cpp channels.cpp cmac.cpp crc.cpp darn.cpp \
     default.cpp des.cpp dessp.cpp dh.cpp dh2.cpp dll.cpp dsa.cpp eax.cpp \
     ec2n.cpp eccrypto.cpp ecp.cpp elgamal.cpp emsa2.cpp eprecomp.cpp \
     esign.cpp files.cpp filters.cpp fips140.cpp fipstest.cpp gcm.cpp \
@@ -330,8 +337,8 @@ pkginclude_HEADERS = \
     3way.h adler32.h adv_simd.h aes.h algebra.h algparam.h \
     arc4.h argnames.h aria.h asn.h authenc.h base32.h base64.h basecode.h \
     blake2.h blowfish.h blumshub.h camellia.h cast.h cbcmac.h ccm.h chacha.h \
-    cham.h channels.h cmac.h config.h cpu.h crc.h cryptlib.h default.h des.h \
-    dh.h dh2.h dll.h dmac.h drbg.h dsa.h eax.h ec2n.h eccrypto.h ecp.h \
+    cham.h channels.h cmac.h config.h cpu.h crc.h cryptlib.h darn.h default.h \
+    des.h dh.h dh2.h dll.h dmac.h drbg.h dsa.h eax.h ec2n.h eccrypto.h ecp.h \
     ecpoint.h elgamal.h emsa2.h eprecomp.h esign.h fhmqv.h files.h filters.h \
     fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h gf2n.h gfpcrypt.h gost.h \
     gzip.h hashfwd.h hc128.h hc256.h hex.h hight.h hkdf.h hmac.h hmqv.h \
