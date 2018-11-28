@@ -1617,24 +1617,18 @@ if test "$IS_PPC" != "0"; then
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    if test "$IS_XLC_COMPILER" = "1"; then
-      POWER3_FLAG="-qarch=pwr3 -qaltivec"
-      POWER4_FLAG="-qarch=pwr4 -qaltivec"
-      POWER5_FLAG="-qarch=pwr5 -qaltivec"
-      POWER6_FLAG="-qarch=pwr6 -qaltivec"
+      ALTIVEC_FLAG="-qaltivec"
       POWER7_FLAG="-qarch=pwr7 -qaltivec"
       POWER8_FLAG="-qarch=pwr8 -qaltivec"
       POWER9_FLAG="-qarch=pwr9 -qaltivec"
    else
-      POWER3_FLAG="-mcpu=power3 -maltivec"
-      POWER4_FLAG="-mcpu=power4 -maltivec"
-      POWER5_FLAG="-mcpu=power5 -maltivec"
-      POWER6_FLAG="-mcpu=power6 -maltivec"
+      ALTIVEC_FLAG="-maltivec"
       POWER7_FLAG="-mcpu=power7 -maltivec"
       POWER8_FLAG="-mcpu=power8 -maltivec"
       POWER9_FLAG="-mcpu=power9 -maltivec"
    fi
 
-   CXXFLAGS="$POWER3_FLAG"
+   CXXFLAGS="$ALTIVEC_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
@@ -1643,43 +1637,7 @@ if test "$IS_PPC" != "0"; then
    )
 
    if test "$retval" != "0"; then
-       POWER3_FLAG=""
-   fi
-
-   CXXFLAGS="$POWER4_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" != "0"; then
-       POWER4_FLAG=""
-   fi
-   
-   CXXFLAGS="$POWER5_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" != "0"; then
-       POWER5_FLAG=""
-   fi
-
-   CXXFLAGS="$POWER6_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" != "0"; then
-       POWER6_FLAG=""
+       ALTIVEC_FLAG=""
    fi
    
    CXXFLAGS="$POWER7_FLAG"
@@ -1761,23 +1719,6 @@ if test "$IS_PPC" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
    fi
 
-   ## Altivec.
-   if test x"$POWER3_FLAG" != "x"; then
-      ALTIVEC_FLAG="$POWER3_FLAG"
-   elif test x"$POWER4_FLAG" != "x"; then
-      ALTIVEC_FLAG="$POWER4_FLAG"
-   elif test x"$POWER5_FLAG" != "x"; then
-      ALTIVEC_FLAG="$POWER5_FLAG"
-   elif test x"$POWER6_FLAG" != "x"; then
-      ALTIVEC_FLAG="$POWER6_FLAG"
-   elif test x"$POWER7_FLAG" != "x"; then
-      ALTIVEC_FLAG="$POWER7_FLAG"
-   elif test x"$POWER8_FLAG" != "x"; then
-      ALTIVEC_FLAG="$POWER8_FLAG"
-   elif test x"$POWER9_FLAG" != "x"; then
-      ALTIVEC_FLAG="$POWER9_FLAG"
-   fi
-
    if test x"$ALTIVEC_FLAG" != "x"; then
       AC_SUBST([CRYPTOPP_ALTIVEC_FLAG], [$ALTIVEC_FLAG])
       AC_DEFINE([CRYPTOPP_ALTIVEC_AVAILABLE], [1], [Enable Altivec])
@@ -1792,7 +1733,7 @@ if test "$IS_PPC" != "0"; then
       fi
    fi
 
-   Drop to Altivec if Power7 not available
+   # Drop to Altivec if Power7 not available
    if test x"$POWER7_FLAG" = "x"; then
       if test x"$ALTIVEC_FLAG" != "x"; then
          AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$ALTIVEC_FLAG])
