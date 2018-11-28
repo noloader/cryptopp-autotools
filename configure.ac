@@ -1670,18 +1670,6 @@ if test "$IS_PPC" != "0"; then
        POWER5_FLAG=
    fi
 
-   CXXFLAGS="$POWER5_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" != "0"; then
-       POWER5_FLAG=
-   fi
-
    CXXFLAGS="$POWER6_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
