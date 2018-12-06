@@ -20,6 +20,9 @@
 ##   The damn tool does not honor AC_PROG_CXX or observe the absence of AC_PROG_CC. It also
 ##   fails to provide a AC_PROG_NO_CC macro. The damn tool is no better than Cmake.
 ##
+## - Cutover to the feature test programs in TestPrograms. It gives us better control
+##   over the feature tests. Also see https://github.com/weidai11/cryptopp/issues/741.
+##
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X.
 ##   Also see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
 ##
@@ -679,6 +682,12 @@ fi
 
 #############################################################################
 ## IA-32, i386, i586, i686, x86_64, etc.
+
+## This block handles Clang and its integrated assembler.
+## Also see https://bugs.llvm.org/show_bug.cgi?id=39895.
+if test "$IS_IA32" = "1" && test "$LLVM_COMPILER" = "1"; then
+    AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
+fi
 
 ## This block handles GCC and friends. i86pc and SunCC is handled after this block
 if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
