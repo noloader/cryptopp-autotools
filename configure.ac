@@ -685,7 +685,7 @@ fi
 
 ## This block handles Clang and its integrated assembler.
 ## Also see https://bugs.llvm.org/show_bug.cgi?id=39895.
-if test "$IS_IA32" = "1" && test "$LLVM_COMPILER" = "1"; then
+if test "$IS_IA32" = "1" && test "$IS_LLVM_COMPILER" = "1"; then
     AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
 fi
 
