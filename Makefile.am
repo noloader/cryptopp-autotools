@@ -7,7 +7,9 @@
 ##    'make sources'. Remove the SIMD files for libothers_la_SOURCES.
 ##    Thanks to steeldriver on U&L.SE for help with the sed.
 ##
-##       make sources | sed -e 's|[[:alnum:]]*_simd.cpp ||g' | fold -w73 -s
+##       make sources | sed 's|cryptlib.cpp cpu.cpp integer.cpp ||g' | \
+##           sed -e 's|[[:alnum:]]*_simd.cpp ||g' | \
+##           sed -e 's|ppc_power[[:alnum:]]*.cpp ||g' | fold -w73 -s
 ##
 ##    Once "library sources" list is created, remove cryptlib.cpp, cpu.cpp,
 ##    integer.cpp; and remove all of the *_simd.cpp files. The remaining
