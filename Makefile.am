@@ -419,7 +419,7 @@ testdata_FILES = \
     TestData/esig1536.dat  TestData/nr1024.dat    TestData/usage.dat \
     TestData/esig2046.dat  TestData/nr2048.dat    TestData/x25519.dat \
     TestData/fhmqv160.dat  TestData/rabi1024.dat  TestData/xtrdh171.dat \
-    TestData/fhmqv256.dat  TestData/rabi2048.dat  TestData/xtrdh342.dat
+    TestData/fhmqv256.dat  TestData/rabi2048.dat  TestData/xtrdh342.dat \
     TestData/fhmqv384.dat  TestData/rc2val.dat
 
 testvector_FILES = \
