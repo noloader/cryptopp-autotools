@@ -707,8 +707,8 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSE2_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_DONNA_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Enable SSE2])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disable SSE2])
@@ -990,7 +990,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ## If not available then need -xarch=sse2 due to SSE2, GCM_Xor16_SSE2, etc.
    if test "$retval" = "0"; then
       CXXFLAGSX="$CXXFLAGS -D__SSE2__=1"
-      AC_SUBST([CRYPTOPP_SSE_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_SSE2_FLAG], [$CXXFLAGSX])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGSX])
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGSX])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGSX])
@@ -2172,8 +2172,8 @@ echo "Static library: $enable_static"
 echo "Shared library: $enable_shared"
 echo ""
 
-if test x"$CRYPTOPP_SSE_FLAG" != "x"; then
-   echo "CRYPTOPP_SSE_FLAG: $CRYPTOPP_SSE_FLAG"
+if test x"$CRYPTOPP_SSE2_FLAG" != "x"; then
+   echo "CRYPTOPP_SSE2_FLAG: $CRYPTOPP_SSE2_FLAG"
 fi
 if test x"$CRYPTOPP_NEON_FLAG" != "x"; then
    echo "CRYPTOPP_NEON_FLAG: $CRYPTOPP_NEON_FLAG"
@@ -2210,6 +2210,9 @@ if test x"$CRYPTOPP_CHAM_FLAG" != "x"; then
 fi
 if test x"$CRYPTOPP_CRC_FLAG" != "x"; then
    echo "CRYPTOPP_CRC_FLAG: $CRYPTOPP_CRC_FLAG"
+fi
+if test x"$CRYPTOPP_DONNA_FLAG" != "x"; then
+   echo "CRYPTOPP_DONNA_FLAG: $CRYPTOPP_DONNA_FLAG"
 fi
 if test x"$CRYPTOPP_LEA_FLAG" != "x"; then
    echo "CRYPTOPP_LEA_FLAG: $CRYPTOPP_LEA_FLAG"
