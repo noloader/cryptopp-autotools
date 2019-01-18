@@ -758,7 +758,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-msse3"
    XXX_PROGRAM="#include <emmintrin.h>
       #include <pmmintrin.h>
-      int main(int argc, char* argv[])
+      int main(int argc, char** argv)
       {
          __m128d x = _mm_setzero_pd();
          x=_mm_addsub_pd(x,x);
@@ -784,7 +784,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-mssse3"
    XXX_PROGRAM="#include <emmintrin.h>
       #include <tmmintrin.h>
-      int main(int argc, char* argv[])
+      int main(int argc, char** argv)
       {
          __m128i x = _mm_setzero_si128();
          x=_mm_alignr_epi8(x,x,2);
@@ -818,7 +818,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-msse4.1"
    XXX_PROGRAM="#include <emmintrin.h>
       #include <smmintrin.h>
-      int main(int argc, char* argv[])
+      int main(int argc, char** argv)
       {
          __m128i x = _mm_setzero_si128();
          __m128i a = _mm_setzero_si128();
