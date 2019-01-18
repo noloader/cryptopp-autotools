@@ -6,70 +6,81 @@
 ## Visit the link below for the original Debian Autotools files
 ##   http://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
 ##
-## To generate the configure file perform the following. The extra steps are needed
-## because the Autotools on some machines, like a PowerMac or Solaris, are not modern
-## enough for macros like AC_PROG_LIBTOOL and AC_ENABLE_SHARED.
+## To generate the configure file perform the following. The extra steps are
+## needed because the Autotools on some machines, like a PowerMac or Solaris,
+## are not modern enough for macros like AC_PROG_LIBTOOL and AC_ENABLE_SHARED.
 ##
 ##   autoupdate && libtoolize && autoreconf
 ##
-## Our Autoconf tests are strict. We use custom AC_COMPILE_IFELSE and XXX_LINK_IFELSE
-## that reject a feature test if there are any warnings or errors. We needed this
-## because Autotools was mis-detecting features on AIX and Solarix using XLC and SunCC.
-## We also needed the custom tests because Autoconf does not have a "warning as errors"
-## option that just works on all the compilers we support.
+## Our Autoconf tests are strict. We use custom AC_COMPILE_IFELSE and
+## AC_LINK_IFELSE that rejects a feature test if there are any warnings or
+## errors. We needed this because Autotools was mis-detecting features on AIX
+## and Solarix using XLC and SunCC. We also needed the custom tests because
+## Autoconf does not have a "warnings as errors" option that just works on all
+## the compilers we support.
 
 
 ## TODO
 ##
 ## - Figure out how to make Autoconf stop using the fucking C compiler for tasks.
-##   The damn tool does not honor AC_PROG_CXX or observe the absence of AC_PROG_CC. It also
-##   fails to provide a AC_PROG_NO_CC macro. The damn tool is no better than Cmake.
+##   The damn tool does not honor AC_PROG_CXX or observe the absence of
+##   AC_PROG_CC. It also fails to provide a AC_PROG_NO_CC macro. The damn tool
+##   is no better than Cmake.
 ##
-## - Fix Autotools not treating warnings as errors. Our test programs are clean, so they
-##   should compile cleanly or the feature is not available. However, Autotools lacks a
-##   AC_TREAT_WARNINGS_AS_ERRORS-like define.
+## - Fix Autotools not treating warnings as errors. Our test programs are clean,
+##   so they should compile cleanly or the feature is not available. However,
+##   Autotools lacks a AC_TREAT_WARNINGS_AS_ERRORS-like macro or define.
 ##
-## - Cutover to the feature test programs in TestPrograms. It gives us better control
-##   over the feature tests. Also see https://github.com/weidai11/cryptopp/issues/741
-##   and https://stackoverflow.com/q/54250060/608639.
+## - Cutover to the feature test programs in TestPrograms. It gives us better
+##   control over the feature tests. Also see
+##   https://github.com/weidai11/cryptopp/issues/741 and
+##   https://stackoverflow.com/q/54250060/608639.
 ##
-## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X.
-##   Also see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
+## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X. Also
+##   see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
 ##
-## - Fix Autoconf ignoring our config.h.in. This one looks like it is a problem without a solution.
-##   Also see https://stackoverflow.com/q/48436715/608639
+## - Fix Autoconf ignoring our config.h.in. This one looks like it is a problem
+##   without a solution. Also see https://stackoverflow.com/q/48436715/608639.
 ##
-## - Stop using local.h, and write the config data into a Crypto++ compatible config.h. There's
-##   not much to "Crypto++ compatible config.h". We need test and write preprocessor macros like
-##   CRYPTOPP_BIG_ENDIAN, CRYPTOPP_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them.
-##   This problem now appears to be closely related to the config.h.in problem. We can't supply a
-##   template and expect Autotools to honor it. Also see
-##   https://lists.gnu.org/archive/html/autoconf/2018-07/msg00014.html
+## - Stop using local.h, and write the config data into a Crypto++ compatible
+##   config.h. There's not much to "Crypto++ compatible config.h". We need test
+##   and write preprocessor macros like CRYPTOPP_BIG_ENDIAN,
+##   CRYPTOPP_LITTLE_ENDIAN, CRYPTOPP_CXX11, etc. There's just a lot of them.
+##   This problem now appears to be closely related to the config.h.in problem.
+##   We can't supply a template and expect Autotools to honor it. Also see
+##   https://lists.gnu.org/archive/html/autoconf/2018-07/msg00014.html.
 ##
-## - Fix incorrect use of --with-sysroot. Autotools does not seem to honor it when it is set.
-##   Also see http://stackoverflow.com/q/47226389/608639
+## - Fix incorrect use of --with-sysroot. Autotools does not seem to honor it
+##   when it is set. Also see http://stackoverflow.com/q/47226389/608639.
 ##
-## - Fix MSYS2 compile error due to `lt-cryptest.c` and `lt-cryptestcwd.c`. They are C files and
-##   don't use necessary C++ flags. They also use Posix functions but fail to define _XOPEN_SOURCE.
-##   I'm guessing this has something to do with libtool, but I have no idea how to fix it at
-##   the moment. Also see http://lists.gnu.org/archive/html/bug-libtool/2017-11/msg00002.html.
+## - Fix MSYS2 compile error due to `lt-cryptest.c` and `lt-cryptestcwd.c`.
+##   They are C files and don't use necessary C++ flags. They also use Posix
+##   functions but fail to define _XOPEN_SOURCE. I'm guessing this has something
+##   to do with libtool, but I have no idea how to fix it at the moment. Also
+##   see http://lists.gnu.org/archive/html/bug-libtool/2017-11/msg00002.html.
 ##
-## - Fix static initialization order fiasco tests. We don't know how to craft the tests because
-##   we don't know how to compile two files at once using Autotools.
+## - Fix static initialization order fiasco tests. We don't know how to craft
+##   the tests because we don't know how to compile two files at once using
+##   Autotools.
 ##
-## - Fix -xarch for SHA when using SunCC. We don't know the arch value at the moment.
+## - Fix -xarch for SHA when using SunCC. We don't know the arch value at the
+##   moment. If things work as expected we will fail the feature test and the
+##   code paths will be disabled. But we want them enabled once Sun supports
+##   the SHA extensions.
 ##
-## - Fix LDFLAGS on AIX. Autotools is adding unwanted flags to LDFLAGS and it is causing
-##   a runtime crash in startup code. See https://stackoverflow.com/q/51680113/608639.
+## - Fix LDFLAGS on AIX. Autotools is adding unwanted flags to LDFLAGS and it
+##   is causing a runtime crash in startup code. See
+##   https://stackoverflow.com/q/51680113/608639.
 ##
 ## - Add ubsan and asan targets for testing.
 ##
 ## - Setup test environment with Dash, which appears to be the lamest shell
 ##
-## - Package Autotools propery, for a regular user's definition of "proper". I don't know what the
-##   final deliverables or artifacts are supposed to look like. We also get warnings and errors
-##   due to a missing m4/ directory even though we don't use it. Maybe we need to distribute an
-##   empty m4/ directory to keep the tools quiet.
+## - Package Autotools propery, for a regular user's definition of "proper".
+##   I don't know what the final deliverables or artifacts are supposed to
+##   look like. We also get warnings and errors due to a missing m4/ directory
+##   even though we don't use it. Maybe we need to distribute an empty m4/
+##   directory to keep the tools quiet.
 
 #############################################################################
 
@@ -209,9 +220,12 @@ fi
 
 #############################################################################
 
-## An improved AC_COMPILE_IFELSE and XXX_LINK_IFELSE.
-## Also see http://stackoverflow.com/q/47160617/608639 and
-## http://lists.gnu.org/archive/html/autoconf/2009-03/msg00099.html.
+## Our Autoconf tests are strict. We use custom AC_COMPILE_IFELSE and
+## AC_LINK_IFELSE that rejects a feature test if there are any warnings or
+## errors. We needed this because Autotools was mis-detecting features on
+## AIX and Solarix using XLC and SunCC. We also needed the custom tests
+## because Autoconf does not have a "warnings as errors" option that just
+## works on all the compilers we support.
 
 AC_DEFUN([XXX_COMPILE_IFELSE],
    [AC_REQUIRE([AC_PROG_EGREP])
