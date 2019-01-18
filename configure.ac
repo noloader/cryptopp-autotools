@@ -767,7 +767,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-msse4.1"
    XXX_PROGRAM="#include <smmintrin.h>
       int main(int argc, char** argv) {
-         __m128i x;
+         __m128i x = _mm_setzero_si128();
          x=_mm_blend_epi16 (x,x,0);
          return 0;
       }"
@@ -823,7 +823,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-mssse3 -mpclmul"
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
-         __m128i x;
+         __m128i x = _mm_setzero_si128();
          x=_mm_clmulepi64_si128 (x,x,0);
          return 0;
       }"
@@ -848,7 +848,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-mssse3 -maes"
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
-         __m128i x;
+         __m128i x = _mm_setzero_si128();
          x=_mm_aesenc_si128(x,x);
          x=_mm_aesenclast_si128(x,x);
          return 0;
@@ -871,7 +871,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-msse4.1 -maes"
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
-         __m128i x;
+         __m128i x = _mm_setzero_si128();
          x=_mm_aesenc_si128(x,x);
          x=_mm_aesenclast_si128(x,x);
          return 0;
@@ -951,7 +951,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-msse4.2 -msha"
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
-         __m128i x;
+         __m128i x = _mm_setzero_si128();
           x=_mm_sha1rnds4_epu32(x,x,0);
           return 0;
       }"
@@ -1104,7 +1104,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
-         __m128i x;
+         __m128i x = _mm_setzero_si128();
          x=_mm_clmulepi64_si128 (x,x,0);
          return 0;
       }"
@@ -1131,7 +1131,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
-         __m128i x;
+         __m128i x = _mm_setzero_si128();
          x=_mm_aesenc_si128(x,x);
          x=_mm_aesenclast_si128(x,x);
          return 0;
@@ -1250,7 +1250,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
-         __m128i x;
+         __m128i x = _mm_setzero_si128();
          x=_mm_sha1msg1_epu32(x,x);
          x=_mm_sha256msg1_epu32(x,x);
          return 0;
