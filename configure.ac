@@ -73,7 +73,7 @@
 
 #############################################################################
 
-AC_INIT([Crypto++], [7.1], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
+AC_INIT([Crypto++], [8.0], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_MACRO_DIR([m4])
