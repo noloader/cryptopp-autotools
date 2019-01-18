@@ -1,18 +1,23 @@
 ## configure.ac - Autotools configuration file for Crypto++.
 ##                written and placed in public domain by Jeffrey Walton.
 ##                based on Debian configure.ac by László Böszörményi.
-##
+
 
 ## Visit the link below for the original Debian Autotools files
 ##   http://sources.debian.net/src/libcrypto++/5.6.4-8/debian/autotools/
 ##
-
 ## To generate the configure file perform the following. The extra steps are needed
 ## because the Autotools on some machines, like a PowerMac or Solaris, are not modern
 ## enough for macros like AC_PROG_LIBTOOL and AC_ENABLE_SHARED.
 ##
 ##   autoupdate && libtoolize && autoreconf
 ##
+## Our Autoconf tests are strict. We use custom AC_COMPILE_IFELSE and XXX_LINK_IFELSE
+## that reject a feature test if there are any warnings or errors. We needed this
+## because Autotools was mis-detecting features on AIX and Solarix using XLC and SunCC.
+## We also needed the custom tests because Autoconf does not have a "warning as errors"
+## option that just works on all the compilers we support.
+
 
 ## TODO
 ##
@@ -65,7 +70,6 @@
 ##   final deliverables or artifacts are supposed to look like. We also get warnings and errors
 ##   due to a missing m4/ directory even though we don't use it. Maybe we need to distribute an
 ##   empty m4/ directory to keep the tools quiet.
-##
 
 #############################################################################
 
@@ -88,12 +92,6 @@ AC_PROG_AWK
 
 ## Assert this once to avoid surprises
 AC_LANG_ASSERT([C++])
-
-## Used for our test compile and link to detect failures. It is more
-## robust than Autotools and catches XL C/C++ and SunCC problems.
-## When searching for elements in BAD_RESULT use case-insensitivity.
-
-BAD_RESULT="fatal|error|unknown|unrecognized|illegal|ignored|incorrect|not found|not exist|cannot find|not supported|not compatible|no such instruction|invalid mnemonic"
 
 #############################################################################
 
@@ -220,7 +218,8 @@ AC_DEFUN([XXX_COMPILE_IFELSE],
    AC_COMPILE_IFELSE(
       [$1],
       [retval=0
-        if $EGREP -i -c -E "$BAD_RESULT" conftest.err >/dev/null; then retval=1; fi
+         touch conftest.err
+         if test `cat conftest.err | wc -w` != "0"; then retval=1; fi
       ],[retval=1]
    )
    AS_IF([test $retval = 0],[$2],[$3])]
@@ -231,7 +230,8 @@ AC_DEFUN([XXX_LINK_IFELSE],
    AC_LINK_IFELSE(
       [$1],
       [retval=0
-        if $EGREP -i -c -E "$BAD_RESULT" conftest.err >/dev/null; then retval=1; fi
+         touch conftest.err
+         if test `cat conftest.err | wc -w` != "0"; then retval=1; fi
       ],[retval=1]
    )
    AS_IF([test $retval = 0],[$2],[$3])]
@@ -405,6 +405,11 @@ fi
 ## Foo::s_x or Bar::s_x. The problem is, we don't know how to do it.
 ## Also see https://stackoverflow.com/q/51662985/608639.
 
+## We can only run one Init Priority test. Otherwise, running both tests
+## cause 'CRYPTOPP_INIT_PRIORITY 250' and 'CRYPTOPP_INIT_PRIORITY 0' to be
+## written, which results in "warning: CRYPTOPP_INIT_PRIORITY redefined".
+## And of course, Autools does not allow us to undefine a macro.
+
 ## GCC-style
 if true; then
 
@@ -450,7 +455,7 @@ if true; then
 fi
 
 ## MSC-style
-if true; then
+if false; then
 
    ## The problem is, Autotools lacks a cross-platform
    ## AC_TREAT_WARNINGS_AS_ERRORS. Clang, GCC, and friends will see
@@ -703,9 +708,17 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    ##### SSE2 #####
 
    CXXFLAGS="-msse2"
+   XXX_PROGRAM="#include <emmintrin.h>
+   int main(int argc, char** argv)
+   {
+      __m128i x = _mm_setzero_si128();
+      x=_mm_add_epi64(x,x);
+      return 0;
+   }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1653,7 +1666,7 @@ if test "$IS_PPC" != "0"; then
    if test "$retval" != "0"; then
        ALTIVEC_FLAG=""
    fi
-   
+
    CXXFLAGS="$POWER7_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
