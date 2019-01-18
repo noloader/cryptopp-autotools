@@ -675,8 +675,9 @@ fi
 #############################################################################
 ## MacPorts GCC using Clang integrated assembler
 
-## Modern GCC must use Clang as the assembler. The old
-## Apple assembler cannot handle much more than SSE3 or so
+## Modern GCC must use Clang as the assembler. The old Apple
+## assembler cannot handle much more than SSE4 or so. We need
+## to use -Wa,-q in subsequent tests, if available.
 
 if test "$IS_APPLE_OS" != "0"; then
 if test "$IS_GCC_COMPILER" != "0" && test "$IS_PORTS_COMPILER" != "0"; then
@@ -695,14 +696,10 @@ if test "$IS_GCC_COMPILER" != "0" && test "$IS_PORTS_COMPILER" != "0"; then
          [AC_MSG_RESULT([no])]
       )
 
+      # We can add -Wa,-q to all files, if needed
       if test "$retval" = "0"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-      fi
-
-      HAVE_OPT=`echo $CXXFLAGS | $EGREP -i -c -E '\-DCRYPTOPP_CLANG_INTEGRATED_ASSEMBLER'`
-      if test "$HAVE_OPT" = "1"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_CLANG_INTEGRATED_ASSEMBLER=1"
-         AC_DEFINE([CRYPTOPP_CLANG_INTEGRATED_ASSEMBLER], [1], [Enable Clang integrated assembler])
+         # AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+         WAQ_FLAG="-Wa,-q"
       fi
 
       ## Restore CXXFLAGS
@@ -720,7 +717,8 @@ if test "$IS_IA32" = "1" && test "$IS_LLVM_COMPILER" = "1"; then
     AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
 fi
 
-## This block handles GCC and friends. i86pc and SunCC is handled after this block
+## This block handles GCC and friends, including -Wa,-q if needed.
+## i86pc and SunCC is handled after this block.
 if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ## Save CXXFLAGS
@@ -728,7 +726,12 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### SSE2 #####
 
-   CXXFLAGS="-msse2"
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-msse2 $WAQ_FLAG"
+   else
+      CXXFLAGS="-msse2"
+   fi
+
    XXX_PROGRAM="#include <emmintrin.h>
       int main(int argc, char** argv)
       {
@@ -756,7 +759,12 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### SSE3 #####
 
-   CXXFLAGS="-msse3"
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-msse3 $WAQ_FLAG"
+   else
+      CXXFLAGS="-msse3"
+   fi
+
    XXX_PROGRAM="#include <emmintrin.h>
       #include <pmmintrin.h>
       int main(int argc, char** argv)
@@ -782,7 +790,12 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### SSSE3 #####
 
-   CXXFLAGS="-mssse3"
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-mssse3 $WAQ_FLAG"
+   else
+      CXXFLAGS="-mssse3"
+   fi
+
    XXX_PROGRAM="#include <emmintrin.h>
       #include <tmmintrin.h>
       int main(int argc, char** argv)
@@ -815,8 +828,13 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### SSE4.1 #####
 
-   ## Old BSD linkers don't support it.
-   CXXFLAGS="-msse4.1"
+   ## Old BSD linkers don't support SSE4 or above.
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-msse4.1 $WAQ_FLAG"
+   else
+      CXXFLAGS="-msse4.1"
+   fi
+
    XXX_PROGRAM="#include <emmintrin.h>
       #include <smmintrin.h>
       int main(int argc, char** argv)
@@ -850,7 +868,12 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    ##### SSE4.2 #####
 
    ## Old BSD linkers don't support it.
-   CXXFLAGS="-msse4.2"
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-msse4.2 $WAQ_FLAG"
+   else
+      CXXFLAGS="-msse4.2"
+   fi
+
    XXX_PROGRAM="#include <nmmintrin.h>
       int main(int argc, char** argv) {
          unsigned int x=32;
@@ -876,8 +899,39 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### PCLMUL #####
 
-   ## Some old compilers and linkers don't support it.
-   CXXFLAGS="-mssse3 -mpclmul"
+   ## Some old compilers, assemblers and linkers don't support it.
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-mpclmul $WAQ_FLAG"
+   else
+      CXXFLAGS="-mpclmul"
+   fi
+
+   XXX_PROGRAM="#include <wmmintrin.h>
+      int main(int argc, char** argv) {
+         __m128i x = _mm_setzero_si128();
+         x=_mm_clmulepi64_si128 (x,x,0);
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   # if -mpclmul fails then it is disabled in the next test
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_GF2N_FLAG], [$CXXFLAGS])
+   fi
+
+   ## Some old compilers, assemblers and linkers don't support it.
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-mssse3 -mpclmul $WAQ_FLAG"
+   else
+      CXXFLAGS="-mssse3 -mpclmul"
+   fi
+
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
          __m128i x = _mm_setzero_si128();
@@ -894,7 +948,6 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_GF2N_FLAG], [-mpclmul])
       AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], [Enable CLMUL])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [Disable CLMUL])
@@ -902,8 +955,13 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### SSSE3+AES #####
 
-   ## Some old compilers and linkers don't support it.
-   CXXFLAGS="-mssse3 -maes"
+   ## Some old compilers, assemblers and linkers don't support it.
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-mssse3 -maes $WAQ_FLAG"
+   else
+      CXXFLAGS="-mssse3 -maes"
+   fi
+
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
          __m128i x = _mm_setzero_si128();
@@ -919,14 +977,20 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       [AC_MSG_RESULT([no])]
    )
 
+   # if -maes fails then it is disabled in the next test
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
    fi
 
    ##### SSE4.1+AES #####
 
-   ## Some compilers and linkers don't support it.
-   CXXFLAGS="-msse4.1 -maes"
+   ## Some old compilers, assemblers and linkers don't support it.
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-msse4.1 -maes $WAQ_FLAG"
+   else
+      CXXFLAGS="-msse4.1 -maes"
+   fi
+
    XXX_PROGRAM="#include <wmmintrin.h>
       int main(int argc, char** argv) {
          __m128i x = _mm_setzero_si128();
@@ -952,8 +1016,13 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### AVX #####
 
-   ## Some compilers and linkers don't support it.
-   CXXFLAGS="-mavx"
+   ## Some old compilers, assemblers and linkers don't support it.
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-mavx $WAQ_FLAG"
+   else
+      CXXFLAGS="-mavx"
+   fi
+
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
          __m256d x;
@@ -978,8 +1047,13 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### AVX2 #####
 
-   ## Some compilers and linkers don't support it.
-   CXXFLAGS="-mavx2"
+   ## Some old compilers, assemblers and linkers don't support it.
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-mavx2 $WAQ_FLAG"
+   else
+      CXXFLAGS="-mavx2"
+   fi
+
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
          __m256i x;
@@ -1005,8 +1079,13 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ##### SHA #####
 
-   ## Some compilers and linkers don't support it.
-   CXXFLAGS="-msse4.2 -msha"
+   ## Some old compilers, assemblers and linkers don't support it.
+   if test x"$WAQ_FLAG" != "x"; then
+      CXXFLAGS="-msse4.2 -msha $WAQ_FLAG"
+   else
+      CXXFLAGS="-msse4.2 -msha"
+   fi
+
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
          __m128i x = _mm_setzero_si128();
