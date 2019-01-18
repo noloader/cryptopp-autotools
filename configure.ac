@@ -68,12 +68,12 @@
 ##
 ## - Fix static initialization order fiasco tests. We don't know how to craft
 ##   the tests because we don't know how to compile two files at once using
-##   Autotools.
+##   Autotools. Also see https://stackoverflow.com/q/51662985/608639.
 ##
 ## - Fix -xarch for SHA when using SunCC. We don't know the arch value at the
 ##   moment. If things work as expected we will fail the feature test and the
 ##   code paths will be disabled. But we want them enabled once Sun supports
-##   the SHA extensions.
+##   the SHA extensions. See https://stackoverflow.com/q/45872180/608639.
 ##
 ## - Fix LDFLAGS on AIX. Autotools is adding unwanted flags to LDFLAGS and it
 ##   is causing a runtime crash in startup code. See
