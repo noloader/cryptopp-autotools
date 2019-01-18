@@ -59,6 +59,12 @@
 ##   to do with libtool, but I have no idea how to fix it at the moment. Also
 ##   see http://lists.gnu.org/archive/html/bug-libtool/2017-11/msg00002.html.
 ##
+## - Fix the LLVM Mixed ASM test. The test uses GCC-style inline assembly,
+##   and it has all the characters that confuse Autotools and M4, like quote,
+##   comman and bracket. The various work arounds and rules for the problems
+##   confuses me. We have a "blind leading the blind" situation. Also see
+##   the source code for TestPrograms/test_mixed_asm.cxx.
+##
 ## - Fix static initialization order fiasco tests. We don't know how to craft
 ##   the tests because we don't know how to compile two files at once using
 ##   Autotools.
@@ -74,7 +80,7 @@
 ##
 ## - Add ubsan and asan targets for testing.
 ##
-## - Setup test environment with Dash, which appears to be the lamest shell
+## - Setup test environment with Dash, which appears to be the lamest shell.
 ##
 ## - Package Autotools propery, for a regular user's definition of "proper".
 ##   I don't know what the final deliverables or artifacts are supposed to
@@ -723,12 +729,12 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    CXXFLAGS="-msse2"
    XXX_PROGRAM="#include <emmintrin.h>
-   int main(int argc, char** argv)
-   {
-      __m128i x = _mm_setzero_si128();
-      x=_mm_add_epi64(x,x);
-      return 0;
-   }"
+      int main(int argc, char** argv)
+      {
+         __m128i x = _mm_setzero_si128();
+         x=_mm_add_epi64(x,x);
+         return 0;
+      }"
 
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
@@ -750,9 +756,18 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    ##### SSE3 #####
 
    CXXFLAGS="-msse3"
+   XXX_PROGRAM="#include <emmintrin.h>
+      #include <pmmintrin.h>
+      int main(int argc, char* argv[])
+      {
+         __m128d x = _mm_setzero_pd();
+         x=_mm_addsub_pd(x,x);
+         return 0;
+      }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -767,9 +782,18 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    ##### SSSE3 #####
 
    CXXFLAGS="-mssse3"
+   XXX_PROGRAM="#include <emmintrin.h>
+      #include <tmmintrin.h>
+      int main(int argc, char* argv[])
+      {
+         __m128i x = _mm_setzero_si128();
+         x=_mm_alignr_epi8(x,x,2);
+         return 0;
+      }"
+
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -792,10 +816,14 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ## Old BSD linkers don't support it.
    CXXFLAGS="-msse4.1"
-   XXX_PROGRAM="#include <smmintrin.h>
-      int main(int argc, char** argv) {
+   XXX_PROGRAM="#include <emmintrin.h>
+      #include <smmintrin.h>
+      int main(int argc, char* argv[])
+      {
          __m128i x = _mm_setzero_si128();
-         x=_mm_blend_epi16 (x,x,0);
+         __m128i a = _mm_setzero_si128();
+         __m128i b = _mm_setzero_si128();
+         x=_mm_blend_epi16(a,b,4);
          return 0;
       }"
 
@@ -824,7 +852,8 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
    CXXFLAGS="-msse4.2"
    XXX_PROGRAM="#include <nmmintrin.h>
       int main(int argc, char** argv) {
-         int x = _mm_crc32_u32(10,20);
+         unsigned int x=32;
+         x=_mm_crc32_u8(x,4);
          return 0;
       }"
 
