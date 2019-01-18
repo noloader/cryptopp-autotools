@@ -1031,7 +1031,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
-         __m256d x;
+         __m256d x=_mm256_setzero_pd();
          x=_mm256_add_pd(x,x);
          return 0;
       }"
@@ -1062,7 +1062,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
-         __m256i x;
+         __m256i x=_mm256_setzero_si256();
          x=_mm256_xor_si256(x,x);
          x=_mm256_add_epi32(x,x);
          return 0;
@@ -1094,9 +1094,15 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    XXX_PROGRAM="#include <immintrin.h>
       int main(int argc, char** argv) {
-         __m128i x = _mm_setzero_si128();
-          x=_mm_sha1rnds4_epu32(x,x,0);
-          return 0;
+         __m128i x=_mm_setzero_si128();
+         x=_mm_sha1msg1_epu32(x,x);
+         x=_mm_sha1msg2_epu32(x,x);
+         x=_mm_sha1nexte_epu32(x,x);
+         x=_mm_sha1rnds4_epu32(x,x,0);
+         x=_mm_sha256msg1_epu32(x,x);
+         x=_mm_sha256msg2_epu32(x,x);
+         x=_mm_sha256rnds2_epu32(x,x,x);
+         return 0;
       }"
 
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
