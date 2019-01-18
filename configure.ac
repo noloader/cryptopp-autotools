@@ -20,8 +20,13 @@
 ##   The damn tool does not honor AC_PROG_CXX or observe the absence of AC_PROG_CC. It also
 ##   fails to provide a AC_PROG_NO_CC macro. The damn tool is no better than Cmake.
 ##
+## - Fix Autotools not treating warnings as errors. Our test programs are clean, so they
+##   should compile cleanly or the feature is not available. However, Autotools lacks a
+##   AC_TREAT_WARNINGS_AS_ERRORS-like define.
+##
 ## - Cutover to the feature test programs in TestPrograms. It gives us better control
-##   over the feature tests. Also see https://github.com/weidai11/cryptopp/issues/741.
+##   over the feature tests. Also see https://github.com/weidai11/cryptopp/issues/741
+##   and https://stackoverflow.com/q/54250060/608639.
 ##
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X.
 ##   Also see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
