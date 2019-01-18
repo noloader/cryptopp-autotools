@@ -850,6 +850,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_GF2N_FLAG], [-mpclmul])
       AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], [Enable CLMUL])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [Disable CLMUL])
@@ -1133,6 +1134,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    if test "$retval" = "0"; then
       CXXFLAGSX="$CXXFLAGS -D__CLMUL__=1"
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGSX])
+      AC_SUBST([CRYPTOPP_GF2N_FLAG], [$CXXFLAGSX])
       AC_DEFINE([CRYPTOPP_CLMUL_AVAILABLE], [1], "Enable CLMUL")
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
@@ -1463,6 +1465,7 @@ if test "$IS_ARMV8" != "0"; then
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_GF2N_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_ARM_PMULL_AVAILABLE], [1], [Enable ARMv8 PMULL])
@@ -1720,6 +1723,7 @@ if test "$IS_PPC" != "0"; then
       AC_SUBST([CRYPTOPP_CRC_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_GCM_FLAG], [$POWER8_FLAG])
+      AC_SUBST([CRYPTOPP_GF2N_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SIMON128_FLAG], [$POWER8_FLAG])
@@ -2237,6 +2241,9 @@ if test x"$CRYPTOPP_LEA_FLAG" != "x"; then
 fi
 if test x"$CRYPTOPP_GCM_FLAG" != "x"; then
    echo "CRYPTOPP_GCM_FLAG: $CRYPTOPP_GCM_FLAG"
+fi
+if test x"$CRYPTOPP_GF2N_FLAG" != "x"; then
+   echo "CRYPTOPP_GF2N_FLAG: $CRYPTOPP_GF2N_FLAG"
 fi
 if test x"$CRYPTOPP_AES_FLAG" != "x"; then
    echo "CRYPTOPP_AES_FLAG: $CRYPTOPP_AES_FLAG"

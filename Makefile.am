@@ -61,6 +61,7 @@ EXTRA_LTLIBRARIES = \
    libcrc_simd.la \
    libdonna_sse.la \
    libgcm_simd.la \
+   libgf2n_simd.la \
    liblea_simd.la \
    libneon_simd.la \
    libppc_simd.la \
@@ -110,6 +111,7 @@ libcryptopp_la_LIBADD = \
    $(libcrc_simd_la_OBJECTS) \
    $(libdonna_sse_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
+   $(libgf2n_simd_la_OBJECTS) \
    $(liblea_simd_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
@@ -156,6 +158,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(libdonna_sse_la_OBJECTS) \
    $(liblea_simd_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
+   $(libgf2n_simd_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
    $(libppc_power7_la_OBJECTS) \
@@ -224,6 +227,9 @@ libdonna_sse_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_DONNA_FLAG)
 
 libgcm_simd_la_SOURCES = gcm_simd.cpp
 libgcm_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GCM_FLAG)
+
+libgf2n_simd_la_SOURCES = gf2n_simd.cpp
+libgf2n_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GF2N_FLAG)
 
 liblea_simd_la_SOURCES = lea_simd.cpp
 liblea_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LEA_FLAG)
