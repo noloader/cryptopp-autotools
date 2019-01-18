@@ -32,9 +32,10 @@
 ##   Autotools lacks a AC_TREAT_WARNINGS_AS_ERRORS-like macro or define.
 ##
 ## - Cutover to the feature test programs in TestPrograms. It gives us better
-##   control over the feature tests. Also see
-##   https://github.com/weidai11/cryptopp/issues/741 and
-##   https://stackoverflow.com/q/54250060/608639.
+##   control over the feature tests. It should also avoid the quoting problem
+##   that plagues Autotools. We can't run some tests at the moment because
+##   Autotool chokes. Also see https://github.com/weidai11/cryptopp/issues/741
+##   and https://stackoverflow.com/q/54250060/608639.
 ##
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X. Also
 ##   see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
