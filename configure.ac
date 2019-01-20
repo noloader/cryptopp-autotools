@@ -2064,7 +2064,7 @@ if test "$IS_SUN_OS" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-      if test "$retval" = "0"; then
+   if test "$retval" = "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
