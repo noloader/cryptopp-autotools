@@ -123,21 +123,21 @@ AC_CANONICAL_HOST
 ## test selection process. It also avoids failed configurations by
 ## avoiding some tests that fail but Autotools reports as success.
 
-IS_AIX_OS=`echo $host | $EGREP -i -c -E 'aix'`
+IS_AIX_OS=`echo $host | $EGREP -i -c 'aix'`
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
 IS_APPLE_OS=`echo "$host" | $EGREP -i -c -E 'apple|darwin'`
-IS_ANDROID_OS=`echo $host | $EGREP -i -c -E 'android'`
-IS_CYGWIN_OS=`echo $host | $EGREP -i -c -E 'cygwin'`
-IS_MINGW_OS=`echo $host | $EGREP -i -c -E 'mingw'`
+IS_ANDROID_OS=`echo $host | $EGREP -i -c 'android'`
+IS_CYGWIN_OS=`echo $host | $EGREP -i -c 'cygwin'`
+IS_MINGW_OS=`echo $host | $EGREP -i -c 'mingw'`
 
 IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
-IS_ARM32=`echo $host | $EGREP -i -c 'arm|armhf|arm7l|eabihf'`
+IS_ARM32=`echo $host | $EGREP -i -c -E 'arm|armhf|arm7l|eabihf'`
 IS_ARMV8=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
 IS_PPC=`echo $host | $EGREP -i -c -E 'ppc|powerpc|powermac'`
 IS_SPARC=`echo $host | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
 
 ## Debug builds add more goodies to help break things. I like breaking things.
-IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-DDEBUG'`
+IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c '\-DDEBUG'`
 
 #############################################################################
 
@@ -159,7 +159,7 @@ fi
 ## SunCC is empty, so we just use $host
 
 COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
-if test -z "$COMPILER_TARGET"; then
+if test x"$COMPILER_TARGET" = "x"; then
    COMPILER_TARGET="$host"
 fi
 
@@ -235,8 +235,7 @@ fi
 ## works on all the compilers we support.
 
 AC_DEFUN([XXX_COMPILE_IFELSE],
-   [AC_REQUIRE([AC_PROG_EGREP])
-   AC_COMPILE_IFELSE(
+   [AC_COMPILE_IFELSE(
       [$1],
       [retval=0
          touch conftest.err
@@ -247,8 +246,7 @@ AC_DEFUN([XXX_COMPILE_IFELSE],
 )
 
 AC_DEFUN([XXX_LINK_IFELSE],
-   [AC_REQUIRE([AC_PROG_EGREP])
-   AC_LINK_IFELSE(
+   [AC_LINK_IFELSE(
       [$1],
       [retval=0
          touch conftest.err
@@ -1685,7 +1683,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
    fi
 
    ## -qpic must be present for some xlC compilers
-   HAS_PIC=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-qpic'`
+   HAS_PIC=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c '\-qpic'`
    if test "$HAS_PIC" = "0"; then
 
       CXXFLAGS="-qpic"
