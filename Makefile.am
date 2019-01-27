@@ -384,68 +384,68 @@ CLEANFILES = adhoc.cpp
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
 testdata_FILES = \
-    TestData/3desval.dat    TestData/fhmqv384.dat  TestData/rc6val.dat
-    TestData/3wayval.dat    TestData/fhmqv512.dat  TestData/rijndael.dat
-    TestData/aria.dat       TestData/gostval.dat   TestData/rsa1024.dat
-    TestData/camellia.dat   TestData/hmqv160.dat   TestData/rsa2048.dat
-    TestData/cast128v.dat   TestData/hmqv256.dat   TestData/rsa2048a.dat
-    TestData/cast256v.dat   TestData/hmqv384.dat   TestData/rsa400pb.dat
-    TestData/defdmac1.bin   TestData/hmqv512.dat   TestData/rsa400pv.dat
-    TestData/defdmac2.bin   TestData/ideaval.dat   TestData/rsa512a.dat
-    TestData/descert.dat    TestData/luc1024.dat   TestData/rw1024.dat
-    TestData/dh1024.dat     TestData/luc2048.dat   TestData/rw2048.dat
-    TestData/dh2048.dat     TestData/lucc1024.dat  TestData/saferval.dat
-    TestData/dlie1024.dat   TestData/lucc512.dat   TestData/serpentv.dat
-    TestData/dlie2048.dat   TestData/lucd1024.dat  TestData/shacal2v.dat
-    TestData/dsa1024.dat    TestData/lucd512.dat   TestData/sharkval.dat
-    TestData/dsa1024b.dat   TestData/lucs1024.dat  TestData/skipjack.dat
-    TestData/dsa512.dat     TestData/lucs512.dat   TestData/squareva.dat
-    TestData/ed25519.dat    TestData/marsval.dat   TestData/twofishv.dat
-    TestData/ed25519v0.dat  TestData/mqv1024.dat   TestData/usage.dat
-    TestData/ed25519v1.dat  TestData/mqv2048.dat   TestData/x25519.dat
-    TestData/elgc1024.dat   TestData/nr1024.dat    TestData/x25519v0.dat
-    TestData/esig1023.dat   TestData/nr2048.dat    TestData/x25519v1.dat
-    TestData/esig1536.dat   TestData/rabi1024.dat  TestData/xtrdh171.dat
-    TestData/esig2046.dat   TestData/rabi2048.dat  TestData/xtrdh342.dat
-    TestData/fhmqv160.dat   TestData/rc2val.dat
+    TestData/3desval.dat    TestData/fhmqv384.dat  TestData/rc6val.dat \
+    TestData/3wayval.dat    TestData/fhmqv512.dat  TestData/rijndael.dat \
+    TestData/aria.dat       TestData/gostval.dat   TestData/rsa1024.dat \
+    TestData/camellia.dat   TestData/hmqv160.dat   TestData/rsa2048.dat \
+    TestData/cast128v.dat   TestData/hmqv256.dat   TestData/rsa2048a.dat \
+    TestData/cast256v.dat   TestData/hmqv384.dat   TestData/rsa400pb.dat \
+    TestData/defdmac1.bin   TestData/hmqv512.dat   TestData/rsa400pv.dat \
+    TestData/defdmac2.bin   TestData/ideaval.dat   TestData/rsa512a.dat \
+    TestData/descert.dat    TestData/luc1024.dat   TestData/rw1024.dat \
+    TestData/dh1024.dat     TestData/luc2048.dat   TestData/rw2048.dat \
+    TestData/dh2048.dat     TestData/lucc1024.dat  TestData/saferval.dat \
+    TestData/dlie1024.dat   TestData/lucc512.dat   TestData/serpentv.dat \
+    TestData/dlie2048.dat   TestData/lucd1024.dat  TestData/shacal2v.dat \
+    TestData/dsa1024.dat    TestData/lucd512.dat   TestData/sharkval.dat \
+    TestData/dsa1024b.dat   TestData/lucs1024.dat  TestData/skipjack.dat \
+    TestData/dsa512.dat     TestData/lucs512.dat   TestData/squareva.dat \
+    TestData/ed25519.dat    TestData/marsval.dat   TestData/twofishv.dat \
+    TestData/ed25519v0.dat  TestData/mqv1024.dat   TestData/usage.dat \
+    TestData/ed25519v1.dat  TestData/mqv2048.dat   TestData/x25519.dat \
+    TestData/elgc1024.dat   TestData/nr1024.dat    TestData/x25519v0.dat \
+    TestData/esig1023.dat   TestData/nr2048.dat    TestData/x25519v1.dat \
+    TestData/esig1536.dat   TestData/rabi1024.dat  TestData/xtrdh171.dat \
+    TestData/esig2046.dat   TestData/rabi2048.dat  TestData/xtrdh342.dat \
+    TestData/fhmqv160.dat   TestData/rc2val.dat \
     TestData/fhmqv256.dat   TestData/rc5val.dat
 
 testvector_FILES = \
-    TestVectors/aes.txt           TestVectors/rsa_pkcs1_1_5.txt
-    TestVectors/all.txt           TestVectors/rsa_pss.txt
-    TestVectors/aria.txt          TestVectors/rw.txt
-    TestVectors/blake2.txt        TestVectors/salsa.txt
-    TestVectors/blake2b.txt       TestVectors/seal.txt
-    TestVectors/blake2s.txt       TestVectors/seed.txt
-    TestVectors/camellia.txt      TestVectors/sha.txt
-    TestVectors/ccm.txt           TestVectors/sha1_160_fips_180.txt
-    TestVectors/chacha.txt        TestVectors/sha1_fips_180.txt
-    TestVectors/chacha_tls.txt    TestVectors/sha2.txt
-    TestVectors/cham.txt          TestVectors/sha2_224_fips_180.txt
-    TestVectors/cmac.txt          TestVectors/sha2_256_fips_180.txt
-    TestVectors/dlies.txt         TestVectors/sha2_384_fips_180.txt
-    TestVectors/dsa.txt           TestVectors/sha2_512_fips_180.txt
-    TestVectors/dsa_1363.txt      TestVectors/sha2_fips_180.txt
-    TestVectors/dsa_rfc6979.txt   TestVectors/sha3.txt
-    TestVectors/eax.txt           TestVectors/sha3_224_fips_202.txt
-    TestVectors/esign.txt         TestVectors/sha3_256_fips_202.txt
-    TestVectors/gcm.txt           TestVectors/sha3_384_fips_202.txt
-    TestVectors/hc128.txt         TestVectors/sha3_512_fips_202.txt
-    TestVectors/hc256.txt         TestVectors/sha3_fips_202.txt
-    TestVectors/hight.txt         TestVectors/shacal2.txt
-    TestVectors/hkdf.txt          TestVectors/simeck.txt
-    TestVectors/hmac.txt          TestVectors/simon.txt
-    TestVectors/kalyna.txt        TestVectors/siphash.txt
-    TestVectors/keccak.txt        TestVectors/sm3.txt
-    TestVectors/lea.txt           TestVectors/sm4.txt
-    TestVectors/mars.txt          TestVectors/sosemanuk.txt
-    TestVectors/nr.txt            TestVectors/speck.txt
-    TestVectors/ocb.txt           TestVectors/tea.txt
-    TestVectors/panama.txt        TestVectors/threefish.txt
-    TestVectors/poly1305_tls.txt  TestVectors/ttmac.txt
-    TestVectors/poly1305aes.txt   TestVectors/vmac.txt
-    TestVectors/rabbit.txt        TestVectors/wake.txt
-    TestVectors/Readme.txt        TestVectors/whrlpool.txt
+    TestVectors/aes.txt           TestVectors/rsa_pkcs1_1_5.txt \
+    TestVectors/all.txt           TestVectors/rsa_pss.txt \
+    TestVectors/aria.txt          TestVectors/rw.txt \
+    TestVectors/blake2.txt        TestVectors/salsa.txt \
+    TestVectors/blake2b.txt       TestVectors/seal.txt \
+    TestVectors/blake2s.txt       TestVectors/seed.txt \
+    TestVectors/camellia.txt      TestVectors/sha.txt \
+    TestVectors/ccm.txt           TestVectors/sha1_160_fips_180.txt \
+    TestVectors/chacha.txt        TestVectors/sha1_fips_180.txt \
+    TestVectors/chacha_tls.txt    TestVectors/sha2.txt \
+    TestVectors/cham.txt          TestVectors/sha2_224_fips_180.txt \
+    TestVectors/cmac.txt          TestVectors/sha2_256_fips_180.txt \
+    TestVectors/dlies.txt         TestVectors/sha2_384_fips_180.txt \
+    TestVectors/dsa.txt           TestVectors/sha2_512_fips_180.txt \
+    TestVectors/dsa_1363.txt      TestVectors/sha2_fips_180.txt \
+    TestVectors/dsa_rfc6979.txt   TestVectors/sha3.txt \
+    TestVectors/eax.txt           TestVectors/sha3_224_fips_202.txt \
+    TestVectors/esign.txt         TestVectors/sha3_256_fips_202.txt \
+    TestVectors/gcm.txt           TestVectors/sha3_384_fips_202.txt \
+    TestVectors/hc128.txt         TestVectors/sha3_512_fips_202.txt \
+    TestVectors/hc256.txt         TestVectors/sha3_fips_202.txt \
+    TestVectors/hight.txt         TestVectors/shacal2.txt \
+    TestVectors/hkdf.txt          TestVectors/simeck.txt \
+    TestVectors/hmac.txt          TestVectors/simon.txt \
+    TestVectors/kalyna.txt        TestVectors/siphash.txt \
+    TestVectors/keccak.txt        TestVectors/sm3.txt \
+    TestVectors/lea.txt           TestVectors/sm4.txt \
+    TestVectors/mars.txt          TestVectors/sosemanuk.txt \
+    TestVectors/nr.txt            TestVectors/speck.txt \
+    TestVectors/ocb.txt           TestVectors/tea.txt \
+    TestVectors/panama.txt        TestVectors/threefish.txt \
+    TestVectors/poly1305_tls.txt  TestVectors/ttmac.txt \
+    TestVectors/poly1305aes.txt   TestVectors/vmac.txt \
+    TestVectors/rabbit.txt        TestVectors/wake.txt \
+    TestVectors/Readme.txt        TestVectors/whrlpool.txt \
     TestVectors/rsa_oaep.txt
 
 nobase_dist_pkgdata_DATA = \
