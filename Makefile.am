@@ -411,41 +411,42 @@ testdata_FILES = \
     TestData/fhmqv256.dat   TestData/rc5val.dat
 
 testvector_FILES = \
-    TestVectors/aes.txt            TestVectors/rsa_pss.txt \
-    TestVectors/all.txt            TestVectors/rw.txt \
-    TestVectors/aria.txt           TestVectors/salsa.txt \
-    TestVectors/blake2.txt         TestVectors/seal.txt \
-    TestVectors/blake2b.txt        TestVectors/seed.txt \
-    TestVectors/blake2s.txt        TestVectors/sha.txt \
-    TestVectors/camellia.txt       TestVectors/sha1_160_fips_180.txt \
-    TestVectors/ccm.txt            TestVectors/sha1_fips_180.txt \
-    TestVectors/chacha.txt         TestVectors/sha2.txt \
-    TestVectors/chacha_tls.txt     TestVectors/sha2_224_fips_180.txt \
-    TestVectors/cham.txt           TestVectors/sha2_256_fips_180.txt \
-    TestVectors/cmac.txt           TestVectors/sha2_384_fips_180.txt \
-    TestVectors/dlies.txt          TestVectors/sha2_512_fips_180.txt \
-    TestVectors/dsa.txt            TestVectors/sha2_fips_180.txt \
-    TestVectors/dsa_1363.txt       TestVectors/sha3.txt \
-    TestVectors/dsa_rfc6979.txt    TestVectors/sha3_224_fips_202.txt \
-    TestVectors/eax.txt            TestVectors/sha3_256_fips_202.txt \
-    TestVectors/esign.txt          TestVectors/sha3_384_fips_202.txt \
-    TestVectors/gcm.txt            TestVectors/sha3_512_fips_202.txt \
-    TestVectors/hc128.txt          TestVectors/sha3_fips_202.txt \
-    TestVectors/hc256.txt          TestVectors/shacal2.txt \
-    TestVectors/hight.txt          TestVectors/simeck.txt \
-    TestVectors/hkdf.txt           TestVectors/simon.txt \
-    TestVectors/hmac.txt           TestVectors/siphash.txt \
-    TestVectors/kalyna.txt         TestVectors/sm3.txt \
-    TestVectors/keccak.txt         TestVectors/sm4.txt \
-    TestVectors/lea.txt            TestVectors/sosemanuk.txt \
-    TestVectors/mars.txt           TestVectors/speck.txt \
-    TestVectors/nr.txt             TestVectors/tea.txt \
-    TestVectors/ocb.txt            TestVectors/threefish.txt \
-    TestVectors/panama.txt         TestVectors/ttmac.txt \
-    TestVectors/rabbit.txt         TestVectors/vmac.txt \
-    TestVectors/Readme.txt         TestVectors/wake.txt \
-    TestVectors/rsa_oaep.txt       TestVectors/whrlpool.txt \
-    TestVectors/rsa_pkcs1_1_5.txt
+    TestVectors/aes.txt           TestVectors/rsa_pkcs1_1_5.txt
+    TestVectors/all.txt           TestVectors/rsa_pss.txt
+    TestVectors/aria.txt          TestVectors/rw.txt
+    TestVectors/blake2.txt        TestVectors/salsa.txt
+    TestVectors/blake2b.txt       TestVectors/seal.txt
+    TestVectors/blake2s.txt       TestVectors/seed.txt
+    TestVectors/camellia.txt      TestVectors/sha.txt
+    TestVectors/ccm.txt           TestVectors/sha1_160_fips_180.txt
+    TestVectors/chacha.txt        TestVectors/sha1_fips_180.txt
+    TestVectors/chacha_tls.txt    TestVectors/sha2.txt
+    TestVectors/cham.txt          TestVectors/sha2_224_fips_180.txt
+    TestVectors/cmac.txt          TestVectors/sha2_256_fips_180.txt
+    TestVectors/dlies.txt         TestVectors/sha2_384_fips_180.txt
+    TestVectors/dsa.txt           TestVectors/sha2_512_fips_180.txt
+    TestVectors/dsa_1363.txt      TestVectors/sha2_fips_180.txt
+    TestVectors/dsa_rfc6979.txt   TestVectors/sha3.txt
+    TestVectors/eax.txt           TestVectors/sha3_224_fips_202.txt
+    TestVectors/esign.txt         TestVectors/sha3_256_fips_202.txt
+    TestVectors/gcm.txt           TestVectors/sha3_384_fips_202.txt
+    TestVectors/hc128.txt         TestVectors/sha3_512_fips_202.txt
+    TestVectors/hc256.txt         TestVectors/sha3_fips_202.txt
+    TestVectors/hight.txt         TestVectors/shacal2.txt
+    TestVectors/hkdf.txt          TestVectors/simeck.txt
+    TestVectors/hmac.txt          TestVectors/simon.txt
+    TestVectors/kalyna.txt        TestVectors/siphash.txt
+    TestVectors/keccak.txt        TestVectors/sm3.txt
+    TestVectors/lea.txt           TestVectors/sm4.txt
+    TestVectors/mars.txt          TestVectors/sosemanuk.txt
+    TestVectors/nr.txt            TestVectors/speck.txt
+    TestVectors/ocb.txt           TestVectors/tea.txt
+    TestVectors/panama.txt        TestVectors/threefish.txt
+    TestVectors/poly1305_tls.txt  TestVectors/ttmac.txt
+    TestVectors/poly1305aes.txt   TestVectors/vmac.txt
+    TestVectors/rabbit.txt        TestVectors/wake.txt
+    TestVectors/Readme.txt        TestVectors/whrlpool.txt
+    TestVectors/rsa_oaep.txt
 
 nobase_dist_pkgdata_DATA = \
     $(testdata_FILES) \
