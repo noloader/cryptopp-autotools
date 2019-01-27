@@ -384,30 +384,30 @@ CLEANFILES = adhoc.cpp
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
 testdata_FILES = \
-    TestData/3desval.dat    TestData/fhmqv384.dat  TestData/rc6val.dat \
-    TestData/3wayval.dat    TestData/fhmqv512.dat  TestData/rijndael.dat \
-    TestData/aria.dat       TestData/gostval.dat   TestData/rsa1024.dat \
-    TestData/camellia.dat   TestData/hmqv160.dat   TestData/rsa2048.dat \
-    TestData/cast128v.dat   TestData/hmqv256.dat   TestData/rsa2048a.dat \
-    TestData/cast256v.dat   TestData/hmqv384.dat   TestData/rsa400pb.dat \
-    TestData/defdmac1.bin   TestData/hmqv512.dat   TestData/rsa400pv.dat \
-    TestData/defdmac2.bin   TestData/ideaval.dat   TestData/rsa512a.dat \
-    TestData/descert.dat    TestData/luc1024.dat   TestData/rw1024.dat \
-    TestData/dh1024.dat     TestData/luc2048.dat   TestData/rw2048.dat \
-    TestData/dh2048.dat     TestData/lucc1024.dat  TestData/saferval.dat \
-    TestData/dlie1024.dat   TestData/lucc512.dat   TestData/serpentv.dat \
-    TestData/dlie2048.dat   TestData/lucd1024.dat  TestData/shacal2v.dat \
-    TestData/dsa1024.dat    TestData/lucd512.dat   TestData/sharkval.dat \
-    TestData/dsa1024b.dat   TestData/lucs1024.dat  TestData/skipjack.dat \
-    TestData/dsa512.dat     TestData/lucs512.dat   TestData/squareva.dat \
-    TestData/ed25519.dat    TestData/marsval.dat   TestData/twofishv.dat \
-    TestData/ed25519v0.dat  TestData/mqv1024.dat   TestData/usage.dat \
-    TestData/ed25519v1.dat  TestData/mqv2048.dat   TestData/x25519.dat \
-    TestData/elgc1024.dat   TestData/nr1024.dat    TestData/x25519v0.dat \
-    TestData/esig1023.dat   TestData/nr2048.dat    TestData/x25519v1.dat \
-    TestData/esig1536.dat   TestData/rabi1024.dat  TestData/xtrdh171.dat \
-    TestData/esig2046.dat   TestData/rabi2048.dat  TestData/xtrdh342.dat \
-    TestData/fhmqv160.dat   TestData/rc2val.dat \
+    TestData/3desval.dat    TestData/fhmqv384.dat  TestData/rc6val.dat
+    TestData/3wayval.dat    TestData/fhmqv512.dat  TestData/rijndael.dat
+    TestData/aria.dat       TestData/gostval.dat   TestData/rsa1024.dat
+    TestData/camellia.dat   TestData/hmqv160.dat   TestData/rsa2048.dat
+    TestData/cast128v.dat   TestData/hmqv256.dat   TestData/rsa2048a.dat
+    TestData/cast256v.dat   TestData/hmqv384.dat   TestData/rsa400pb.dat
+    TestData/defdmac1.bin   TestData/hmqv512.dat   TestData/rsa400pv.dat
+    TestData/defdmac2.bin   TestData/ideaval.dat   TestData/rsa512a.dat
+    TestData/descert.dat    TestData/luc1024.dat   TestData/rw1024.dat
+    TestData/dh1024.dat     TestData/luc2048.dat   TestData/rw2048.dat
+    TestData/dh2048.dat     TestData/lucc1024.dat  TestData/saferval.dat
+    TestData/dlie1024.dat   TestData/lucc512.dat   TestData/serpentv.dat
+    TestData/dlie2048.dat   TestData/lucd1024.dat  TestData/shacal2v.dat
+    TestData/dsa1024.dat    TestData/lucd512.dat   TestData/sharkval.dat
+    TestData/dsa1024b.dat   TestData/lucs1024.dat  TestData/skipjack.dat
+    TestData/dsa512.dat     TestData/lucs512.dat   TestData/squareva.dat
+    TestData/ed25519.dat    TestData/marsval.dat   TestData/twofishv.dat
+    TestData/ed25519v0.dat  TestData/mqv1024.dat   TestData/usage.dat
+    TestData/ed25519v1.dat  TestData/mqv2048.dat   TestData/x25519.dat
+    TestData/elgc1024.dat   TestData/nr1024.dat    TestData/x25519v0.dat
+    TestData/esig1023.dat   TestData/nr2048.dat    TestData/x25519v1.dat
+    TestData/esig1536.dat   TestData/rabi1024.dat  TestData/xtrdh171.dat
+    TestData/esig2046.dat   TestData/rabi2048.dat  TestData/xtrdh342.dat
+    TestData/fhmqv160.dat   TestData/rc2val.dat
     TestData/fhmqv256.dat   TestData/rc5val.dat
 
 testvector_FILES = \
