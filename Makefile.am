@@ -357,7 +357,6 @@ noinst_HEADERS = \
     aes_armv4.h
 
 bin_PROGRAMS = cryptest
-noinst_PROGRAMS = cryptestcwd
 
 cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"${pkgdatadir}/"'
 cryptest_SOURCES = \
@@ -369,17 +368,6 @@ cryptest_SOURCES = \
 
 nodist_cryptest_SOURCES = adhoc.cpp
 cryptest_LDADD = $(lib_LTLIBRARIES)
-
-cryptestcwd_CXXFLAGS = $(AM_CXXFLAGS)
-cryptestcwd_SOURCES = \
-    test.cpp bench1.cpp bench2.cpp bench3.cpp datatest.cpp \
-    dlltest.cpp fipsalgt.cpp validat0.cpp validat1.cpp validat2.cpp \
-    validat3.cpp validat4.cpp validat5.cpp validat6.cpp validat7.cpp \
-    validat8.cpp validat9.cpp validat10.cpp regtest1.cpp regtest2.cpp \
-    regtest3.cpp regtest4.cpp
-
-nodist_cryptestcwd_SOURCES = adhoc.cpp
-cryptestcwd_LDADD = $(lib_LTLIBRARIES)
 
 CLEANFILES = adhoc.cpp
 
