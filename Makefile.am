@@ -11,11 +11,11 @@
 ##           sed -e 's|[[:alnum:]]*_simd.cpp ||g' | \
 ##           sed -e 's|[[:alnum:]]*_sse.cpp ||g' | \
 ##           sed -e 's|[[:alnum:]]*_avx.cpp ||g' | \
-##           sed -e 's|ppc_power[[:alnum:]]*.cpp ||g' | fold -w73 -s
+##           sed -e 's|ppc_power[[:alnum:]]*.cpp ||g' | \
+##           fold -w73 -s
 ##
-##    Once "library sources" list is created, remove cryptlib.cpp, cpu.cpp,
-##    integer.cpp; and remove all of the *_simd.cpp files. The remaining
-##    list should be used for `libothers_la_SOURCES` below.
+##    The command `make sources | sed ... | fold` will create the source file
+##    list that can be used with `libothers_la_SOURCES` below.
 ##
 ##    Note: configure.ac deletes GNUmakefile. You can get it back with:
 ##
@@ -297,6 +297,9 @@ endif
 # and don't need special flags. It is formed by removing cryptlib.cpp,
 # cpu.cpp, integer.cpp, *_avx.cpp and *_simd.cpp files. It is sorted in
 # alphabetical order for deterministic builds.
+
+# To build this list, see the head notes and run the command with the
+# make and multiple sed commands.
 
 libothers_la_SOURCES = \
     3way.cpp adler32.cpp algebra.cpp algparam.cpp arc4.cpp aria.cpp \
