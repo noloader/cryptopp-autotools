@@ -9,6 +9,8 @@
 ##
 ##       make sources | sed 's|cryptlib.cpp cpu.cpp integer.cpp ||g' | \
 ##           sed -e 's|[[:alnum:]]*_simd.cpp ||g' | \
+##           sed -e 's|[[:alnum:]]*_sse.cpp ||g' | \
+##           sed -e 's|[[:alnum:]]*_avx.cpp ||g' | \
 ##           sed -e 's|ppc_power[[:alnum:]]*.cpp ||g' | fold -w73 -s
 ##
 ##    Once "library sources" list is created, remove cryptlib.cpp, cpu.cpp,
@@ -300,7 +302,7 @@ libothers_la_SOURCES = \
     3way.cpp adler32.cpp algebra.cpp algparam.cpp arc4.cpp aria.cpp \
     ariatab.cpp asn.cpp authenc.cpp base32.cpp base64.cpp basecode.cpp \
     bfinit.cpp blake2.cpp blowfish.cpp blumshub.cpp camellia.cpp cast.cpp \
-    casts.cpp cbcmac.cpp ccm.cpp chacha.cpp cham.cpp \
+    casts.cpp cbcmac.cpp ccm.cpp chacha.cpp chachapoly.cpp cham.cpp \
     channels.cpp cmac.cpp crc.cpp darn.cpp default.cpp des.cpp dessp.cpp \
     dh.cpp dh2.cpp dll.cpp donna_32.cpp donna_64.cpp dsa.cpp eax.cpp \
     ec2n.cpp eccrypto.cpp ecp.cpp elgamal.cpp emsa2.cpp eprecomp.cpp \
@@ -324,26 +326,27 @@ libothers_la_SOURCES = \
 # Don't include aes_armv4.h here
 pkginclude_HEADERS = \
     3way.h adler32.h adv_simd.h aes.h algebra.h algparam.h \
-    arc4.h argnames.h aria.h asn.h authenc.h base32.h base64.h basecode.h \
-    blake2.h blowfish.h blumshub.h camellia.h cast.h cbcmac.h ccm.h chacha.h \
-    cham.h channels.h cmac.h config.h cpu.h crc.h cryptlib.h darn.h \
-    default.h des.h dh.h dh2.h dll.h dmac.h donna.h drbg.h dsa.h eax.h \
-    ec2n.h eccrypto.h ecp.h ecpoint.h elgamal.h emsa2.h eprecomp.h esign.h \
-    fhmqv.h files.h filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h \
-    gf2n.h gfpcrypt.h gost.h gzip.h hashfwd.h hc128.h hc256.h hex.h hight.h \
-    hkdf.h hmac.h hmqv.h hrtimer.h ida.h idea.h integer.h iterhash.h \
-    kalyna.h keccak.h keccakc.h lea.h lubyrack.h luc.h mars.h md2.h md4.h \
-    md5.h mdc.h mersenne.h misc.h modarith.h modes.h modexppc.h mqueue.h \
-    mqv.h naclite.h nbtheory.h nr.h oaep.h oids.h osrng.h ossig.h padlkrng.h \
-    panama.h pch.h pkcspad.h poly1305.h polynomi.h ppc_simd.h pssr.h \
-    pubkey.h pwdbased.h queue.h rabbit.h rabin.h randpool.h rc2.h rc5.h \
-    rc6.h rdrand.h rijndael.h ripemd.h rng.h rsa.h rw.h safer.h salsa.h \
-    scrypt.h seal.h secblock.h seckey.h seed.h serpent.h serpentp.h sha.h \
-    sha3.h shacal2.h shark.h simeck.h simon.h simple.h siphash.h skipjack.h \
-    sm3.h sm4.h smartptr.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h \
-    tea.h threefish.h tiger.h trap.h trunhash.h ttmac.h tweetnacl.h \
-    twofish.h vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h xtrcrypt.h \
-    zdeflate.h zinflate.h zlib.h
+    arc4.h argnames.h aria.h arm_simd.h asn.h authenc.h base32.h base64.h \
+    basecode.h blake2.h blowfish.h blumshub.h camellia.h cast.h cbcmac.h \
+    ccm.h chacha.h chachapoly.h cham.h channels.h cmac.h config.h cpu.h \
+    crc.h cryptlib.h darn.h default.h des.h dh.h dh2.h dll.h dmac.h donna.h \
+    donna_32.h donna_64.h donna_sse.h drbg.h dsa.h eax.h ec2n.h eccrypto.h \
+    ecp.h ecpoint.h elgamal.h emsa2.h eprecomp.h esign.h fhmqv.h files.h \
+    filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h gf2n.h gfpcrypt.h \
+    gost.h gzip.h hashfwd.h hc128.h hc256.h hex.h hight.h hkdf.h hmac.h \
+    hmqv.h hrtimer.h ida.h idea.h integer.h iterhash.h kalyna.h keccak.h \
+    keccakc.h lea.h lubyrack.h luc.h mars.h md2.h md4.h md5.h mdc.h \
+    mersenne.h misc.h modarith.h modes.h modexppc.h mqueue.h mqv.h naclite.h \
+    nbtheory.h nr.h oaep.h oids.h osrng.h ossig.h padlkrng.h panama.h pch.h \
+    pkcspad.h poly1305.h polynomi.h ppc_simd.h pssr.h pubkey.h pwdbased.h \
+    queue.h rabbit.h rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h \
+    rijndael.h ripemd.h rng.h rsa.h rw.h safer.h salsa.h scrypt.h seal.h \
+    secblock.h seckey.h seed.h serpent.h serpentp.h sha.h sha3.h shacal2.h \
+    shark.h simeck.h simon.h simple.h siphash.h skipjack.h sm3.h sm4.h \
+    smartptr.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h tea.h \
+    threefish.h tiger.h trap.h trunhash.h ttmac.h tweetnacl.h twofish.h \
+    vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h xtrcrypt.h zdeflate.h \
+    zinflate.h zlib.h
 
 noinst_HEADERS = \
     local.h \
@@ -411,42 +414,43 @@ testdata_FILES = \
     TestData/fhmqv256.dat   TestData/rc5val.dat
 
 testvector_FILES = \
-    TestVectors/aes.txt           TestVectors/rsa_pkcs1_1_5.txt \
-    TestVectors/all.txt           TestVectors/rsa_pss.txt \
-    TestVectors/aria.txt          TestVectors/rw.txt \
-    TestVectors/blake2.txt        TestVectors/salsa.txt \
-    TestVectors/blake2b.txt       TestVectors/seal.txt \
-    TestVectors/blake2s.txt       TestVectors/seed.txt \
-    TestVectors/camellia.txt      TestVectors/sha.txt \
-    TestVectors/ccm.txt           TestVectors/sha1_160_fips_180.txt \
-    TestVectors/chacha.txt        TestVectors/sha1_fips_180.txt \
-    TestVectors/chacha_tls.txt    TestVectors/sha2.txt \
-    TestVectors/cham.txt          TestVectors/sha2_224_fips_180.txt \
-    TestVectors/cmac.txt          TestVectors/sha2_256_fips_180.txt \
-    TestVectors/dlies.txt         TestVectors/sha2_384_fips_180.txt \
-    TestVectors/dsa.txt           TestVectors/sha2_512_fips_180.txt \
-    TestVectors/dsa_1363.txt      TestVectors/sha2_fips_180.txt \
-    TestVectors/dsa_rfc6979.txt   TestVectors/sha3.txt \
-    TestVectors/eax.txt           TestVectors/sha3_224_fips_202.txt \
-    TestVectors/esign.txt         TestVectors/sha3_256_fips_202.txt \
-    TestVectors/gcm.txt           TestVectors/sha3_384_fips_202.txt \
-    TestVectors/hc128.txt         TestVectors/sha3_512_fips_202.txt \
-    TestVectors/hc256.txt         TestVectors/sha3_fips_202.txt \
-    TestVectors/hight.txt         TestVectors/shacal2.txt \
-    TestVectors/hkdf.txt          TestVectors/simeck.txt \
-    TestVectors/hmac.txt          TestVectors/simon.txt \
-    TestVectors/kalyna.txt        TestVectors/siphash.txt \
-    TestVectors/keccak.txt        TestVectors/sm3.txt \
-    TestVectors/lea.txt           TestVectors/sm4.txt \
-    TestVectors/mars.txt          TestVectors/sosemanuk.txt \
-    TestVectors/nr.txt            TestVectors/speck.txt \
-    TestVectors/ocb.txt           TestVectors/tea.txt \
-    TestVectors/panama.txt        TestVectors/threefish.txt \
-    TestVectors/poly1305_tls.txt  TestVectors/ttmac.txt \
-    TestVectors/poly1305aes.txt   TestVectors/vmac.txt \
-    TestVectors/rabbit.txt        TestVectors/wake.txt \
-    TestVectors/Readme.txt        TestVectors/whrlpool.txt \
-    TestVectors/rsa_oaep.txt
+    TestVectors/aead.txt              TestVectors/rsa_oaep.txt \
+    TestVectors/aes.txt               TestVectors/rsa_pkcs1_1_5.txt \
+    TestVectors/all.txt               TestVectors/rsa_pss.txt \
+    TestVectors/aria.txt              TestVectors/rw.txt \
+    TestVectors/blake2b.txt           TestVectors/salsa.txt \
+    TestVectors/blake2s.txt           TestVectors/seal.txt \
+    TestVectors/blake2.txt            TestVectors/seed.txt \
+    TestVectors/camellia.txt          TestVectors/sha1_160_fips_180.txt \
+    TestVectors/ccm.txt               TestVectors/sha1_fips_180.txt \
+    TestVectors/chacha20poly1305.txt  TestVectors/sha2_224_fips_180.txt \
+    TestVectors/chacha_tls.txt        TestVectors/sha2_256_fips_180.txt \
+    TestVectors/chacha.txt            TestVectors/sha2_384_fips_180.txt \
+    TestVectors/cham.txt              TestVectors/sha2_512_fips_180.txt \
+    TestVectors/cmac.txt              TestVectors/sha2_fips_180.txt \
+    TestVectors/dlies.txt             TestVectors/sha2.txt \
+    TestVectors/dsa_1363.txt          TestVectors/sha3_224_fips_202.txt \
+    TestVectors/dsa_rfc6979.txt       TestVectors/sha3_256_fips_202.txt \
+    TestVectors/dsa.txt               TestVectors/sha3_384_fips_202.txt \
+    TestVectors/eax.txt               TestVectors/sha3_512_fips_202.txt \
+    TestVectors/esign.txt             TestVectors/sha3_fips_202.txt \
+    TestVectors/gcm.txt               TestVectors/sha3.txt \
+    TestVectors/hc128.txt             TestVectors/shacal2.txt \
+    TestVectors/hc256.txt             TestVectors/sha.txt \
+    TestVectors/hight.txt             TestVectors/simeck.txt \
+    TestVectors/hkdf.txt              TestVectors/simon.txt \
+    TestVectors/hmac.txt              TestVectors/siphash.txt \
+    TestVectors/kalyna.txt            TestVectors/sm3.txt \
+    TestVectors/keccak.txt            TestVectors/sm4.txt \
+    TestVectors/lea.txt               TestVectors/sosemanuk.txt \
+    TestVectors/mars.txt              TestVectors/speck.txt \
+    TestVectors/nr.txt                TestVectors/tea.txt \
+    TestVectors/ocb.txt               TestVectors/threefish.txt \
+    TestVectors/panama.txt            TestVectors/ttmac.txt \
+    TestVectors/poly1305aes.txt       TestVectors/vmac.txt \
+    TestVectors/poly1305_tls.txt      TestVectors/wake.txt \
+    TestVectors/rabbit.txt            TestVectors/whrlpool.txt \
+    TestVectors/Readme.txt
 
 nobase_dist_pkgdata_DATA = \
     $(testdata_FILES) \
