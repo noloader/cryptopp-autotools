@@ -64,6 +64,7 @@ EXTRA_LTLIBRARIES = \
    libdonna_sse.la \
    libgcm_simd.la \
    libgf2n_simd.la \
+   libkeccak_simd.la \
    liblea_simd.la \
    libneon_simd.la \
    libppc_simd.la \
@@ -114,6 +115,7 @@ libcryptopp_la_LIBADD = \
    $(libdonna_sse_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
    $(libgf2n_simd_la_OBJECTS) \
+   $(libkeccak_simd_la_OBJECTS) \
    $(liblea_simd_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
@@ -158,6 +160,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
    $(libdonna_sse_la_OBJECTS) \
+   $(libkeccak_simd_la_OBJECTS) \
    $(liblea_simd_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
    $(libgf2n_simd_la_OBJECTS) \
@@ -232,6 +235,9 @@ libgcm_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GCM_FLAG)
 
 libgf2n_simd_la_SOURCES = gf2n_simd.cpp
 libgf2n_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GF2N_FLAG)
+
+libkeccak_simd_la_SOURCES = keccak_simd.cpp
+libkeccak_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_KECCAK_FLAG)
 
 liblea_simd_la_SOURCES = lea_simd.cpp
 liblea_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LEA_FLAG)
@@ -312,19 +318,19 @@ libothers_la_SOURCES = \
     esign.cpp files.cpp filters.cpp fips140.cpp fipstest.cpp gcm.cpp \
     gf256.cpp gf2_32.cpp gf2n.cpp gfpcrypt.cpp gost.cpp gzip.cpp hc128.cpp \
     hc256.cpp hex.cpp hight.cpp hmac.cpp hrtimer.cpp ida.cpp idea.cpp \
-    iterhash.cpp kalyna.cpp kalynatab.cpp keccak.cpp keccakc.cpp lea.cpp \
+    iterhash.cpp kalyna.cpp kalynatab.cpp keccak.cpp keccak_core.cpp lea.cpp \
     luc.cpp mars.cpp marss.cpp md2.cpp md4.cpp md5.cpp misc.cpp modes.cpp \
     mqueue.cpp mqv.cpp nbtheory.cpp oaep.cpp osrng.cpp padlkrng.cpp \
     panama.cpp pkcspad.cpp poly1305.cpp polynomi.cpp pssr.cpp pubkey.cpp \
     queue.cpp rabbit.cpp rabin.cpp randpool.cpp rc2.cpp rc5.cpp rc6.cpp \
     rdrand.cpp rdtables.cpp rijndael.cpp ripemd.cpp rng.cpp rsa.cpp rw.cpp \
     safer.cpp salsa.cpp scrypt.cpp seal.cpp seed.cpp serpent.cpp sha.cpp \
-    sha3.cpp shacal2.cpp shark.cpp sharkbox.cpp simeck.cpp simon.cpp \
-    skipjack.cpp sm3.cpp sm4.cpp sosemanuk.cpp speck.cpp square.cpp \
-    squaretb.cpp strciphr.cpp tea.cpp tftables.cpp threefish.cpp tiger.cpp \
-    tigertab.cpp ttmac.cpp tweetnacl.cpp twofish.cpp vmac.cpp wake.cpp \
-    whrlpool.cpp xed25519.cpp xtr.cpp xtrcrypt.cpp zdeflate.cpp zinflate.cpp \
-    zlib.cpp
+    sha3.cpp shacal2.cpp shake.cpp shark.cpp sharkbox.cpp simeck.cpp \
+    simon.cpp skipjack.cpp sm3.cpp sm4.cpp sosemanuk.cpp speck.cpp \
+    square.cpp squaretb.cpp strciphr.cpp tea.cpp tftables.cpp threefish.cpp \
+    tiger.cpp tigertab.cpp ttmac.cpp tweetnacl.cpp twofish.cpp vmac.cpp \
+    wake.cpp whrlpool.cpp xed25519.cpp xtr.cpp xtrcrypt.cpp zdeflate.cpp \
+    zinflate.cpp zlib.cpp
 
 # Don't include aes_armv4.h here
 pkginclude_HEADERS = \
@@ -338,13 +344,13 @@ pkginclude_HEADERS = \
     filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h gf2n.h gfpcrypt.h \
     gost.h gzip.h hashfwd.h hc128.h hc256.h hex.h hight.h hkdf.h hmac.h \
     hmqv.h hrtimer.h ida.h idea.h integer.h iterhash.h kalyna.h keccak.h \
-    keccakc.h lea.h lubyrack.h luc.h mars.h md2.h md4.h md5.h mdc.h \
-    mersenne.h misc.h modarith.h modes.h modexppc.h mqueue.h mqv.h naclite.h \
-    nbtheory.h nr.h oaep.h oids.h osrng.h ossig.h padlkrng.h panama.h pch.h \
-    pkcspad.h poly1305.h polynomi.h ppc_simd.h pssr.h pubkey.h pwdbased.h \
-    queue.h rabbit.h rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h \
-    rijndael.h ripemd.h rng.h rsa.h rw.h safer.h salsa.h scrypt.h seal.h \
-    secblock.h seckey.h seed.h serpent.h serpentp.h sha.h sha3.h shacal2.h \
+    lea.h lubyrack.h luc.h mars.h md2.h md4.h md5.h mdc.h mersenne.h misc.h \
+    modarith.h modes.h modexppc.h mqueue.h mqv.h naclite.h nbtheory.h nr.h \
+    oaep.h oids.h osrng.h ossig.h padlkrng.h panama.h pch.h pkcspad.h \
+    poly1305.h polynomi.h ppc_simd.h pssr.h pubkey.h pwdbased.h queue.h \
+    rabbit.h rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h rijndael.h \
+    ripemd.h rng.h rsa.h rw.h safer.h salsa.h scrypt.h seal.h secblock.h \
+    seckey.h seed.h serpent.h serpentp.h sha.h sha3.h shacal2.h shake.h \
     shark.h simeck.h simon.h simple.h siphash.h skipjack.h sm3.h sm4.h \
     smartptr.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h tea.h \
     threefish.h tiger.h trap.h trunhash.h ttmac.h tweetnacl.h twofish.h \
@@ -405,28 +411,28 @@ testdata_FILES = \
     TestData/fhmqv256.dat   TestData/rc5val.dat
 
 testvector_FILES = \
-    TestVectors/aead.txt              TestVectors/rsa_oaep.txt \
-    TestVectors/aes.txt               TestVectors/rsa_pkcs1_1_5.txt \
-    TestVectors/all.txt               TestVectors/rsa_pss.txt \
-    TestVectors/aria.txt              TestVectors/rw.txt \
-    TestVectors/blake2b.txt           TestVectors/salsa.txt \
-    TestVectors/blake2s.txt           TestVectors/seal.txt \
-    TestVectors/blake2.txt            TestVectors/seed.txt \
-    TestVectors/camellia.txt          TestVectors/sha1_160_fips_180.txt \
-    TestVectors/ccm.txt               TestVectors/sha1_fips_180.txt \
-    TestVectors/chacha20poly1305.txt  TestVectors/sha2_224_fips_180.txt \
-    TestVectors/chacha_tls.txt        TestVectors/sha2_256_fips_180.txt \
-    TestVectors/chacha.txt            TestVectors/sha2_384_fips_180.txt \
-    TestVectors/cham.txt              TestVectors/sha2_512_fips_180.txt \
-    TestVectors/cmac.txt              TestVectors/sha2_fips_180.txt \
-    TestVectors/dlies.txt             TestVectors/sha2.txt \
-    TestVectors/dsa_1363.txt          TestVectors/sha3_224_fips_202.txt \
-    TestVectors/dsa_rfc6979.txt       TestVectors/sha3_256_fips_202.txt \
-    TestVectors/dsa.txt               TestVectors/sha3_384_fips_202.txt \
-    TestVectors/eax.txt               TestVectors/sha3_512_fips_202.txt \
-    TestVectors/esign.txt             TestVectors/sha3_fips_202.txt \
-    TestVectors/gcm.txt               TestVectors/sha3.txt \
-    TestVectors/hc128.txt             TestVectors/shacal2.txt \
+    TestVectors/aead.txt              TestVectors/rsa_pkcs1_1_5.txt \
+    TestVectors/aes.txt               TestVectors/rsa_pss.txt \
+    TestVectors/all.txt               TestVectors/rw.txt \
+    TestVectors/aria.txt              TestVectors/salsa.txt \
+    TestVectors/blake2b.txt           TestVectors/seal.txt \
+    TestVectors/blake2s.txt           TestVectors/seed.txt \
+    TestVectors/blake2.txt            TestVectors/sha1_160_fips_180.txt \
+    TestVectors/camellia.txt          TestVectors/sha1_fips_180.txt \
+    TestVectors/ccm.txt               TestVectors/sha2_224_fips_180.txt \
+    TestVectors/chacha20poly1305.txt  TestVectors/sha2_256_fips_180.txt \
+    TestVectors/chacha_tls.txt        TestVectors/sha2_384_fips_180.txt \
+    TestVectors/chacha.txt            TestVectors/sha2_512_fips_180.txt \
+    TestVectors/cham.txt              TestVectors/sha2_fips_180.txt \
+    TestVectors/cmac.txt              TestVectors/sha2.txt \
+    TestVectors/dlies.txt             TestVectors/sha3_224_fips_202.txt \
+    TestVectors/dsa_1363.txt          TestVectors/sha3_256_fips_202.txt \
+    TestVectors/dsa_rfc6979.txt       TestVectors/sha3_384_fips_202.txt \
+    TestVectors/dsa.txt               TestVectors/sha3_512_fips_202.txt \
+    TestVectors/eax.txt               TestVectors/sha3_fips_202.txt \
+    TestVectors/esign.txt             TestVectors/sha3.txt \
+    TestVectors/gcm.txt               TestVectors/shacal2.txt \
+    TestVectors/hc128.txt             TestVectors/shake.txt \
     TestVectors/hc256.txt             TestVectors/sha.txt \
     TestVectors/hight.txt             TestVectors/simeck.txt \
     TestVectors/hkdf.txt              TestVectors/simon.txt \
@@ -441,7 +447,8 @@ testvector_FILES = \
     TestVectors/poly1305aes.txt       TestVectors/vmac.txt \
     TestVectors/poly1305_tls.txt      TestVectors/wake.txt \
     TestVectors/rabbit.txt            TestVectors/whrlpool.txt \
-    TestVectors/Readme.txt
+    TestVectors/Readme.txt            TestVectors/xchacha.txt \
+    TestVectors/rsa_oaep.txt
 
 nobase_dist_pkgdata_DATA = \
     $(testdata_FILES) \
