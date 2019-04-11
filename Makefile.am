@@ -194,7 +194,7 @@ endif
 libcryptopp_la_DEPENDENCIES += $(libothers_la_OBJECTS)
 
 ## Very important... Version number of the library
-libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 8:0:0
+libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 8:1:0
 
 ## Source files with special needs
 libcryptlib_la_SOURCES = cryptlib.cpp

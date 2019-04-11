@@ -76,7 +76,7 @@ You may also need `libltdl-dev` on Debian and Ubuntu; and may need `libtool-ltdl
 If working on the GCC Compile Farm then you may need exta steps for systems like AIX. AIX offers updated Autoconf and Automake in `/opt/freeware/bin/`; and offers Libtool in `/opt/cfarm/libtool-2.4.2/bin/`. Both `bin/` need to be on path. When running `autoreconf` you must `autoreconf --force --install --include=/opt/cfarm/libtool-2.4.2/share/aclocal/`.
 
 # Integration
-The Autotools submodule integrates with the Crypto++ library. The submodule removes the library's `GNUmakefile` and `GNUmakefile-cross`. In the future we plan to overwrite the library's `config.h` and produce a n installation specific `config.h`.
+The Autotools submodule integrates with the Crypto++ library. The submodule removes the library's `GNUmakefile` and `GNUmakefile-cross`. In the future we plan to overwrite the library's `config.h` and produce an installation specific `config.h`.
 
 The library's `GNUmakefile` and `GNUmakefile-cross` were modified to clean the artifacts produced by Autotools. To clean the directory after running Autotools perform a `git checkout GNUmakefile` followed by a `make -f GNUmakefile distclean`.
 
@@ -88,6 +88,31 @@ If you want to use `cryptest-autotools.sh` to drive things then perform the foll
     cd cryptopp
     cp TestScripts/cryptest-autotools.sh .
     ./cryptest-autotools.sh
+
+# Cross-compiles
+
+Cross-compiles are mostly broken due to Autotools. The biggest problem seems to be Autotools inability to honor a C++ project settings. Using Android as an example:
+
+* `configure.ac` sets `AC_PROG_CXX`
+* `configure.ac` sets `AC_LANG([C++])`
+* User sets `CXX=/opt/android-ndk-r19c/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++`
+* User sets `LD=/opt/android-ndk-r19c/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++`
+* User sets `CXXFLAGS="-target armv7-none-linux-androideabi21 ...`
+* User sets `LDFLAGS="-Wl,-target=armv7-none-linux-androideabi21 ...`
+* User invokes `./configure --host=$(config.guess) --build=armv7-none-linux-androideabi21`
+
+Autotools will perform a test using the host's gcc and fail with:
+
+```
+configure:3481: checking whether the C compiler works
+configure:3503: gcc -Wl,-target=armv7-none-linux-androideabi21 ... conftest.c  >&5
+/usr/bin/ld: unrecognised emulation mode: thumb
+Supported emulations: elf_x86_64 elf32_x86_64 elf_i386 elf_iamcu i386linux elf_l1om
+                      elf_k1om i386pep i386pe
+collect2: error: ld returned 1 exit status
+```
+
+Autotools absolutely sucks. The maintainers have had 30 years to get it right and their shit is still broken.
 
 # Collaboration
 We would like all distro maintainers to be collaborators on this repo. If you are a distro maintainer then please contact us so we can send you an invite.

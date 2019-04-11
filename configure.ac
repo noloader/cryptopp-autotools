@@ -91,7 +91,7 @@
 
 #############################################################################
 
-AC_INIT([Crypto++], [8.0], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
+AC_INIT([Crypto++], [8.1], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_MACRO_DIR([m4])
@@ -117,24 +117,25 @@ AC_LANG_ASSERT([C++])
 ## Most people call this the target machine, but not Autotools.
 
 AC_CANONICAL_HOST
+AC_CANONICAL_BUILD
 
 ## These are some variables that help us track platform and compiler.
 ## It speeds up configuration by adding some intelligence to the
 ## test selection process. It also avoids failed configurations by
 ## avoiding some tests that fail but Autotools reports as success.
 
-IS_AIX_OS=`echo $host | $EGREP -i -c 'aix'`
+IS_AIX_OS=`echo $build | $EGREP -i -c 'aix'`
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
-IS_APPLE_OS=`echo "$host" | $EGREP -i -c -E 'apple|darwin'`
-IS_ANDROID_OS=`echo $host | $EGREP -i -c 'android'`
-IS_CYGWIN_OS=`echo $host | $EGREP -i -c 'cygwin'`
-IS_MINGW_OS=`echo $host | $EGREP -i -c 'mingw'`
+IS_APPLE_OS=`echo "$build" | $EGREP -i -c -E 'apple|darwin'`
+IS_ANDROID_OS=`echo $build | $EGREP -i -c 'android'`
+IS_CYGWIN_OS=`echo $build | $EGREP -i -c 'cygwin'`
+IS_MINGW_OS=`echo $build | $EGREP -i -c 'mingw'`
 
-IS_IA32=`echo $host | $EGREP -i -c -E 'i.86|x86_64|amd64'`
-IS_ARM32=`echo $host | $EGREP -i -c -E 'arm|armhf|arm7l|eabihf'`
-IS_ARMV8=`echo $host | $EGREP -i -c -E 'aarch32|aarch64'`
-IS_PPC=`echo $host | $EGREP -i -c -E 'ppc|powerpc|powermac'`
-IS_SPARC=`echo $host | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
+IS_IA32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
+IS_ARM32=`echo $build | $EGREP -i -c -E 'arm|armhf|arm7l|eabihf'`
+IS_ARMV8=`echo $build | $EGREP -i -c -E 'aarch32|aarch64'`
+IS_PPC=`echo $build | $EGREP -i -c -E 'ppc|powerpc|powermac'`
+IS_SPARC=`echo $build | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
 
 ## Debug builds add more goodies to help break things. I like breaking things.
 IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c '\-DDEBUG'`
@@ -149,18 +150,18 @@ IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c '\-DDEBUG'`
 ## See if CXX is valid. Autotools just trucks on with an invalid one.
 
 if test x"$CXX" != "x"; then
-   COMPILER_TARGET=`command -v "$CXX"`
-   if test x"$COMPILER_TARGET" = "x"; then
+   COMPILER_VALID=`command -v "$CXX"`
+   if test x"$COMPILER_VALID" = "x"; then
       AC_MSG_FAILURE(["$CXX" is not a valid compiler or is not on-path])
    fi
 fi
 
 ## Compiler is valid. Try to detect the target and vendor.
-## SunCC is empty, so we just use $host
+## SunCC is empty, so we just use $build
 
-COMPILER_TARGET=`"$CXX" -dumpmachine 2>/dev/null`
+COMPILER_TARGET=`"$CXX" "$CXXFLAGS" -dumpmachine 2>/dev/null`
 if test x"$COMPILER_TARGET" = "x"; then
-   COMPILER_TARGET="$host"
+   COMPILER_TARGET="$build"
 fi
 
 ## Determine the compiler's vendor. We need to work around some Autoconf bugs.
@@ -221,8 +222,6 @@ if test "$IS_ANDROID_OS" != "0"; then
       AC_MSG_RESULT([no])
       AC_MSG_ERROR([ANDROID_NDK_ROOT is not set. Please set ANDROID_NDK_ROOT])
    fi
-
-   AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
 fi
 
 #############################################################################
@@ -1431,15 +1430,10 @@ fi
 #############################################################################
 ## ARM A-32, including NEON, soft floats and hard floats
 
-if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
-
-   AC_MSG_ERROR(["Android is not ready. Ping noloader, gmail to move it along."])
-fi
-
 if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
 
    ## Most Linux are hard-float systems.
-   IS_ARMHF=`echo $host | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
+   IS_ARMHF=`echo $build | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
    if test "$IS_ARMHF" != "0"; then
       #AC_MSG_NOTICE([ARM hard-floats detected, using -mfloat-abi=hard.])
       FP_FLAG="hard"
@@ -2234,18 +2228,20 @@ fi
 
 if test "$IS_ANDROID_OS" != "0"; then
 
+   # ac_srcdir does not work. Autotools blows...
+
    THIS_FILE="$ANDROID_NDK_ROOT/sources/android/cpufeatures/cpu-features.h"
    AC_CHECK_FILE([$THIS_FILE],
-      [cp "$THIS_FILE" "$ac_srcdir"]
+      [cp "$THIS_FILE" "./"]
    )
 
    THIS_FILE="$ANDROID_NDK_ROOT/sources/android/cpufeatures/cpu-features.c"
    AC_CHECK_FILE([$THIS_FILE],
-      [cp "$THIS_FILE" "$ac_srcdir"]
+      [cp "$THIS_FILE" "./"]
    )
 
    # And set the flag so Makefile adds the recipes
-   THIS_FILE="$ac_srcdir/cpu-features.c"
+   THIS_FILE="./cpu-features.c"
    AC_CHECK_FILE([$THIS_FILE],
       [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])],
       [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])]
@@ -2319,7 +2315,7 @@ echo "something looks wrong then please modify config.h and please report"
 echo "it at http://github.com/noloader/cryptopp-autotools."
 echo ""
 
-echo "   Build triplet: $host"
+echo "   Build triplet: $build"
 echo " Compiler target: $COMPILER_TARGET"
 echo "Compiler version: $COMPILER_VERSION"
 echo ""
