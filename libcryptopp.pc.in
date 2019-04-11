@@ -7,7 +7,7 @@
 ## and other 64-bit OSes that use library directories like /lib64,
 ## /usr/lib64, /lib/amd64 and friends. Also see:
 ## * https://stackoverflow.com/q/47124066/608639
-## * and https://stackoverflow.com/q/46847939/608639
+## * https://stackoverflow.com/q/46847939/608639 and
 ## * https://bugzilla.redhat.com/show_bug.cgi?id=1510073.
 
 prefix=@prefix@
