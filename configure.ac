@@ -1568,6 +1568,8 @@ fi
 
 if test "$IS_ARMV8" != "0"; then
 
+   # https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html
+
    AC_CHECK_HEADERS(arm_acle.h,
       [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available])],
       [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [0], [arm_acle.h is not available])]
@@ -1600,6 +1602,30 @@ if test "$IS_ARMV8" != "0"; then
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Enable NEON])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+   fi
+
+   CXXFLAGS="-mfix-cortex-a53-835769"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_CXXFLAGS="$AM_CXXFLAGS -mfix-cortex-a53-835769"
+   fi
+
+   CXXFLAGS="-mfix-cortex-a53-843419"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    fi
 
    CXXFLAGS="-march=armv8-a+crc"
@@ -1643,7 +1669,7 @@ if test "$IS_ARMV8" != "0"; then
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
    fi
 
-   CXXFLAGS="-march=armv8.4-a+sha3"
+   CXXFLAGS="-march=armv8.3-a+sha3"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
@@ -1663,7 +1689,7 @@ if test "$IS_ARMV8" != "0"; then
       #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA3"
    fi
 
-   CXXFLAGS="-march=armv8.4-a+sm4"
+   CXXFLAGS="-march=armv8.3-a+sm4"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
@@ -1681,6 +1707,22 @@ if test "$IS_ARMV8" != "0"; then
       #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM4], [1], [Disable ARMv8 SM4])
       #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM3"
       #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM4"
+   fi
+
+   CXXFLAGS="-march=armv8.3-a+rng"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_ARM_RNG_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_RNG_AVAILABLE], [1], [Enable ARMv8 RNG])
+   #else
+      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_RNG], [1], [Disable ARMv8 RNG])
+      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_RNG"
    fi
 
    ## Restore CXXFLAGS
