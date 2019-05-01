@@ -1432,20 +1432,10 @@ fi
 
 if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
 
-   ## Most Linux are hard-float systems.
-   IS_ARMHF=`echo $build | $EGREP -i -c -E 'armhf|arm7l|gnueabihf'`
-   if test "$IS_ARMHF" != "0"; then
-      #AC_MSG_NOTICE([ARM hard-floats detected, using -mfloat-abi=hard.])
-      FP_FLAG="hard"
-   else
-      #AC_MSG_NOTICE([ARM soft-floats detected, using -mfloat-abi=softfp.])
-      FP_FLAG="softfp"
-   fi
-
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   CXXFLAGS="-march=armv7-a -mfloat-abi=$FP_FLAG -mfpu=neon"
+   CXXFLAGS="-march=armv7-a -mfpu=neon"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_PROGRAM([])],
@@ -1479,6 +1469,51 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## Android and -mfloat-abi=softfp
+
+if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   CXXFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=neon"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_CRC_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_LEA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_NEON_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SIMECK_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SIMON128_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_SPECK128_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1], [Enable NEON])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disbale NEON])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+
 fi
 
 #############################################################################
