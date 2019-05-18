@@ -31,17 +31,18 @@
 ##   so they should compile cleanly or the feature is not available. However,
 ##   Autotools lacks a AC_TREAT_WARNINGS_AS_ERRORS-like macro or define.
 ##
-## - Cutover to the feature test programs in TestPrograms. It gives us better
-##   control over the feature tests. It should also avoid the quoting problem
-##   that plagues Autotools. We can't run some tests at the moment because
-##   Autotool chokes. Also see https://github.com/weidai11/cryptopp/issues/741
-##   and https://stackoverflow.com/q/54250060/608639.
-##
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X. Also
 ##   see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
 ##
 ## - Fix Autoconf ignoring our config.h.in. This one looks like it is a problem
 ##   without a solution. Also see https://stackoverflow.com/q/48436715/608639.
+##   (Gave up after https://github.com/weidai11/cryptopp/commit/c51f0ecbfd21.
+##   Now we can write new config_asm.h, config_cxx.h, and config_misc.h.)
+##
+## - Figure out how to write new configuration information to config_asm.h,
+##   config_cxx.h, and config_misc.h. According to the Autoconf manual we
+##   can use multiple headers. However, it does not seem to work in
+##   practice. Also see https://stackoverflow.com/q/56193203/608639.
 ##
 ## - Stop using local.h, and write the config data into a Crypto++ compatible
 ##   config.h. There's not much to "Crypto++ compatible config.h". We need test
@@ -91,8 +92,32 @@
 
 #############################################################################
 
+## This configure.ac proceeds in five parts:
+##
+##   1. configure.ac preamble
+##
+##   2. compiler and host detection
+##
+##   3. configure options, like --disable-asm
+##
+##   4. CPU feature tests, like SSE, NEON, ARMv8, PowerPC
+##
+##   5. C++ feature tests, like C++11, alignof and alignas
+##
+##   6. Misc feature and options
+##
+
+#############################################################################
+##   PART 1   PART 1   PART 1   PART 1   PART 1   PART 1   PART 1   PART 1
+## ==========================================================================
+## configure.ac preamble
+#############################################################################
+
 AC_INIT([Crypto++], [8.3], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
 AM_INIT_AUTOMAKE
+
+AC_PROG_CXX
+AC_LANG([C++])
 
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([local.h])
@@ -103,8 +128,6 @@ AM_PROG_AS
 AC_PROG_LIBTOOL
 LT_INIT
 
-AC_PROG_CXX
-AC_LANG([C++])
 AC_PROG_GREP
 AC_PROG_AWK
 
@@ -118,6 +141,43 @@ AC_LANG_ASSERT([C++])
 
 AC_CANONICAL_HOST
 AC_CANONICAL_BUILD
+
+#############################################################################
+
+## Our Autoconf tests are strict. We use custom AC_COMPILE_IFELSE and
+## AC_LINK_IFELSE that rejects a feature test if there are any warnings or
+## errors. We needed this because Autotools was mis-detecting features on
+## AIX and Solarix using XLC and SunCC. We also needed the custom tests
+## because Autoconf does not have a "warnings as errors" option that just
+## works on all the compilers we support.
+
+AC_DEFUN([XXX_COMPILE_IFELSE],
+   [AC_COMPILE_IFELSE(
+      [$1],
+      [retval=0
+         touch conftest.err
+         if test `cat conftest.err | wc -w` != "0"; then retval=1; fi
+      ],[retval=1]
+   )
+   AS_IF([test $retval = 0],[$2],[$3])]
+)
+
+AC_DEFUN([XXX_LINK_IFELSE],
+   [AC_LINK_IFELSE(
+      [$1],
+      [retval=0
+         touch conftest.err
+         if test `cat conftest.err | wc -w` != "0"; then retval=1; fi
+      ],[retval=1]
+   )
+   AS_IF([test $retval = 0],[$2],[$3])]
+)
+
+#############################################################################
+##   PART 2   PART 2   PART 2   PART 2   PART 2   PART 2   PART 2   PART 2
+## ==========================================================================
+## compiler and host detection
+#############################################################################
 
 ## These are some variables that help us track platform and compiler.
 ## It speeds up configuration by adding some intelligence to the
@@ -178,7 +238,7 @@ if test x"$COMPILER_VERSION" = "x"; then
    COMPILER_VERSION=`"$CXX" -V 2>&1 | head -n 1`
 fi
 
-## Microsoft test for COMPILER_VERSION
+## Microsoft test if COMPILER_VERSION is empty
 if test `basename "$CXX"` = "cl.exe"; then
    COMPILER_VERSION=`"$CXX" /? 2>&1 | head -n 1`
 fi
@@ -211,6 +271,191 @@ case "$LDNAME" in
 esac
 
 #############################################################################
+##   PART 3   PART 3   PART 3   PART 3   PART 3   PART 3   PART 3   PART 3
+## ==========================================================================
+## configure options, like --disable-asm
+#############################################################################
+
+AC_ARG_ENABLE([pthreads],
+   AS_HELP_STRING([--disable-pthreads], [disable pthreads]))
+AS_IF([test "x$enable_pthreads" = "xno"], [
+   : # AC_DEFINE([CRYPTOPP_DISABLE_PTHREADS], [1], [disable pthreads])
+])
+
+# Applies to all platforms
+AC_ARG_ENABLE([asm],
+   AS_HELP_STRING([--disable-asm], [disable all ASM and intrinsics]))
+AS_IF([test "x$enable_asm" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [disable all ASM and intrinsics])
+])
+
+# X86 defines
+AC_ARG_ENABLE([sse2],
+   AS_HELP_STRING([--disable-sse2], [disable x86 SSE2 instructions]))
+AS_IF([test "x$enable_sse2" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SSE2], [1], [disable x86 SSE2 instructions])
+])
+
+AC_ARG_ENABLE([sse3],
+   AS_HELP_STRING([--disable-sse3], [disable x86 SSE3 instructions]))
+AS_IF([test "x$enable_sse3" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [disable x86 SSE3 instructions])
+])
+
+AC_ARG_ENABLE([ssse3],
+   AS_HELP_STRING([--disable-ssse3], [disable x86 SSSE3 instructions]))
+AS_IF([test "x$enable_ssse3" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [disable x86 SSSE3 instructions])
+])
+
+AC_ARG_ENABLE([sse4],
+   AS_HELP_STRING([--disable-sse4], [disable x86 SSE4.1 and SSE4.2 instructions]))
+AS_IF([test "x$enable_sse4" = "xno"], [
+  AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [disable x86 SSE4.1 and SSE4.2 instructions])
+])
+
+AC_ARG_ENABLE([clmul],
+   AS_HELP_STRING([--disable-clmul], [disable x86 CLMUL instructions]))
+AS_IF([test "x$enable_clmul" = "xno"], [
+  AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [disable x86 CLMUL instructions])
+])
+
+AC_ARG_ENABLE([aes],
+   AS_HELP_STRING([--disable-aes], [disable x86 AES instructions]))
+AS_IF([test "x$enable_aes" = "xno"], [
+  AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [disable x86 AES instructions])
+])
+
+AC_ARG_ENABLE([sha],
+   AS_HELP_STRING([--disable-sha], [disable x86 SHA instructions]))
+AS_IF([test "x$enable_sha" = "xno"], [
+  AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [disable x86 SHA instructions])
+])
+
+AC_ARG_ENABLE([avx],
+   AS_HELP_STRING([--disable-avx], [disable x86 AVX instructions]))
+AS_IF([test "x$enable_avx" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_AVX], [1], [disable x86 AVX instructions])
+])
+
+AC_ARG_ENABLE([avx2],
+   AS_HELP_STRING([--disable-avx2], [disable x86 AVX2 instructions]))
+AS_IF([test "x$enable_avx2" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_AVX2], [1], [disable x86 AVX2 instructions])
+])
+
+# ARM-32 defines
+AC_ARG_ENABLE([armv7],
+   AS_HELP_STRING([--disable-armv7], [disable ARM ARMv7 instructions]))
+AS_IF([test "x$enable_armv7" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_ARMv7], [1], [disable ARM ARMv7 instructions])
+])
+
+AC_ARG_ENABLE([neon],
+   AS_HELP_STRING([--disable-neon], [disable ARM NEON instructions]))
+AS_IF([test "x$enable_neon" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_NEON], [1], [disable ARM NEON instructions])
+])
+
+# ARMv8 defines
+AC_ARG_ENABLE([asimd],
+   AS_HELP_STRING([--disable-asimd], [disable ARMv8 ASIMD instructions]))
+AS_IF([test "x$enable_asimd" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_ASIMD], [1], [disable ARMv8 ASIMD instructions])
+])
+
+AC_ARG_ENABLE([crc32],
+   AS_HELP_STRING([--disable-crc32], [disable ARMv8 CRC32 instructions]))
+AS_IF([test "x$enable_crc32" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_CRC32], [1], [disable ARMv8 CRC32 instructions])
+])
+
+AC_ARG_ENABLE([pmull],
+   AS_HELP_STRING([--disable-pmull], [disable ARMv8 PMULL instructions]))
+AS_IF([test "x$enable_pmull" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_PMULL], [1], [disable ARMv8 PMULL instructions])
+])
+
+AC_ARG_ENABLE([aes],
+   AS_HELP_STRING([--disable-aes], [disable ARMv8 AES instructions]))
+AS_IF([test "x$enable_aes" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [disable ARMv8 AES instructions])
+])
+
+AC_ARG_ENABLE([sha1],
+   AS_HELP_STRING([--disable-sha1], [disable ARMv8 SHA1 instructions]))
+AS_IF([test "x$enable_sha1" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SHA1], [1], [disable ARMv8 SHA1 instructions])
+])
+
+AC_ARG_ENABLE([sha256],
+   AS_HELP_STRING([--disable-sha256], [disable ARMv8 SHA256 instructions]))
+AS_IF([test "x$enable_sha256" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SHA256], [1], [disable ARMv8 SHA256 instructions])
+])
+
+AC_ARG_ENABLE([sha512],
+   AS_HELP_STRING([--disable-sha512], [disable ARMv8 SHA512 instructions]))
+AS_IF([test "x$enable_sha512" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SHA512], [1], [disable ARMv8 SHA512 instructions])
+])
+
+AC_ARG_ENABLE([sha3],
+   AS_HELP_STRING([--disable-sha3], [disable ARMv8 SHA3 instructions]))
+AS_IF([test "x$enable_sha3" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SHA3], [1], [disable ARMv8 SHA3 instructions])
+])
+
+AC_ARG_ENABLE([sm3],
+   AS_HELP_STRING([--disable-sm3], [disable ARMv8 SM3 instructions]))
+AS_IF([test "x$enable_sm3" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SM3], [1], [disable ARMv8 SM3 instructions])
+])
+
+AC_ARG_ENABLE([sm4],
+   AS_HELP_STRING([--disable-sm4], [disable ARMv8 SM4 instructions]))
+AS_IF([test "x$enable_sm4" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SM4], [1], [disable ARMv8 SM4 instructions])
+])
+
+# PPC defines
+AC_ARG_ENABLE([altivec],
+   AS_HELP_STRING([--disable-altivec], [disable PPC Altivec instructions]))
+AS_IF([test "x$enable_altivec" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [disable PPC Altivec instructions])
+])
+
+AC_ARG_ENABLE([aes],
+   AS_HELP_STRING([--disable-aes], [disable PPC AES instructions]))
+AS_IF([test "x$enable_aes" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [disable PPC AES instructions])
+])
+
+AC_ARG_ENABLE([vmull],
+   AS_HELP_STRING([--disable-vmull], [disable PPC VMULL instructions]))
+AS_IF([test "x$enable_vmull" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_VMULL], [1], [disable PPC VMULL instructions])
+])
+
+AC_ARG_ENABLE([sha256],
+   AS_HELP_STRING([--disable-sha256], [disable PPC SHA256 instructions]))
+AS_IF([test "x$enable_sha256" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SHA256], [1], [disable PPC SHA256 instructions])
+])
+
+AC_ARG_ENABLE([sha512],
+   AS_HELP_STRING([--disable-sha512], [disable PPC SHA512 instructions]))
+AS_IF([test "x$enable_sha512" = "xno"], [
+   AC_DEFINE([CRYPTOPP_DISABLE_SHA512], [1], [disable PPC SHA512 instructions])
+])
+
+#############################################################################
+##   PART 4   PART 4   PART 4   PART 4   PART 4   PART 4   PART 4   PART 4
+## ==========================================================================
+## CPU feature tests, like SSE, NEON, ARMv8, PowerPC
+#############################################################################
+
+#############################################################################
 ## Die early on Android
 
 if test "$IS_ANDROID_OS" != "0"; then
@@ -223,37 +468,6 @@ if test "$IS_ANDROID_OS" != "0"; then
       AC_MSG_ERROR([ANDROID_NDK_ROOT is not set. Please set ANDROID_NDK_ROOT])
    fi
 fi
-
-#############################################################################
-
-## Our Autoconf tests are strict. We use custom AC_COMPILE_IFELSE and
-## AC_LINK_IFELSE that rejects a feature test if there are any warnings or
-## errors. We needed this because Autotools was mis-detecting features on
-## AIX and Solarix using XLC and SunCC. We also needed the custom tests
-## because Autoconf does not have a "warnings as errors" option that just
-## works on all the compilers we support.
-
-AC_DEFUN([XXX_COMPILE_IFELSE],
-   [AC_COMPILE_IFELSE(
-      [$1],
-      [retval=0
-         touch conftest.err
-         if test `cat conftest.err | wc -w` != "0"; then retval=1; fi
-      ],[retval=1]
-   )
-   AS_IF([test $retval = 0],[$2],[$3])]
-)
-
-AC_DEFUN([XXX_LINK_IFELSE],
-   [AC_LINK_IFELSE(
-      [$1],
-      [retval=0
-         touch conftest.err
-         if test `cat conftest.err | wc -w` != "0"; then retval=1; fi
-      ],[retval=1]
-   )
-   AS_IF([test $retval = 0],[$2],[$3])]
-)
 
 #############################################################################
 ## Doxygen documentation
@@ -287,16 +501,6 @@ if true; then
          ;;
    esac
 fi
-
-#############################################################################
-## Big endian/little endian
-
-AC_C_BIGENDIAN(
-   AC_DEFINE(CRYPTOPP_BIG_ENDIAN, 1, [machine is big-endian]),
-   AC_DEFINE(CRYPTOPP_LITTLE_ENDIAN, 1, [machine is little-endian]),
-   AC_MSG_ERROR([unknown endianess]),
-   AC_MSG_ERROR([universial endianess not supported])
-)
 
 #############################################################################
 ## Newlib and _XOPEN_SOURCE
@@ -706,13 +910,13 @@ fi
 fi
 
 #############################################################################
-## Clang integrated assembler.
+## Clang integrated assembler and SunCC.
 
 ## This block handles Clang and its integrated assembler.
 ## Also see https://bugs.llvm.org/show_bug.cgi?id=39895.
 if test "$IS_IA32" = "1"; then
-   if test "$IS_LLVM_COMPILER" = "1" || test x"$WAQ_FLAG" != "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_MIXED_ASM], [1], [Disable mixed asm for Clang integrated assembler])
+   if test x"$WAQ_FLAG" != "x"; then
+      AC_DEFINE([CRYPTOPP_DISABLE_MIXED_ASM], [1], [Disable mixed asm for Clang and SunCC])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
    fi
 fi
@@ -735,17 +939,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-msse2"
    fi
 
-   XXX_PROGRAM="#include <emmintrin.h>
-      int main(int argc, char** argv)
-      {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_add_epi64(x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sse2.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -768,18 +964,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-msse3"
    fi
 
-   XXX_PROGRAM="#include <emmintrin.h>
-      #include <pmmintrin.h>
-      int main(int argc, char** argv)
-      {
-         __m128d x = _mm_setzero_pd();
-         x=_mm_addsub_pd(x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sse3.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -799,18 +986,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-mssse3"
    fi
 
-   XXX_PROGRAM="#include <emmintrin.h>
-      #include <tmmintrin.h>
-      int main(int argc, char** argv)
-      {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_alignr_epi8(x,x,2);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_ssse3.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -839,20 +1017,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-msse4.1"
    fi
 
-   XXX_PROGRAM="#include <emmintrin.h>
-      #include <smmintrin.h>
-      int main(int argc, char** argv)
-      {
-         __m128i x = _mm_setzero_si128();
-         __m128i a = _mm_setzero_si128();
-         __m128i b = _mm_setzero_si128();
-         x=_mm_blend_epi16(a,b,4);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sse41.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -878,16 +1045,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-msse4.2"
    fi
 
-   XXX_PROGRAM="#include <nmmintrin.h>
-      int main(int argc, char** argv) {
-         unsigned int x=32;
-         x=_mm_crc32_u8(x,4);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sse42.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -910,16 +1070,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-mpclmul"
    fi
 
-   XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char** argv) {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_clmulepi64_si128 (x,x,0);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_clmul.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -936,16 +1089,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-mssse3 -mpclmul"
    fi
 
-   XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char** argv) {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_clmulepi64_si128 (x,x,0);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_clmul.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -966,17 +1112,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-mssse3 -maes"
    fi
 
-   XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char** argv) {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_aesenc_si128(x,x);
-         x=_mm_aesenclast_si128(x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_aes.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -995,17 +1133,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-msse4.1 -maes"
    fi
 
-   XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char** argv) {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_aesenc_si128(x,x);
-         x=_mm_aesenclast_si128(x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_aes.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1027,16 +1157,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-mavx"
    fi
 
-   XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char** argv) {
-         __m256d x=_mm256_setzero_pd();
-         x=_mm256_add_pd(x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_avx.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1058,17 +1181,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-mavx2"
    fi
 
-   XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char** argv) {
-         __m256i x=_mm256_setzero_si256();
-         x=_mm256_xor_si256(x,x);
-         x=_mm256_add_epi32(x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_avx2.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1090,22 +1205,9 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       CXXFLAGS="-msse4.2 -msha"
    fi
 
-   XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char** argv) {
-         __m128i x=_mm_setzero_si128();
-         x=_mm_sha1msg1_epu32(x,x);
-         x=_mm_sha1msg2_epu32(x,x);
-         x=_mm_sha1nexte_epu32(x,x);
-         x=_mm_sha1rnds4_epu32(x,x,0);
-         x=_mm_sha256msg1_epu32(x,x);
-         x=_mm_sha256msg2_epu32(x,x);
-         x=_mm_sha256rnds2_epu32(x,x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sha.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1133,7 +1235,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    CXXFLAGS="-xarch=sse2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sse2.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1161,7 +1263,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    CXXFLAGS="-xarch=sse3"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sse3.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1180,7 +1282,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    CXXFLAGS="-xarch=ssse3"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_ssse3.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1207,7 +1309,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    CXXFLAGS="-xarch=sse4_1"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sse41.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1229,7 +1331,7 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    CXXFLAGS="-xarch=sse4_2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sse42.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1249,17 +1351,10 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ##### CLMUL #####
 
-   XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char** argv) {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_clmulepi64_si128 (x,x,0);
-         return 0;
-      }"
-
    CXXFLAGS="-xarch=aes"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_clmul.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1277,18 +1372,10 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ##### AES #####
 
-   XXX_PROGRAM="#include <wmmintrin.h>
-      int main(int argc, char** argv) {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_aesenc_si128(x,x);
-         x=_mm_aesenclast_si128(x,x);
-         return 0;
-      }"
-
    CXXFLAGS="-xarch=aes"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_aes.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1307,16 +1394,9 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ##### AVX #####
 
    CXXFLAGS="-xarch=avx"
-   XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char** argv) {
-         __m256d x;
-         x=_mm256_add_pd(x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_avx.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1333,17 +1413,9 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    ##### AVX2 #####
 
    CXXFLAGS="-xarch=avx2"
-   XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char** argv) {
-         __m256i x;
-         x=_mm256_xor_si256(x,x);
-         x=_mm256_add_epi32(x,x);
-         return 0;
-      }"
-
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_avx2.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1362,9 +1434,9 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ## https://docs.oracle.com/cd/E77782_01/html/E77792/gqexw.html
    CXXFLAGS="-xarch=avx_i"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (rdrand)])
-   AC_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([])],
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_rdrand.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1380,9 +1452,9 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ## https://docs.oracle.com/cd/E60778_01/html/E60745/bjapr.html
    CXXFLAGS="-xarch=avx2_i"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (rdseed)])
-   AC_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([])],
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_rdseed.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1396,19 +1468,10 @@ if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ##### SHA #####
 
-   XXX_PROGRAM="#include <immintrin.h>
-      int main(int argc, char** argv) {
-         __m128i x = _mm_setzero_si128();
-         x=_mm_sha1msg1_epu32(x,x);
-         x=_mm_sha256msg1_epu32(x,x);
-         return 0;
-   }"
-
    ##CXXFLAGS="-xarch=avx2_i"
-   CXXFLAGS="-xarch=sha"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (sha?)])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_x86_sha.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1435,10 +1498,18 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
+   CXXFLAGS="-march=armv7-a"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cxx`])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
    CXXFLAGS="-march=armv7-a -mfpu=neon"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_neon.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1482,7 +1553,7 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
    CXXFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=neon"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_neon.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1528,7 +1599,7 @@ if test "$IS_ARM32" != "0"; then
    CXXFLAGS="-march=armv7-a -Wa,--noexecstack"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1543,7 +1614,7 @@ if test "$IS_ARM32" != "0"; then
       CXXFLAGS="-march=armv7-a"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cxx`])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -1581,7 +1652,7 @@ if test "$IS_ARMV8" != "0"; then
    CXXFLAGS="-march=armv8-a"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_asimd.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1607,7 +1678,7 @@ if test "$IS_ARMV8" != "0"; then
    CXXFLAGS="-mfix-cortex-a53-835769"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1619,7 +1690,7 @@ if test "$IS_ARMV8" != "0"; then
    CXXFLAGS="-mfix-cortex-a53-843419"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1631,7 +1702,7 @@ if test "$IS_ARMV8" != "0"; then
    CXXFLAGS="-march=armv8-a+crc"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_crc.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1645,67 +1716,114 @@ if test "$IS_ARMV8" != "0"; then
    fi
 
    CXXFLAGS="-march=armv8-a+crypto"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (AES)])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_aes.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
 
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_GF2N_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_ARM_PMULL_AVAILABLE], [1], [Enable ARMv8 PMULL])
       AC_DEFINE([CRYPTOPP_ARM_AES_AVAILABLE], [1], [Enable ARMv8 AES])
-      AC_DEFINE([CRYPTOPP_ARM_SHA_AVAILABLE], [1], [Enable ARMv8 SHA])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ARM_PMULL], [1], [Disable ARMv8 PMULL])
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_AES], [1], [Disable ARMv8 AES])
-      AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA], [1], [Disable ARMv8 SHA])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_AES"
+   fi
+
+   CXXFLAGS="-march=armv8-a+crypto"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (SHA1)])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_sha1.cxx`])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_SHA1_AVAILABLE], [1], [Enable ARMv8 SHA1])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA], [1], [Disable ARMv8 SHA1])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
+   fi
+
+   CXXFLAGS="-march=armv8-a+crypto"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (SHA256)])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_sha256.cxx`])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_SHA_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_SHA256_AVAILABLE], [256], [Enable ARMv8 SHA256])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA], [256], [Disable ARMv8 SHA256])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
    fi
 
    CXXFLAGS="-march=armv8.3-a+sha3"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (SHA512)])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_sha3.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SHA512_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_SHA512_AVAILABLE], [1], [Enable ARMv8 SHA512])
+   #else
+      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA512], [1], [Disable ARMv8 SHA512])
+      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA512"
+   fi
+
+   CXXFLAGS="-march=armv8.3-a+sha3"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (SHA3)])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_sha3.cxx`])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SHA3_FLAG], [$CXXFLAGS])
-      AC_DEFINE([CRYPTOPP_ARM_SHA512_AVAILABLE], [1], [Enable ARMv8 SHA-512])
       AC_DEFINE([CRYPTOPP_ARM_SHA3_AVAILABLE], [1], [Enable ARMv8 SHA3])
    #else
-      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA512], [1], [Disable ARMv8 SHA-512])
       #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA3], [1], [Disable ARMv8 SHA3])
-      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA512"
       #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA3"
    fi
 
    CXXFLAGS="-march=armv8.3-a+sm4"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (SM3)])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_sm3.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SM3_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_ARM_SM3_AVAILABLE], [1], [Enable ARMv8 SM3])
-      AC_DEFINE([CRYPTOPP_ARM_SM4_AVAILABLE], [1], [Enable ARMv8 SM4])
    #else
       #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM3], [1], [Disable ARMv8 SM3])
-      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM4], [1], [Disable ARMv8 SM4])
       #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM3"
+   fi
+
+   CXXFLAGS="-march=armv8.3-a+sm4"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (SM4)])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_sm4.cxx`])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_SM4_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_SM4_AVAILABLE], [1], [Enable ARMv8 SM4])
+   #else
+      #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM4], [1], [Disable ARMv8 SM4])
       #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM4"
    fi
 
@@ -1996,6 +2114,78 @@ if test "$IS_PPC" != "0"; then
 fi
 
 #############################################################################
+##   PART 5   PART 5   PART 5   PART 5   PART 5   PART 5   PART 5   PART 5
+## ==========================================================================
+## C++ feature tests, like C++11, alignof and alignas
+#############################################################################
+
+#############################################################################
+## Now test C++ features
+
+#AH_HEADER=
+#AC_CONFIG_COMMANDS_PRE(
+#   [m4_ifndef([AH_HEADER], [AC_CONFIG_HEADERS([config_cxx.h])])
+#])
+
+#############################################################################
+
+if true; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   XXX_PROGRAM="#include <forward_list>
+      int main(int argc, char** argv) {
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([whether runtime library is C++11])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_DEFINE([CRYPTOPP_CXX11], [1], [C++11 is available])
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+if true; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   XXX_PROGRAM="#include <exception>
+      int main(int argc, char** argv) {
+         return 0 == uncaught_exceptions() ? 0 : 1;
+      }"
+
+   AC_MSG_CHECKING([whether runtime library is C++17])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_DEFINE([CRYPTOPP_CXX11], [1], [C++17 is available])
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+##   PART 6   PART 6   PART 6   PART 6   PART 6   PART 6   PART 6   PART 6
+## ==========================================================================
+## Misc feature and options
+#############################################################################
+
+#############################################################################
 ## Add -pipe for non-IoT gadgets to speedup compiles. We use 2GB RAM as
 ## threshold. Anything with less than 2GB will not use -pipe.
 
@@ -2128,6 +2318,7 @@ if test "$IS_SUN_OS" != "0"; then
       fi
    fi
 
+   # No longer needed
    LDFLAGS="-lnsl"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
@@ -2140,6 +2331,7 @@ if test "$IS_SUN_OS" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    fi
 
+   # No longer needed
    LDFLAGS="-lsocket"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
@@ -2328,34 +2520,6 @@ else
 fi
 
 #############################################################################
-## It is too bad this does not work. If we could write directly
-## to the config file we could do away with the library one.
-
-if false; then
-
-cat << EOT >> local.h
-typedef unsigned char byte;
-typedef unsigned short word16;
-typedef unsigned int word32;
-
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-   typedef unsigned __int64 word64;
-   #define W64LIT(x) x##ui64
-#elif (_LP64 || __LP64__)
-   typedef unsigned long word64;
-   #define W64LIT(x) x##UL
-#else
-   typedef unsigned long long word64;
-   #define W64LIT(x) x##ULL
-#endif
-
-// define large word type, used for file offsets and such
-typedef word64 lword;
-const lword LWORD_MAX = W64LIT(0xffffffffffffffff);
-EOT
-fi
-
-#############################################################################
 ## Miscellaneous items
 
 ## Fix CCAS and CCASFLAGS
@@ -2364,7 +2528,6 @@ AC_SUBST([CCAS], [$CXX])
 AC_SUBST([CCASFLAGS], [$CXXFLAGS])
 
 ## Without this 'make' uses our GNUmakefile, and not Makefile
-# AC_CONFIG_COMMANDS_PRE([rm -f config.h 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross 2>/dev/null])
 
