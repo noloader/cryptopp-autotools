@@ -912,12 +912,27 @@ fi
 #############################################################################
 ## Clang integrated assembler and SunCC.
 
-## This block handles Clang and its integrated assembler.
 ## Also see https://bugs.llvm.org/show_bug.cgi?id=39895.
-if test "$IS_IA32" = "1"; then
-   if test x"$WAQ_FLAG" != "x"; then
-      AC_DEFINE([CRYPTOPP_DISABLE_MIXED_ASM], [1], [Disable mixed asm for Clang and SunCC])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
+if test "$IS_IA32" = "1" && test "x$enable_asm" != "xno"; then
+   if test "$IS_GCC_COMPILER" != "0"; then
+
+      if test x"$WAQ_FLAG" != "x"; then
+         CXXFLAGS="-msse2 $WAQ_FLAG"
+      else
+         CXXFLAGS="-msse2"
+      fi
+
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_SOURCE([`cat TestPrograms/test_mixed_asm.cxx`])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" != "0"; then
+         AC_DEFINE([CRYPTOPP_DISABLE_MIXED_ASM], [1], [Disable mixed asm])
+         AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
+      fi
    fi
 fi
 
