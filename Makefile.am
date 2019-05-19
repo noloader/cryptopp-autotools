@@ -296,6 +296,7 @@ if CRYPTOGAMS_ARM_SOURCES
 libaes_armv4_la_SOURCES = aes_armv4.S
 libsha1_armv4_la_SOURCES = sha1_armv4.S
 libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
+libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
 endif
 
 ## cpufeatures library on Android
