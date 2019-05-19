@@ -1699,7 +1699,7 @@ if test "$IS_ARMV8" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      AM_CXXFLAGS="$AM_CXXFLAGS -mfix-cortex-a53-835769"
+      AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
    fi
 
    CXXFLAGS="-mfix-cortex-a53-843419"
