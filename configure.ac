@@ -1747,6 +1747,23 @@ if test "$IS_ARMV8" != "0"; then
    fi
 
    CXXFLAGS="-march=armv8-a+crypto"
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (PMULL)])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_arm_pmull.cxx`])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AC_SUBST([CRYPTOPP_GCM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPP_GF2N_FLAG], [$CXXFLAGS])
+      AC_DEFINE([CRYPTOPP_ARM_PMULL_AVAILABLE], [1], [Enable ARMv8 PMULL])
+   else
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_PMULL], [1], [Disable ARMv8 PMULL])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
+   fi
+
+   CXXFLAGS="-march=armv8-a+crypto"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (SHA1)])
    XXX_COMPILE_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_arm_sha1.cxx`])],
