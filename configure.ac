@@ -834,6 +834,9 @@ fi
 ## Also see https://bugs.llvm.org/show_bug.cgi?id=39895.
 if test "$IS_IA32" = "1" && test "x$enable_asm" != "xno"; then
 
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
    CXXFLAGS="-msse2 $WAQ_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports mixed ASM])
    XXX_COMPILE_IFELSE(
@@ -846,6 +849,9 @@ if test "$IS_IA32" = "1" && test "x$enable_asm" != "xno"; then
       AC_DEFINE([CRYPTOPP_DISABLE_MIXED_ASM], [1], [Disable mixed asm])
       AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
    fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
 #############################################################################
