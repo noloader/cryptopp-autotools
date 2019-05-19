@@ -116,9 +116,6 @@
 AC_INIT([Crypto++], [8.3], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
 AM_INIT_AUTOMAKE
 
-AC_PROG_CXX
-AC_LANG([C++])
-
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([local.h])
 AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
@@ -127,6 +124,11 @@ AC_CONFIG_SRCDIR([configure.ac])
 AM_PROG_AS
 AC_PROG_LIBTOOL
 LT_INIT
+
+## If AC_PROG_CXX is included after AC_INIT and AM_INIT_AUTOMAKE,
+## then Autotools fails to build the executable with -PIC on ARM32.
+AC_PROG_CXX
+AC_LANG([C++])
 
 AC_PROG_GREP
 AC_PROG_AWK
