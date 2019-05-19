@@ -293,15 +293,15 @@ libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE2_FLAG)
 ## ARMv7-a AES by Andy Polyakov
 ## Also see https://stackoverflow.com/q/51575580/608639
 if CRYPTOGAMS_ARM_SOURCES
-libaes_armv4_la_SOURCES = aes_armv4.S
-libsha1_armv4_la_SOURCES = sha1_armv4.S
-libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
-libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
+   libaes_armv4_la_SOURCES = aes_armv4.S
+   libsha1_armv4_la_SOURCES = sha1_armv4.S
+   libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
+   libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
 endif
 
 ## cpufeatures library on Android
 if ANDROID_CPU_FEATURES
-libcpu_features_la_SOURCES = cpu-features.c
+   libcpu_features_la_SOURCES = cpu-features.c
 endif
 
 # This is the list of remaining sources files that don't need special order
