@@ -454,7 +454,7 @@ testvector_FILES = \
     TestVectors/poly1305_tls.txt      TestVectors/vmac.txt \
     TestVectors/rabbit.txt            TestVectors/wake.txt \
     TestVectors/Readme.txt            TestVectors/whrlpool.txt \
-    TestVectors/rsa_oaep.txt          TestVectors/xchacha.txt \
+    TestVectors/rsa_oaep.txt          TestVectors/xchacha.txt
 
 nobase_dist_pkgdata_DATA = \
     $(testdata_FILES) \
