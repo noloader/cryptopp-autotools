@@ -129,20 +129,24 @@ LT_INIT
 ## then Autotools fails to build the executable with -PIC on ARM32.
 AC_PROG_CXX
 AC_LANG([C++])
+LT_LANG([C++])
 
+# Enable static and shared libraries
+AC_ENABLE_SHARED
+AM_ENABLE_SHARED
+AC_ENABLE_STATIC
+AM_ENABLE_STATIC
+
+# Programs we use
 AC_PROG_GREP
 AC_PROG_AWK
 
-## Assert this once to avoid surprises
-AC_LANG_ASSERT([C++])
-
-#############################################################################
-
-## Determine the CPU and OS of the machine we are building for.
-## Most people call this the target machine, but not Autotools.
-
+# Detect build and host platforms
 AC_CANONICAL_HOST
 AC_CANONICAL_BUILD
+
+## Assert this once to avoid surprises
+AC_LANG_ASSERT([C++])
 
 #############################################################################
 
@@ -502,93 +506,6 @@ if true; then
          enable_shared=yes; enable_static=yes;
          ;;
    esac
-fi
-
-#############################################################################
-## Newlib and _XOPEN_SOURCE
-
-if true; then
-
-   ## Save CXXFLAGS
-   SAVED_CXXFLAGS="$CXXFLAGS"
-
-   ## This test may need to be changed if the Newlib folks provide directions.
-   ## Also see http://www.sourceware.org/ml/newlib/2017/msg01095.html.
-
-   XXX_PROGRAM="#include <string>
-      int main(int argc, char** argv) {
-         #ifndef __NEWLIB__
-         #  error
-         #endif
-         return 0;
-      }"
-
-   AC_MSG_CHECKING([whether runtime library is Newlib])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" = "0"; then
-
-      CXXFLAGS="-D_XOPEN_SOURCE=600"
-      AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
-      XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes])],
-         [AC_MSG_RESULT([no])]
-      )
-
-      if test "$retval" = "0"; then
-         AC_DEFINE([_XOPEN_SOURCE], [600], [Enable _XOPEN_SOURCE])
-         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-      fi
-   fi
-
-   ## Restore CXXFLAGS
-   CXXFLAGS="$SAVED_CXXFLAGS"
-fi
-
-#############################################################################
-## libstdc++ and _GLIBCXX_DEBUG
-if test "$IS_DEBUG" = "1"; then
-
-   ## Save CXXFLAGS
-   SAVED_CXXFLAGS="$CXXFLAGS"
-
-   XXX_PROGRAM="#include <string>
-      int main(int argc, char** argv) {
-         #ifndef __GLIBCXX__
-         #  error
-         #endif
-         return 0;
-      }"
-
-   AC_MSG_CHECKING([whether runtime library is libstdc++])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" = "0"; then
-
-      CXXFLAGS="-D_GLIBCXX_DEBUG"
-      AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
-      XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
-         [AC_MSG_RESULT([yes])],
-         [AC_MSG_RESULT([no])]
-      )
-
-      if test "$retval" = "0"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
-      fi
-   fi
-
-   ## Restore CXXFLAGS
-   CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
 #############################################################################
@@ -2145,6 +2062,93 @@ fi
 ## ==========================================================================
 ## C++ feature tests, like C++11, alignof and alignas
 #############################################################################
+
+#############################################################################
+## Newlib and _XOPEN_SOURCE
+
+if true; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   ## This test may need to be changed if the Newlib folks provide directions.
+   ## Also see http://www.sourceware.org/ml/newlib/2017/msg01095.html.
+
+   XXX_PROGRAM="#include <string>
+      int main(int argc, char** argv) {
+         #ifndef __NEWLIB__
+         #  error
+         #endif
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([whether runtime library is Newlib])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+
+      CXXFLAGS="-D_XOPEN_SOURCE=600"
+      AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" = "0"; then
+         AC_DEFINE([_XOPEN_SOURCE], [600], [Enable _XOPEN_SOURCE])
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## libstdc++ and _GLIBCXX_DEBUG
+if test "$IS_DEBUG" = "1"; then
+
+   ## Save CXXFLAGS
+   SAVED_CXXFLAGS="$CXXFLAGS"
+
+   XXX_PROGRAM="#include <string>
+      int main(int argc, char** argv) {
+         #ifndef __GLIBCXX__
+         #  error
+         #endif
+         return 0;
+      }"
+
+   AC_MSG_CHECKING([whether runtime library is libstdc++])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+
+      CXXFLAGS="-D_GLIBCXX_DEBUG"
+      AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+
+      if test "$retval" = "0"; then
+         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+      fi
+   fi
+
+   ## Restore CXXFLAGS
+   CXXFLAGS="$SAVED_CXXFLAGS"
+fi
 
 #############################################################################
 ## Now test C++ features
