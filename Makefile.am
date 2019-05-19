@@ -393,8 +393,8 @@ testdata_FILES = \
     TestData/3desval.dat    TestData/fhmqv384.dat  TestData/rc6val.dat \
     TestData/3wayval.dat    TestData/fhmqv512.dat  TestData/rijndael.dat \
     TestData/aria.dat       TestData/gostval.dat   TestData/rsa1024.dat \
-    TestData/camellia.dat   TestData/hmqv160.dat   TestData/rsa2048.dat \
-    TestData/cast128v.dat   TestData/hmqv256.dat   TestData/rsa2048a.dat \
+    TestData/camellia.dat   TestData/hmqv160.dat   TestData/rsa2048a.dat \
+    TestData/cast128v.dat   TestData/hmqv256.dat   TestData/rsa2048.dat \
     TestData/cast256v.dat   TestData/hmqv384.dat   TestData/rsa400pb.dat \
     TestData/defdmac1.bin   TestData/hmqv512.dat   TestData/rsa400pv.dat \
     TestData/defdmac2.bin   TestData/ideaval.dat   TestData/rsa512a.dat \
@@ -403,8 +403,8 @@ testdata_FILES = \
     TestData/dh2048.dat     TestData/lucc1024.dat  TestData/saferval.dat \
     TestData/dlie1024.dat   TestData/lucc512.dat   TestData/serpentv.dat \
     TestData/dlie2048.dat   TestData/lucd1024.dat  TestData/shacal2v.dat \
-    TestData/dsa1024.dat    TestData/lucd512.dat   TestData/sharkval.dat \
-    TestData/dsa1024b.dat   TestData/lucs1024.dat  TestData/skipjack.dat \
+    TestData/dsa1024b.dat   TestData/lucd512.dat   TestData/sharkval.dat \
+    TestData/dsa1024.dat    TestData/lucs1024.dat  TestData/skipjack.dat \
     TestData/dsa512.dat     TestData/lucs512.dat   TestData/squareva.dat \
     TestData/ed25519.dat    TestData/marsval.dat   TestData/twofishv.dat \
     TestData/ed25519v0.dat  TestData/mqv1024.dat   TestData/usage.dat \
@@ -443,18 +443,18 @@ testvector_FILES = \
     TestVectors/hight.txt             TestVectors/simeck.txt \
     TestVectors/hkdf.txt              TestVectors/simon.txt \
     TestVectors/hmac.txt              TestVectors/siphash.txt \
-    TestVectors/kalyna.txt            TestVectors/sm3.txt \
-    TestVectors/keccak.txt            TestVectors/sm4.txt \
-    TestVectors/lea.txt               TestVectors/sosemanuk.txt \
-    TestVectors/mars.txt              TestVectors/speck.txt \
-    TestVectors/nr.txt                TestVectors/tea.txt \
-    TestVectors/ocb.txt               TestVectors/threefish.txt \
-    TestVectors/panama.txt            TestVectors/ttmac.txt \
-    TestVectors/poly1305aes.txt       TestVectors/vmac.txt \
-    TestVectors/poly1305_tls.txt      TestVectors/wake.txt \
-    TestVectors/rabbit.txt            TestVectors/whrlpool.txt \
-    TestVectors/Readme.txt            TestVectors/xchacha.txt \
-    TestVectors/rsa_oaep.txt
+    TestVectors/kalyna.txt            TestVectors/skipjack.txt \
+    TestVectors/keccak.txt            TestVectors/sm3.txt \
+    TestVectors/lea.txt               TestVectors/sm4.txt \
+    TestVectors/mars.txt              TestVectors/sosemanuk.txt \
+    TestVectors/nr.txt                TestVectors/speck.txt \
+    TestVectors/ocb.txt               TestVectors/tea.txt \
+    TestVectors/panama.txt            TestVectors/threefish.txt \
+    TestVectors/poly1305aes.txt       TestVectors/ttmac.txt \
+    TestVectors/poly1305_tls.txt      TestVectors/vmac.txt \
+    TestVectors/rabbit.txt            TestVectors/wake.txt \
+    TestVectors/Readme.txt            TestVectors/whrlpool.txt \
+    TestVectors/rsa_oaep.txt          TestVectors/xchacha.txt \
 
 nobase_dist_pkgdata_DATA = \
     $(testdata_FILES) \
