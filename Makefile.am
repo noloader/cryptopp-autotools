@@ -82,9 +82,10 @@ EXTRA_LTLIBRARIES = \
    libsm4_simd.la \
    libsse_simd.la
 
-## ARMv7-a AES by Andy Polyakov
-if CRYPTOGAMS_AES
+## ARMv7-a AES and SHA1 by Andy Polyakov
+if CRYPTOGAMS_ARM_SOURCES
    EXTRA_LTLIBRARIES += libaes_armv4.la
+   EXTRA_LTLIBRARIES += libsha1_armv4.la
 endif
 
 ## The remainder of the source files
@@ -133,9 +134,10 @@ libcryptopp_la_LIBADD = \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
 
-## ARMv7-a AES by Andy Polyakov
-if CRYPTOGAMS_AES
+## ARMv7-a AES and SHA1 by Andy Polyakov
+if CRYPTOGAMS_ARM_SOURCES
    libcryptopp_la_LIBADD += $(libaes_armv4_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libsha1_armv4_la_OBJECTS)
 endif
 
 ## cpufeatures library on Android
@@ -180,9 +182,10 @@ libcryptopp_la_DEPENDENCIES = \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
 
-## ARMv7-a AES by Andy Polyakov
-if CRYPTOGAMS_AES
+## ARMv7-a AES and SHA1 by Andy Polyakov
+if CRYPTOGAMS_ARM_SOURCES
    libcryptopp_la_DEPENDENCIES += $(libaes_armv4_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libsha1_armv4_la_OBJECTS)
 endif
 
 ## cpufeatures library on Android
@@ -289,8 +292,8 @@ libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE2_FLAG)
 
 ## ARMv7-a AES by Andy Polyakov
 ## Also see https://stackoverflow.com/q/51575580/608639
-if CRYPTOGAMS_AES
-libaes_armv4_la_SOURCES = aes_armv4.S
+if CRYPTOGAMS_ARM_SOURCES
+libaes_armv4_la_SOURCES = aes_armv4.S sha1_armv4.S
 libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
 endif
 
@@ -363,7 +366,8 @@ noinst_HEADERS = \
     factory.h \
     resource.h \
     validate.h \
-    aes_armv4.h
+    aes_armv4.h \
+    sha1_armv4.h
 
 bin_PROGRAMS = cryptest
 

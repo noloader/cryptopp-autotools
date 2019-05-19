@@ -1605,7 +1605,7 @@ fi
 #############################################################################
 ## ARM A-32 and aes_armv4.S
 
-# Used by Makefile.am to compile aes_armv4.S
+# Used by Makefile.am to compile aes_armv4.S and sha1_armv4.S
 if test "$IS_ARM32" != "0"; then
 
    ## Save CXXFLAGS
@@ -1621,7 +1621,7 @@ if test "$IS_ARM32" != "0"; then
 
    if test "$retval" = "0"; then
 
-      AM_CONDITIONAL([CRYPTOGAMS_AES], [true])
+      AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
       AC_SUBST([CRYPTOPGAMS_FLAGS], [$CXXFLAGS])
 
    else
@@ -1635,10 +1635,10 @@ if test "$IS_ARM32" != "0"; then
       )
 
       if test "$retval" = "0"; then
-         AM_CONDITIONAL([CRYPTOGAMS_AES], [true])
+         AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
          AC_SUBST([CRYPTOPGAMS_FLAGS], [$CXXFLAGS])
       else
-         AM_CONDITIONAL([CRYPTOGAMS_AES], [false])
+         AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [false])
       fi
    fi
 
@@ -1646,7 +1646,7 @@ if test "$IS_ARM32" != "0"; then
    CXXFLAGS="$SAVED_CXXFLAGS"
 else
    # Required for other platforms
-   AM_CONDITIONAL([CRYPTOGAMS_AES], [false])
+   AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [false])
 fi
 
 #############################################################################
