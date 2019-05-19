@@ -371,7 +371,7 @@ noinst_HEADERS = \
     aes_armv4.h \
     sha1_armv4.h
 
-bin_PROGRAMS = cryptest
+bin_PROGRAMS = cryptest$(EXEEXT)
 
 cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"${pkgdatadir}/"'
 cryptest_SOURCES = \
