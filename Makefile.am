@@ -86,6 +86,8 @@ EXTRA_LTLIBRARIES = \
 if CRYPTOGAMS_ARM_SOURCES
    EXTRA_LTLIBRARIES += libaes_armv4.la
    EXTRA_LTLIBRARIES += libsha1_armv4.la
+   EXTRA_LTLIBRARIES += libsha256_armv4.la
+   EXTRA_LTLIBRARIES += libsha512_armv4.la
 endif
 
 ## The remainder of the source files
@@ -138,6 +140,8 @@ libcryptopp_la_LIBADD = \
 if CRYPTOGAMS_ARM_SOURCES
    libcryptopp_la_LIBADD += $(libaes_armv4_la_OBJECTS)
    libcryptopp_la_LIBADD += $(libsha1_armv4_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libsha256_armv4_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libsha512_armv4_la_OBJECTS)
 endif
 
 ## cpufeatures library on Android
@@ -186,6 +190,8 @@ libcryptopp_la_DEPENDENCIES = \
 if CRYPTOGAMS_ARM_SOURCES
    libcryptopp_la_DEPENDENCIES += $(libaes_armv4_la_OBJECTS)
    libcryptopp_la_DEPENDENCIES += $(libsha1_armv4_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libsha256_armv4_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libsha512_armv4_la_OBJECTS)
 endif
 
 ## cpufeatures library on Android
@@ -295,8 +301,12 @@ libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE2_FLAG)
 if CRYPTOGAMS_ARM_SOURCES
    libaes_armv4_la_SOURCES = aes_armv4.S
    libsha1_armv4_la_SOURCES = sha1_armv4.S
+   libsha256_armv4_la_SOURCES = sha256_armv4.S
+   libsha512_armv4_la_SOURCES = sha512_armv4.S
    libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
    libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
+   libsha256_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
+   libsha512_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
 endif
 
 ## cpufeatures library on Android
@@ -369,11 +379,12 @@ noinst_HEADERS = \
     resource.h \
     validate.h \
     aes_armv4.h \
-    sha1_armv4.h
+    sha1_armv4.h \
+    sha256_armv4.h
 
 bin_PROGRAMS = cryptest$(EXEEXT)
 
-cryptest_CXXFLAGS = $(AM_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"${pkgdatadir}/"'
+cryptest_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTEST_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"${pkgdatadir}/"'
 cryptest_SOURCES = \
     test.cpp bench1.cpp bench2.cpp bench3.cpp datatest.cpp \
     dlltest.cpp fipsalgt.cpp validat0.cpp validat1.cpp validat2.cpp \
