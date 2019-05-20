@@ -21,9 +21,9 @@ The general workflow is clone Wei Dai's Crypto++, fetch the Autotools files, and
     git clone https://github.com/weidai11/cryptopp.git
     cd cryptopp
     
-	wget https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/configure.ac
-	wget https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/Makefile.am
-	wget https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/libcryptopp.pc.in
+	wget -O configure.ac https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/configure.ac
+	wget -O Makefile.am https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/Makefile.am
+	wget -O libcryptopp.pc.in https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/libcryptopp.pc.in
 
     mkdir -p "$PWD/m4/"
 
