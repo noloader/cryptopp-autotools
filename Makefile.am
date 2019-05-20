@@ -82,7 +82,7 @@ EXTRA_LTLIBRARIES = \
    libsm4_simd.la \
    libsse_simd.la
 
-## ARMv7-a AES and SHA1 by Andy Polyakov
+## ARMv7-a AES and SHA by Andy Polyakov
 if CRYPTOGAMS_ARM_SOURCES
    EXTRA_LTLIBRARIES += libaes_armv4.la
    EXTRA_LTLIBRARIES += libsha1_armv4.la
@@ -136,7 +136,7 @@ libcryptopp_la_LIBADD = \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
 
-## ARMv7-a AES and SHA1 by Andy Polyakov
+## ARMv7-a AES and SHA by Andy Polyakov
 if CRYPTOGAMS_ARM_SOURCES
    libcryptopp_la_LIBADD += $(libaes_armv4_la_OBJECTS)
    libcryptopp_la_LIBADD += $(libsha1_armv4_la_OBJECTS)
@@ -186,7 +186,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
 
-## ARMv7-a AES and SHA1 by Andy Polyakov
+## ARMv7-a AES and SHA by Andy Polyakov
 if CRYPTOGAMS_ARM_SOURCES
    libcryptopp_la_DEPENDENCIES += $(libaes_armv4_la_OBJECTS)
    libcryptopp_la_DEPENDENCIES += $(libsha1_armv4_la_OBJECTS)
@@ -380,7 +380,8 @@ noinst_HEADERS = \
     validate.h \
     aes_armv4.h \
     sha1_armv4.h \
-    sha256_armv4.h
+    sha256_armv4.h \
+    sha512_armv4.h
 
 bin_PROGRAMS = cryptest$(EXEEXT)
 

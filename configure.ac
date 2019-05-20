@@ -34,6 +34,14 @@
 ## - Fix Autoconf using the wrong AR and ARFLAGS on platforms like OS X. Also
 ##   see http://lists.gnu.org/archive/html/bug-autoconf/2017-11/msg00002.html.
 ##
+## - Fix Autoconf not honoring LT_INIT. We are trying to enable PIC, static and
+##   shared by default but Autotools is ignoring [pic-only]. Also see
+##   https://stackoverflow.com/q/56215237/608639.
+##
+## - Fix Autoconf not using PIC/PIE for cryptest. The problem is bigger than the
+##   LT_INIT bug. There is no Uniform Name like bin_LTPROGRAMS to signal PIC/PIE
+##   should be used. Autoconf is guessing wrong and not using PIC/PIE.
+##
 ## - Fix Autoconf ignoring our config.h.in. This one looks like it is a problem
 ##   without a solution. Also see https://stackoverflow.com/q/48436715/608639.
 ##   (Gave up after https://github.com/weidai11/cryptopp/commit/c51f0ecbfd21.
@@ -114,6 +122,7 @@
 #############################################################################
 
 AC_INIT([Crypto++], [8.3], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
+LT_INIT([pic-only,enable-shared,enable-static])
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_MACRO_DIR([m4])
@@ -123,19 +132,12 @@ AC_CONFIG_SRCDIR([configure.ac])
 
 AM_PROG_AS
 AC_PROG_LIBTOOL
-LT_INIT
 
 ## If AC_PROG_CXX is included after AC_INIT and AM_INIT_AUTOMAKE,
 ## then Autotools fails to build the executable with -PIC on ARM32.
 AC_PROG_CXX
 AC_LANG([C++])
 LT_LANG([C++])
-
-# Enable static and shared libraries
-AC_ENABLE_SHARED
-AM_ENABLE_SHARED
-AC_ENABLE_STATIC
-AM_ENABLE_STATIC
 
 # Programs we use
 AC_PROG_GREP
