@@ -1,6 +1,6 @@
 # Crypto++ Autotools
 
-This repository contains Autotools files for Wei Dai's Crypto++ (https://github.com/weidai11/cryptopp). It supplies `configure.ac` and `makefile.am` for Crypto++ for those who want to use Autotools. Autotools is officialy unsupported, so use it at your own risk.
+This repository contains Autotools files for Wei Dai's Crypto++ (https://github.com/weidai11/cryptopp). It supplies `configure.ac`, `makefile.am` and `libcryptopp.pc.in`. Autotools is officialy unsupported, so use it at your own risk.
 
 The purpose of Crypto++ Autotools is three-fold:
 
@@ -15,19 +15,19 @@ There is a wiki page available that discusses Autotools and the Crypto++ project
 The Autotools files are a work in progress, so use it at your own risk. The head notes in `configure.ac` and `makefile.am` list some outstanding items. Please feel free to make pull requests to fix problems.
 
 # Workflow
-The general workflow is clone Wei Dai's crypto++, add Autotools as a submodule, and then copy the files of interest into the Crypto++ directory:
+
+The general workflow is clone Wei Dai's Crypto++, fetch the Autotools files, and then `autoreconf`:
 
     git clone https://github.com/weidai11/cryptopp.git
     cd cryptopp
-    git submodule add https://github.com/noloader/cryptopp-autotools.git autotools
-    git submodule update --remote
+    
+	wget https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/configure.ac
+	wget https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/Makefile.am
+	wget https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/libcryptopp.pc.in
 
-    cp "$PWD/autotools/Makefile.am" "$PWD"
-    cp "$PWD/autotools/configure.ac" "$PWD"
-    cp "$PWD/autotools/libcryptopp.pc.in" "$PWD"
     mkdir -p "$PWD/m4/"
 
-Once the submodule is added or updated, then run the following. Our testing showed `autoupdate` produced bad results on some versions of Autotools, so it is hit or miss whether it should be run.
+Once you have the files you can run `autoreconf` and friends. Our testing showed `autoupdate` produced bad results on some versions of Autotools, so it is hit or miss whether it should be run.
 
     autoupdate
     libtoolize --force --install
@@ -41,20 +41,6 @@ Once the submodule is added or updated, then run the following. Our testing show
 Best performance is obtained with `-O3` because GCC (and other compiler) apply vectorization optimizations. If you are not forced to `-O2` by policy (like Debian or Fedora), then you should configure with a higher optimization enabled:
 
     CXXFLAGS="-DNDEBUG -g2 -O3" ./configure <other options>
-
-To update the library and the submodule perform the following. The `make clean` is needed because reconfigure'ing does not invalidate the previously built objects or artifacts.
-
-    cd cryptopp
-    git pull
-    git submodule update --remote
-
-    cp "$PWD/autotools/Makefile.am" "$PWD"
-    cp "$PWD/autotools/configure.ac" "$PWD"
-    cp "$PWD/autotools/libcryptopp.pc.in" "$PWD"
-
-    make clean
-
-Despite our efforts we have not been able to add the submodule to Crypto++ for seamless integration. If anyone knows how to add the submodule directly to the Crypto++ directory, then please provide the instructions.
 
 # ZIP Files
 
