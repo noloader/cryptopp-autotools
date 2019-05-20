@@ -43,6 +43,8 @@ Best performance is obtained with `-O3` because GCC (and other compiler) apply v
 
     CXXFLAGS="-DNDEBUG -g2 -O3" ./configure <other options>
 
+Despite our efforts we have not been able to add the submodule to Crypto++ for seamless integration. If anyone knows how to add a submodule directly to the Crypto++ directory, then please provide the instructions.
+
 # ZIP Files
 
 If you are working from a Crypto++ release zip file, then you should download the same cryptopp-autotools release zip file. Both Crypto++ and this project use the same release tags, such as CRYPTOPP_8_0_0.
