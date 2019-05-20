@@ -202,8 +202,9 @@ endif
 ## The remainder of the object files
 libcryptopp_la_DEPENDENCIES += $(libothers_la_OBJECTS)
 
-## Very important... Version number of the library
-libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -version-info 8:3:0
+## Man, did Autotools fuck this up royally...
+## https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
+libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -release 8.3.0 -version-info 8:3
 
 ## Source files with special needs
 libcryptlib_la_SOURCES = cryptlib.cpp
