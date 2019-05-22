@@ -294,6 +294,7 @@ AC_ARG_ENABLE([asm],
    AS_HELP_STRING([--disable-asm], [disable all ASM and intrinsics]))
 AS_IF([test "x$enable_asm" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [disable all ASM and intrinsics])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
 ])
 
 # X86 defines
@@ -301,67 +302,78 @@ AC_ARG_ENABLE([sse2],
    AS_HELP_STRING([--disable-sse2], [disable x86 SSE2 instructions]))
 AS_IF([test "x$enable_sse2" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SSE2], [1], [disable x86 SSE2 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE2"
 ])
 
 AC_ARG_ENABLE([sse3],
    AS_HELP_STRING([--disable-sse3], [disable x86 SSE3 instructions]))
 AS_IF([test "x$enable_sse3" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [disable x86 SSE3 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
 ])
 
 AC_ARG_ENABLE([ssse3],
    AS_HELP_STRING([--disable-ssse3], [disable x86 SSSE3 instructions]))
 AS_IF([test "x$enable_ssse3" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [disable x86 SSSE3 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
 ])
 
 AC_ARG_ENABLE([sse4],
    AS_HELP_STRING([--disable-sse4], [disable x86 SSE4.1 and SSE4.2 instructions]))
 AS_IF([test "x$enable_sse4" = "xno"], [
-  AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [disable x86 SSE4.1 and SSE4.2 instructions])
+   AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [disable x86 SSE4.1 and SSE4.2 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
 ])
 
 AC_ARG_ENABLE([clmul],
    AS_HELP_STRING([--disable-clmul], [disable x86 CLMUL instructions]))
 AS_IF([test "x$enable_clmul" = "xno"], [
-  AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [disable x86 CLMUL instructions])
+   AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [disable x86 CLMUL instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
 ])
 
 AC_ARG_ENABLE([aes],
    AS_HELP_STRING([--disable-aes], [disable x86 AES instructions]))
 AS_IF([test "x$enable_aes" = "xno"], [
-  AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [disable x86 AES instructions])
+   AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [disable x86 AES instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
 ])
 
 AC_ARG_ENABLE([sha],
    AS_HELP_STRING([--disable-sha], [disable x86 SHA instructions]))
 AS_IF([test "x$enable_sha" = "xno"], [
-  AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [disable x86 SHA instructions])
+   AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [disable x86 SHA instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
 ])
 
 AC_ARG_ENABLE([avx],
    AS_HELP_STRING([--disable-avx], [disable x86 AVX instructions]))
 AS_IF([test "x$enable_avx" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_AVX], [1], [disable x86 AVX instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX"
 ])
 
 AC_ARG_ENABLE([avx2],
    AS_HELP_STRING([--disable-avx2], [disable x86 AVX2 instructions]))
 AS_IF([test "x$enable_avx2" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_AVX2], [1], [disable x86 AVX2 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX2"
 ])
 
 # ARM-32 defines
 AC_ARG_ENABLE([armv7],
    AS_HELP_STRING([--disable-armv7], [disable ARM ARMv7 instructions]))
 AS_IF([test "x$enable_armv7" = "xno"], [
-   AC_DEFINE([CRYPTOPP_DISABLE_ARMv7], [1], [disable ARM ARMv7 instructions])
+   AC_DEFINE([CRYPTOPP_DISABLE_ARMV7], [1], [disable ARM ARMv7 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARMV7"
 ])
 
 AC_ARG_ENABLE([neon],
    AS_HELP_STRING([--disable-neon], [disable ARM NEON instructions]))
 AS_IF([test "x$enable_neon" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_NEON], [1], [disable ARM NEON instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_NEON"
 ])
 
 # ARMv8 defines
@@ -369,60 +381,70 @@ AC_ARG_ENABLE([asimd],
    AS_HELP_STRING([--disable-asimd], [disable ARMv8 ASIMD instructions]))
 AS_IF([test "x$enable_asimd" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ASIMD], [1], [disable ARMv8 ASIMD instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASIMD"
 ])
 
 AC_ARG_ENABLE([crc32],
    AS_HELP_STRING([--disable-crc32], [disable ARMv8 CRC32 instructions]))
 AS_IF([test "x$enable_crc32" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_CRC32], [1], [disable ARMv8 CRC32 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CRC32"
 ])
 
 AC_ARG_ENABLE([pmull],
    AS_HELP_STRING([--disable-pmull], [disable ARMv8 PMULL instructions]))
 AS_IF([test "x$enable_pmull" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_PMULL], [1], [disable ARMv8 PMULL instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_PMULL"
 ])
 
 AC_ARG_ENABLE([aes],
    AS_HELP_STRING([--disable-aes], [disable ARMv8 AES instructions]))
 AS_IF([test "x$enable_aes" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [disable ARMv8 AES instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
 ])
 
 AC_ARG_ENABLE([sha1],
    AS_HELP_STRING([--disable-sha1], [disable ARMv8 SHA1 instructions]))
 AS_IF([test "x$enable_sha1" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SHA1], [1], [disable ARMv8 SHA1 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA1"
 ])
 
 AC_ARG_ENABLE([sha256],
    AS_HELP_STRING([--disable-sha256], [disable ARMv8 SHA256 instructions]))
 AS_IF([test "x$enable_sha256" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SHA256], [1], [disable ARMv8 SHA256 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA256"
 ])
 
 AC_ARG_ENABLE([sha512],
    AS_HELP_STRING([--disable-sha512], [disable ARMv8 SHA512 instructions]))
 AS_IF([test "x$enable_sha512" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SHA512], [1], [disable ARMv8 SHA512 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA512"
 ])
 
 AC_ARG_ENABLE([sha3],
    AS_HELP_STRING([--disable-sha3], [disable ARMv8 SHA3 instructions]))
 AS_IF([test "x$enable_sha3" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SHA3], [1], [disable ARMv8 SHA3 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA3"
 ])
 
 AC_ARG_ENABLE([sm3],
    AS_HELP_STRING([--disable-sm3], [disable ARMv8 SM3 instructions]))
 AS_IF([test "x$enable_sm3" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SM3], [1], [disable ARMv8 SM3 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SM3"
 ])
 
 AC_ARG_ENABLE([sm4],
    AS_HELP_STRING([--disable-sm4], [disable ARMv8 SM4 instructions]))
 AS_IF([test "x$enable_sm4" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SM4], [1], [disable ARMv8 SM4 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SM4"
 ])
 
 # PPC defines
@@ -430,30 +452,35 @@ AC_ARG_ENABLE([altivec],
    AS_HELP_STRING([--disable-altivec], [disable PPC Altivec instructions]))
 AS_IF([test "x$enable_altivec" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [disable PPC Altivec instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ALTIVEC"
 ])
 
 AC_ARG_ENABLE([aes],
    AS_HELP_STRING([--disable-aes], [disable PPC AES instructions]))
 AS_IF([test "x$enable_aes" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [disable PPC AES instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
 ])
 
 AC_ARG_ENABLE([vmull],
    AS_HELP_STRING([--disable-vmull], [disable PPC VMULL instructions]))
 AS_IF([test "x$enable_vmull" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_VMULL], [1], [disable PPC VMULL instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_VMULL"
 ])
 
 AC_ARG_ENABLE([sha256],
    AS_HELP_STRING([--disable-sha256], [disable PPC SHA256 instructions]))
 AS_IF([test "x$enable_sha256" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SHA256], [1], [disable PPC SHA256 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA256"
 ])
 
 AC_ARG_ENABLE([sha512],
    AS_HELP_STRING([--disable-sha512], [disable PPC SHA512 instructions]))
 AS_IF([test "x$enable_sha512" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SHA512], [1], [disable PPC SHA512 instructions])
+   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA512"
 ])
 
 #############################################################################
