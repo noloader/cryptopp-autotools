@@ -72,7 +72,8 @@
 ## - Fix the ARM 32-builds. Running 'cryptest v' results in
 ##   "unexpected reloc type 0x03". GNUmakefile and CMake are OK. I've been
 ##   working on it (on and off) for three days and no closer to finding a
-##   solution. Autotools is such a broken heaping pile of shit...
+##   solution. Autotools is such a broken heaping pile of shit... Also see
+##   https://sourceware.org/ml/binutils/2019-05/msg00287.html
 ##
 ## - Fix static initialization order fiasco tests. We don't know how to craft
 ##   the tests because we don't know how to compile two files at once using
