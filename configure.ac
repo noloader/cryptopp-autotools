@@ -2563,7 +2563,7 @@ fi
 ## Fix CCAS and CCASFLAGS
 ## Also see https://stackoverflow.com/q/51575580/608639
 AC_SUBST([CCAS], [$CXX])
-AC_SUBST([CCASFLAGS], [$CXXFLAGS])
+AC_SUBST([CCASFLAGS], [$AM_CXXFLAGS $CXXFLAGS])
 
 ## Without this 'make' uses our GNUmakefile, and not Makefile
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
