@@ -194,6 +194,7 @@ AC_DEFUN([XXX_LINK_IFELSE],
 
 IS_AIX_OS=`echo $build | $EGREP -i -c 'aix'`
 IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
+IS_LINUX_OS=`echo "$build" | $EGREP -i -c 'linux'`
 IS_APPLE_OS=`echo "$build" | $EGREP -i -c -E 'apple|darwin'`
 IS_ANDROID_OS=`echo $build | $EGREP -i -c 'android'`
 IS_CYGWIN_OS=`echo $build | $EGREP -i -c 'cygwin'`
@@ -1525,8 +1526,9 @@ fi
 #############################################################################
 ## ARM A-32 and aes_armv4.S
 
-# Used by Makefile.am to compile aes_armv4.S and sha1_armv4.S
-if test "$IS_ARM32" != "0"; then
+# Used by Makefile.am to compile aes_armv4.S and sha1_armv4.S.
+# Only valid on Linux because ASM is written for GNU AS (GAS).
+if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -1540,13 +1542,15 @@ if test "$IS_ARM32" != "0"; then
    )
 
    if test "$retval" = "0"; then
-
       AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
-      AC_SUBST([CRYPTOPGAMS_FLAGS], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPGAMS_ARMV7_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPGAMS_ARMV7_THUMB_FLAG], [$CXXFLAGS])
+   fi
 
-   else
+   # For Clang, aes_armv4.S needs -mthumb
+   if test "$IS_LLVM_COMPILER" != "0"; then
 
-      CXXFLAGS="-march=armv7-a"
+      CXXFLAGS="-march=armv7-a -mthumb -Wa,--noexecstack"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
          [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cxx`])],
@@ -1555,10 +1559,7 @@ if test "$IS_ARM32" != "0"; then
       )
 
       if test "$retval" = "0"; then
-         AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
-         AC_SUBST([CRYPTOPGAMS_FLAGS], [$CXXFLAGS])
-      else
-         AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [false])
+         AC_SUBST([CRYPTOPGAMS_ARMV7_THUMB_FLAG], [$CXXFLAGS])
       fi
    fi
 
@@ -2681,8 +2682,8 @@ fi
 if test x"$CRYPTOPP_SM4_FLAG" != "x"; then
    echo "CRYPTOPP_SM4_FLAG: $CRYPTOPP_SM4_FLAG"
 fi
-if test x"$CRYPTOPGAMS_FLAGS" != "x"; then
-   echo "CRYPTOPGAMS_FLAGS: $CRYPTOPGAMS_FLAGS"
+if test x"$CRYPTOPGAMS_ARMV7_FLAG" != "x"; then
+   echo "CRYPTOPGAMS_ARMV7_FLAG: $CRYPTOPGAMS_ARMV7_FLAG"
 fi
 
 echo ""

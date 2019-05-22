@@ -304,10 +304,10 @@ if CRYPTOGAMS_ARM_SOURCES
    libsha1_armv4_la_SOURCES = sha1_armv4.S
    libsha256_armv4_la_SOURCES = sha256_armv4.S
    libsha512_armv4_la_SOURCES = sha512_armv4.S
-   libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
-   libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
-   libsha256_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
-   libsha512_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_FLAGS)
+   libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV7_THUMB_FLAG)
+   libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV7_FLAG)
+   libsha256_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV7_FLAG)
+   libsha512_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV7_FLAG)
 endif
 
 ## cpufeatures library on Android
