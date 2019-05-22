@@ -69,11 +69,10 @@
 ##   to do with libtool, but I have no idea how to fix it at the moment. Also
 ##   see http://lists.gnu.org/archive/html/bug-libtool/2017-11/msg00002.html.
 ##
-## - Fix the LLVM Mixed ASM test. The test uses GCC-style inline assembly,
-##   and it has all the characters that confuse Autotools and M4, like quote,
-##   comman and bracket. The various work arounds and rules for the problems
-##   confuses me. We have a "blind leading the blind" situation. Also see
-##   the source code for TestPrograms/test_mixed_asm.cxx.
+## - Fix the ARM 32-builds. Running 'cryptest v' results in
+##   "unexpected reloc type 0x03". GNUmakefile and CMake are OK. I've been
+##   working on it (on and off) for three days and no closer to finding a
+##   solution. Autotools is such a broken heaping pile of shit...
 ##
 ## - Fix static initialization order fiasco tests. We don't know how to craft
 ##   the tests because we don't know how to compile two files at once using
@@ -133,8 +132,6 @@ AC_CONFIG_SRCDIR([configure.ac])
 AM_PROG_AS
 AC_PROG_LIBTOOL
 
-## If AC_PROG_CXX is included after AC_INIT and AM_INIT_AUTOMAKE,
-## then Autotools fails to build the executable with -PIC on ARM32.
 AC_PROG_CXX
 AC_LANG([C++])
 LT_LANG([C++])
