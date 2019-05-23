@@ -139,6 +139,7 @@ LT_LANG([C++])
 
 # Programs we use
 AC_PROG_GREP
+AC_PROG_SED
 AC_PROG_AWK
 
 # Detect build and host platforms
@@ -190,22 +191,22 @@ AC_DEFUN([XXX_LINK_IFELSE],
 ## test selection process. It also avoids failed configurations by
 ## avoiding some tests that fail but Autotools reports as success.
 
-IS_AIX_OS=`echo $build | $EGREP -i -c 'aix'`
-IS_SUN_OS=`uname -s | $EGREP -i -c 'SunOS'`
-IS_LINUX_OS=`echo "$build" | $EGREP -i -c 'linux'`
-IS_APPLE_OS=`echo "$build" | $EGREP -i -c -E 'apple|darwin'`
-IS_ANDROID_OS=`echo $build | $EGREP -i -c 'android'`
-IS_CYGWIN_OS=`echo $build | $EGREP -i -c 'cygwin'`
-IS_MINGW_OS=`echo $build | $EGREP -i -c 'mingw'`
+IS_AIX_OS=`echo $build | $GREP -i -c 'aix'`
+IS_SUN_OS=`uname -s | $GREP -i -c 'SunOS'`
+IS_LINUX_OS=`echo "$build" | $GREP -i -c 'linux'`
+IS_APPLE_OS=`echo "$build" | $GREP -i -c -E 'apple|darwin'`
+IS_ANDROID_OS=`echo $build | $GREP -i -c 'android'`
+IS_CYGWIN_OS=`echo $build | $GREP -i -c 'cygwin'`
+IS_MINGW_OS=`echo $build | $GREP -i -c 'mingw'`
 
-IS_IA32=`echo $build | $EGREP -i -c -E 'i.86|x86_64|amd64'`
-IS_ARM32=`echo $build | $EGREP -i -c -E 'arm|armhf|arm7l|eabihf'`
-IS_ARMV8=`echo $build | $EGREP -i -c -E 'aarch32|aarch64'`
-IS_PPC=`echo $build | $EGREP -i -c -E 'ppc|powerpc|powermac'`
-IS_SPARC=`echo $build | $EGREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
+IS_IA32=`echo $build | $GREP -i -c -E 'i.86|x86_64|amd64'`
+IS_ARM32=`echo $build | $GREP -i -c -E 'arm|armhf|arm7l|eabihf'`
+IS_ARMV8=`echo $build | $GREP -i -c -E 'aarch32|aarch64'`
+IS_PPC=`echo $build | $GREP -i -c -E 'ppc|powerpc|powermac'`
+IS_SPARC=`echo $build | $GREP -i -c -E 'sparc|sparcv8|sparcv9|sparc64'`
 
 ## Debug builds add more goodies to help break things. I like breaking things.
-IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c '\-DDEBUG'`
+IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $GREP -i -c '\-DDEBUG'`
 
 #############################################################################
 
@@ -250,13 +251,13 @@ if test `basename "$CXX"` = "cl.exe"; then
    COMPILER_VERSION=`"$CXX" /? 2>&1 | head -n 1`
 fi
 
-IS_GCC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -v 'Clang' | $EGREP -i -c -E 'GCC|G\+\+'`
-IS_MSC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'Microsoft'`
-IS_LLVM_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'LLVM|Clang'`
-IS_SUN_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'Sun C'`
-IS_ICC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'ICC'`
-IS_XLC_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c 'IBM XL'`
-IS_PORTS_COMPILER=`echo $COMPILER_VERSION | $EGREP -i -c -E 'MacPorts|Homebrew'`
+IS_GCC_COMPILER=`echo $COMPILER_VERSION | $GREP -i -v 'Clang' | $GREP -i -c -E 'GCC|G\+\+'`
+IS_MSC_COMPILER=`echo $COMPILER_VERSION | $GREP -i -c 'Microsoft'`
+IS_LLVM_COMPILER=`echo $COMPILER_VERSION | $GREP -i -c -E 'LLVM|Clang'`
+IS_SUN_COMPILER=`echo $COMPILER_VERSION | $GREP -i -c -E 'Sun C'`
+IS_ICC_COMPILER=`echo $COMPILER_VERSION | $GREP -i -c 'ICC'`
+IS_XLC_COMPILER=`echo $COMPILER_VERSION | $GREP -i -c 'IBM XL'`
+IS_PORTS_COMPILER=`echo $COMPILER_VERSION | $GREP -i -c -E 'MacPorts|Homebrew'`
 
 ## A catch-all for compilers that claim to be GCC compatible. Each should be
 ## able to handle GCC syntax. It excludes XLC, SunCC and MSVC
@@ -674,7 +675,7 @@ fi
 #############################################################################
 ## Solaris, SunCC and missing optimizations
 
-OPT_ANY=`echo $CXXFLAGS | $EGREP -c -E '\-O0|\-O1|\-O2|\-O3|\-O4|\-O5|\-xO0|\-xO1|\-xO2|\-xO3|\-xO4|\-xO5|\-Os|\-Og|\-Ofast'`
+OPT_ANY=`echo $CXXFLAGS | $GREP -c -E '\-O0|\-O1|\-O2|\-O3|\-O4|\-O5|\-xO0|\-xO1|\-xO2|\-xO3|\-xO4|\-xO5|\-Os|\-Og|\-Ofast'`
 
 if test "$OPT_ANY" = "0"; then
 
@@ -830,7 +831,7 @@ fi
 if test "$IS_APPLE_OS" != "0"; then
 if test "$IS_GCC_COMPILER" != "0" && test "$IS_PORTS_COMPILER" != "0"; then
 
-   HAVE_OPT=`echo $CXXFLAGS | $EGREP -i -c -E '\-Wa,-q'`
+   HAVE_OPT=`echo $CXXFLAGS | $GREP -i -c -E '\-Wa,-q'`
    if test "$HAVE_OPT" = "0"; then
 
       ## Save CXXFLAGS
@@ -1835,7 +1836,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
    SAVED_CXXFLAGS="$CXXFLAGS"
 
    ## -qrtti must be present for some xlC compilers
-   HAS_RTTI=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c -E '\-qrtti'`
+   HAS_RTTI=`echo $CPPFLAGS $CXXFLAGS | $GREP -i -c -E '\-qrtti'`
    if test "$HAS_RTTI" = "0"; then
 
       CXXFLAGS="-qrtti"
@@ -1852,7 +1853,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
    fi
 
    ## -qpic must be present for some xlC compilers
-   HAS_PIC=`echo $CPPFLAGS $CXXFLAGS | $EGREP -i -c '\-qpic'`
+   HAS_PIC=`echo $CPPFLAGS $CXXFLAGS | $GREP -i -c '\-qpic'`
    if test "$HAS_PIC" = "0"; then
 
       CXXFLAGS="-qpic"
@@ -2256,21 +2257,21 @@ fi
 ## threshold. Anything with less than 2GB will not use -pipe.
 
 # Unix, Linux and family
-MEM_SIZE=`$EGREP "MemTotal" /proc/meminfo 2>/dev/null | $AWK '{print int($2/1024/1024); exit;}'`
+MEM_SIZE=`$GREP "MemTotal" /proc/meminfo 2>/dev/null | $AWK '{print int($2/1024/1024); exit;}'`
 
 # Darwin
 if test "$IS_APPLE_OS" != "0"; then
-   MEM_SIZE=`sysctl -a 2>&1 | $EGREP "hw.memsize" 2>/dev/null | $AWK '{print int($3/1024/1024); exit;}'`
+   MEM_SIZE=`sysctl -a 2>&1 | $GREP "hw.memsize" 2>/dev/null | $AWK '{print int($3/1024/1024); exit;}'`
 fi
 
 # Solaris
 if test "$IS_SUN_OS" != "0"; then
-   MEM_SIZE=`prtconf 2>/dev/null | $EGREP "Memory" | $AWK '{print int($3/1024); exit;}'`
+   MEM_SIZE=`prtconf 2>/dev/null | $GREP "Memory" | $AWK '{print int($3/1024); exit;}'`
 fi
 
 # AIX
 if test "$IS_AIX_OS" != "0"; then
-   MEM_SIZE=`prtconf -m 2>/dev/null | $EGREP "MB" | $AWK '{print int($3/1024); exit;}'`
+   MEM_SIZE=`prtconf -m 2>/dev/null | $GREP "MB" | $AWK '{print int($3/1024); exit;}'`
 fi
 
 if test "$MEM_SIZE" -ge "2"; then
@@ -2491,8 +2492,8 @@ fi
 
 if true; then
 
-   COUNT1=`echo $CXXFLAGS | $EGREP -c -E '\-fopenmp'`
-   COUNT2=`echo $LDFLAGS | $EGREP -c -E '\-lgomp'`
+   COUNT1=`echo $CXXFLAGS | $GREP -c -E '\-fopenmp'`
+   COUNT2=`echo $LDFLAGS | $GREP -c -E '\-lgomp'`
    if test "$COUNT1" != "0" && test "$COUNT2" = "0"; then
 
       SAVED_LDFLAGS="$LDFLAGS"
@@ -2722,7 +2723,7 @@ echo "User flags (overrides Automake flags on conflict):"
 echo "CXXFLAGS: $CXXFLAGS"
 echo "LDFLAGS: $LDFLAGS"
 
-OPT_NDEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -c -E '\-DNDEBUG'`
+OPT_NDEBUG=`echo $CPPFLAGS $CXXFLAGS | $GREP -c -E '\-DNDEBUG'`
 if test "$OPT_NDEBUG" = "0"; then
    echo ""
    echo "CPPFLAGS does not include -DNDEBUG. You should consider building"
@@ -2731,14 +2732,14 @@ if test "$OPT_NDEBUG" = "0"; then
    echo "like AppPort, Windows Error Reporting, Crash Reporter, etc."
 fi
 
-OPT_SYM=`echo $CPPFLAGS $CXXFLAGS | $EGREP -c -E '\-g'`
+OPT_SYM=`echo $CPPFLAGS $CXXFLAGS | $GREP -c -E '\-g'`
 if test "$OPT_SYM" = "0"; then
    echo ""
    echo "CPPFLAGS does not include -g. You should consider building with -g"
    echo "to add debug symbols in case you have to analyze a crash."
 fi
 
-OPT_O3=`echo $CXXFLAGS | $EGREP -c -E '\-O3|\-O4|\-O5|\-xO3|\-xO4|\-xO5|\-Os|\-Ofast'`
+OPT_O3=`echo $CXXFLAGS | $GREP -c -E '\-O3|\-O4|\-O5|\-xO3|\-xO4|\-xO5|\-Os|\-Ofast'`
 if test "$OPT_O3" = "0"; then
    echo ""
    echo "CXXFLAGS does not include -O3. You should consider building at -O3"
