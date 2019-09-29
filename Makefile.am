@@ -324,7 +324,7 @@ endif
 # make and multiple sed commands.
 
 libothers_la_SOURCES = \
-    3way.cpp adler32.cpp algebra.cpp algparam.cpp arc4.cpp aria.cpp \
+    3way.cpp adler32.cpp algebra.cpp algparam.cpp allocate.cpp arc4.cpp aria.cpp \
     ariatab.cpp asn.cpp authenc.cpp base32.cpp base64.cpp basecode.cpp \
     bfinit.cpp blake2.cpp blowfish.cpp blumshub.cpp camellia.cpp cast.cpp \
     casts.cpp cbcmac.cpp ccm.cpp chacha.cpp chachapoly.cpp cham.cpp \
@@ -350,7 +350,7 @@ libothers_la_SOURCES = \
 
 # Don't include aes_armv4.h here
 pkginclude_HEADERS = \
-    3way.h adler32.h adv_simd.h aes.h algebra.h algparam.h \
+    3way.h adler32.h adv_simd.h aes.h algebra.h algparam.h allocate.h \
     arc4.h argnames.h aria.h arm_simd.h asn.h authenc.h base32.h base64.h \
     basecode.h blake2.h blowfish.h blumshub.h camellia.h cast.h cbcmac.h \
     ccm.h chacha.h chachapoly.h cham.h channels.h cmac.h config.h cpu.h \
