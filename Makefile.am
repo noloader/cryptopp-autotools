@@ -345,8 +345,8 @@ libothers_la_SOURCES = \
     simon.cpp skipjack.cpp sm3.cpp sm4.cpp sosemanuk.cpp speck.cpp \
     square.cpp squaretb.cpp strciphr.cpp tea.cpp tftables.cpp threefish.cpp \
     tiger.cpp tigertab.cpp ttmac.cpp tweetnacl.cpp twofish.cpp vmac.cpp \
-    wake.cpp whrlpool.cpp xed25519.cpp xtr.cpp xtrcrypt.cpp zdeflate.cpp \
-    zinflate.cpp zlib.cpp
+    wake.cpp whrlpool.cpp xed25519.cpp xtr.cpp xtrcrypt.cpp xts.cpp \
+    zdeflate.cpp zinflate.cpp zlib.cpp
 
 # Don't include aes_armv4.h here
 pkginclude_HEADERS = \
@@ -370,8 +370,8 @@ pkginclude_HEADERS = \
     shark.h simeck.h simon.h simple.h siphash.h skipjack.h sm3.h sm4.h \
     smartptr.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h tea.h \
     threefish.h tiger.h trap.h trunhash.h ttmac.h tweetnacl.h twofish.h \
-    vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h xtrcrypt.h zdeflate.h \
-    zinflate.h zlib.h
+    vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h xtrcrypt.h xts.h \
+    zdeflate.h zinflate.h zlib.h
 
 noinst_HEADERS = \
     local.h \
