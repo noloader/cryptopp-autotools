@@ -1,4 +1,4 @@
-# Crypto++ Autotools
+## Crypto++ Autotools
 
 This repository contains Autotools files for Wei Dai's Crypto++ (https://github.com/weidai11/cryptopp). It supplies `configure.ac`, `makefile.am` and `libcryptopp.pc.in`. Autotools is officialy unsupported, so use it at your own risk.
 
@@ -12,11 +12,19 @@ The initial `Makefile.am` and `configure.ac` were shamelessly ripped from Debian
 
 There is a wiki page available that discusses Autotools and the Crypto++ project files in more detail at [Autotools](https://www.cryptopp.com/wiki/Autotools).
 
-# Testing 
+## Testing
 
 The Autotools files are officialy unsupported, so use them at your own risk. With that said, the Autotools source files are tested with Crypto++ on Linux and OS X using [Travis CI](https://github.com/weidai11/cryptopp/blob/master/.travis.yml).
 
-# Workflow
+In June 2018 the library added `cryptest-autotools.sh` to help test the Autotools gear. The script is located in Crypto++'s `TestScripts` directory. The script downloads the Autotools project files, builds the library and then runs the self tests.
+
+If you want to use `cryptest-autotools.sh` to drive things then perform the following steps.
+
+    cd cryptopp
+    cp TestScripts/cryptest-autotools.sh .
+    ./cryptest-autotools.sh
+
+## Workflow
 
 The general workflow is clone Wei Dai's Crypto++, fetch the Autotools files, and then `autoreconf`:
 
@@ -47,13 +55,13 @@ Best performance is obtained with `-O3` because GCC (and other compiler) apply v
 
 Despite our efforts we have not been able to add the submodule to Crypto++ for seamless integration. If anyone knows how to add a submodule directly to the Crypto++ directory, then please provide the instructions.
 
-# ZIP Files
+## ZIP Files
 
 If you are working from a Crypto++ release zip file, then you should download the same cryptopp-autotools release zip file. Both Crypto++ and this project use the same release tags, such as CRYPTOPP_8_0_0.
 
 If you mix and match Master with a release zip file then things may not work as expected. You may find the build project files reference a source file that is not present in the Crypto++ release.
 
-# Prerequisites
+## Prerequisites
 
 Before running the Autotools project please ensure you have the following installed:
 
@@ -66,21 +74,12 @@ You may also need `libltdl-dev` on Debian and Ubuntu; and may need `libtool-ltdl
 
 If working on the GCC Compile Farm then you may need exta steps for systems like AIX. AIX offers updated Autoconf and Automake in `/opt/freeware/bin/`; and offers Libtool in `/opt/cfarm/libtool-2.4.2/bin/`. Both `bin/` need to be on path. When running `autoreconf` you must `autoreconf --force --install --include=/opt/cfarm/libtool-2.4.2/share/aclocal/`.
 
-# Integration
+## Integration
 The Autotools submodule integrates with the Crypto++ library. The submodule removes the library's `GNUmakefile` and `GNUmakefile-cross`. In the future we plan to overwrite the library's `config.h` and produce an installation specific `config.h`.
 
 The library's `GNUmakefile` and `GNUmakefile-cross` were modified to clean the artifacts produced by Autotools. To clean the directory after running Autotools perform a `git checkout GNUmakefile` followed by a `make -f GNUmakefile distclean`.
 
-# cryptest-autotools.sh
-In June 2018 the library added `cryptest-autotools.sh` to help test the Autotools gear. The script is located in Crypto++'s `TestScripts` directory. The script downloads the Autotools project files, builds the library and then runs the self tests.
-
-If you want to use `cryptest-autotools.sh` to drive things then perform the following steps.
-
-    cd cryptopp
-    cp TestScripts/cryptest-autotools.sh .
-    ./cryptest-autotools.sh
-
-# Cross-compiles
+## Cross-compiles
 
 Cross-compiles are mostly broken due to Autotools. The biggest problem seems to be Autotools inability to honor a C++ project settings. Using Android as an example:
 
@@ -105,16 +104,13 @@ collect2: error: ld returned 1 exit status
 
 Autotools absolutely sucks. The maintainers have had 30 years to get it right and their shit is still broken.
 
-# Collaboration
+## Collaboration
 We would like all distro maintainers to be collaborators on this repo. If you are a distro maintainer then please contact us so we can send you an invite.
 
 If you are a collaborator then make changes as you see fit. You don't need to ask for permission to make a change. Noloader is not an Autotools expert so there are probably lots of opportunities for improvement.
 
 Keep in mind other distros may be using the files, so try not to break things for the other guy. We have to be mindful of lesser-used platforms and compilers, like AIX, Solaris, IBM xlC and Oracle's SunCC.
 
-Everything in this repo is release under Public Domain code. If the license or terms is unpalatable for you, then don't feel obligated to commit.
+## License
 
-# Future
-The Autotools project files are separate at the moment for several reason, like avoiding Git log pollution with Autotool branch experiments. We also need to keep a logical separation because GNUmake is the official build system, and not the Autotools project files.
-
-Eventually we would like to do two things. First, we would like to move this project from Jeff Walton's GitHub to Wei Dai's GitHub to provide stronger assurances on provenance. Second, we would like to provide an `autotools.tar.gz` and place it in the Crypto++ `TestScripts/` directory to make it easier for folks to use Autotools.
+Everything in this repo is release under Public Domain code. If the license or terms is unpalatable for you, then don't feel obligated to use it or commit.
