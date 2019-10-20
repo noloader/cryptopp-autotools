@@ -1456,6 +1456,16 @@ fi
 #############################################################################
 ## ARM A-32, including NEON, soft floats and hard floats
 
+if test "$IS_ARM32" != "0" || test "$IS_ARMV8" != "0"; then
+
+   # https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html
+
+   AC_CHECK_HEADERS(arm_neon.h,
+      [AC_DEFINE([CRYPTOPP_ARM_NEON_HEADER], [1], [arm_neon.h is available])],
+      [AC_DEFINE([CRYPTOPP_ARM_NEON_HEADER], [0], [arm_neon.h is not available])]
+   )
+fi
+
 if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
 
    ## Save CXXFLAGS
@@ -1605,9 +1615,15 @@ if test "$IS_ARMV8" != "0"; then
    # https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html
 
    AC_CHECK_HEADERS(arm_acle.h,
-      [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [1], [arm_acle.h is available])],
-      [AC_DEFINE([CRYPTOPP_ARM_ACLE_AVAILABLE], [0], [arm_acle.h is not available])]
+      [AC_DEFINE([CRYPTOPP_ARM_ACLE_HEADER], [1], [arm_acle.h is available])],
+      [AC_DEFINE([CRYPTOPP_ARM_ACLE_HEADER], [0], [arm_acle.h is not available])]
    )
+
+fi
+
+if test "$IS_ARMV8" != "0"; then
+
+   # https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -2592,7 +2608,7 @@ fi
 ## Fix CCAS and CCASFLAGS
 ## Also see https://stackoverflow.com/q/51575580/608639
 AC_SUBST([CCAS], [$CXX])
-AC_SUBST([CCASFLAGS], [$AM_CXXFLAGS $CXXFLAGS])
+AC_SUBST([CCASFLAGS], ["$AM_CXXFLAGS $CXXFLAGS"])
 
 ## Without this 'make' uses our GNUmakefile, and not Makefile
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
@@ -2630,6 +2646,16 @@ echo ""
 echo "Static library: $enable_static"
 echo "Shared library: $enable_shared"
 echo ""
+
+if test "$IS_ARM32" != "0" && test "$IS_ARMV8" != "0"; then
+  if test x"$CRYPTOPP_ARM_NEON_HEADER" != "x"; then
+   echo "CRYPTOPP_ARM_NEON_HEADER: $CRYPTOPP_ARM_NEON_HEADER"
+  fi
+  if test x"$CRYPTOPP_ARM_ACLE_HEADER" != "x"; then
+   echo "CRYPTOPP_ARM_ACLE_HEADER: $CRYPTOPP_ARM_ACLE_HEADER"
+  fi
+  echo ""
+fi
 
 if test x"$CRYPTOPP_SSE2_FLAG" != "x"; then
    echo "CRYPTOPP_SSE2_FLAG: $CRYPTOPP_SSE2_FLAG"
@@ -2728,8 +2754,9 @@ if test "$OPT_NDEBUG" = "0"; then
    echo ""
    echo "CPPFLAGS does not include -DNDEBUG. You should consider building"
    echo "with NDEBUG defined so an assert does not inadvertently crash your"
-   echo "program and egress sensitive data to an error reporting service"
-   echo "like AppPort, Windows Error Reporting, Crash Reporter, etc."
+   echo "program and egress sensitive data to the filesystem or an error"
+   echo "reporting service like AppPort, Windows Error Reporting, Crash"
+   echo "Reporter, Test Flight, etc."
 fi
 
 OPT_SYM=`echo $CPPFLAGS $CXXFLAGS | $GREP -c -E '\-g'`
