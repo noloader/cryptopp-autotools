@@ -1,13 +1,3 @@
-# In the YML below each job gets an environment that includes
-# BUILD_OS and BUILD_MODE. The variables are used in the driver
-# scripts and is used to select a test. For example, BUILD_OS=linux
-# and BUILD_MODE=all means run 'make all' on Linux. Travis supplies
-# Linux based on 'os: linux' key so BUILD_OS is effectively ignored.
-# The Android and iOS tests specify a BUILD_ARCH. BUILD_ARCH is passed
-# to the underlying setenv-*.sh scripts. For example, testing on iOS,
-# BUILD_ARCH=arm64 means 'setenv-ios.sh arm64' is called before
-# 'make GNUmakefile-cross' is called.
-
 # DO NOT create top level (global) keys like env, arch, os, compiler.
 # The top level/global keys invoke [unwanted] matrix expansion. Also
 # see https://stackoverflow.com/q/58473000/608639 and
@@ -16,8 +6,6 @@
 # https://github.com/travis-ci/travis-yml/blob/master/schema.json.
 
 language: cpp
-dist: xenial
-sudo: required
 
 git:
   depth: 2
@@ -32,74 +20,47 @@ jobs:
       name: Linux, amd64, GCC
       arch: amd64
       compiler: gcc
-      env:
-        - BUILD_OS=linux
-        - BUILD_JOBS=2
     - os: linux
       name: Linux, amd64, Clang
       arch: amd64
       compiler: clang
-      env:
-        - BUILD_OS=linux
-        - BUILD_JOBS=2
     - os: linux
       name: Linux, arm64, GCC
       arch: arm64
       compiler: gcc
-      env:
-        - BUILD_OS=linux
-        - BUILD_JOBS=2
     - os: linux
       name: Linux, arm64, Clang
       arch: arm64
       compiler: clang
-      env:
-        - BUILD_OS=linux
-        - BUILD_JOBS=2
     - os: linux
       name: Linux, ppc64le, GCC
       arch: ppc64le
       compiler: gcc
-      env:
-        - BUILD_OS=linux
-        - BUILD_JOBS=2
     - os: linux
       name: Linux, ppc64le, Clang
       arch: ppc64le
       compiler: clang
-      env:
-        - BUILD_OS=linux
-        - BUILD_JOBS=2
     - os: osx
       name: OS X, amd64, GCC
       arch: amd64
       compiler: gcc
-      env:
-        - BUILD_OS=linux
-        - BUILD_JOBS=2
     - os: osx
       name: OS X, amd64, Clang
       arch: amd64
       compiler: clang
-      env:
-        - BUILD_OS=linux
-        - BUILD_JOBS=2
 
 before_script:
-    # Let travis clone cryptopp-autotools
-    # cd ..
-    # git clone https://github.com/weidai11/cryptopp.git
-    # cp Autotools files to cryptopp then build
+    # Let travis clone cryptopp-autotools, clone cryptopp
+    # copy cryptopp-autotools to cryptopp, and then run
+    # the test script.
   - |
     cd ..
     git clone https://github.com/weidai11/cryptopp.git
-    cp cryptopp-autotools/libcryptopp.pc.in cryptopp
-    cp cryptopp-autotools/configure.ac cryptopp
-    cp cryptopp-autotools/Makefile.am cryptopp
+    cp cryptopp-autotools/*.* cryptopp/
     cd cryptopp
 
 script:
   - |
-    make -j "$BUILD_JOBS"
+    make -j 2
     ./cryptest.exe v
     ./cryptest.exe tv all
