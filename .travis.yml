@@ -61,6 +61,6 @@ before_script:
 
 script:
   - |
-    make -j 2
+    make -k -j 2
     ./cryptest.exe v
     ./cryptest.exe tv all
