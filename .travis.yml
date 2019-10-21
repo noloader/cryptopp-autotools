@@ -57,15 +57,15 @@ jobs:
         - BUILD_OS=linux
         - BUILD_JOBS=2
     - os: linux
-      name: Linux, ppc64, GCC
-      arch: ppc64
+      name: Linux, ppc64le, GCC
+      arch: ppc64le
       compiler: gcc
       env:
         - BUILD_OS=linux
         - BUILD_JOBS=2
     - os: linux
-      name: Linux, ppc64, Clang
-      arch: ppc64
+      name: Linux, ppc64le, Clang
+      arch: ppc64le
       compiler: clang
       env:
         - BUILD_OS=linux
