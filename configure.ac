@@ -2647,7 +2647,7 @@ echo "Static library: $enable_static"
 echo "Shared library: $enable_shared"
 echo ""
 
-if test "$IS_ARM32" != "0" && test "$IS_ARMV8" != "0"; then
+if test "$IS_ARM32" != "0" || test "$IS_ARMV8" != "0"; then
   if test x"$CRYPTOPP_ARM_NEON_HEADER" != "x"; then
    echo "CRYPTOPP_ARM_NEON_HEADER: $CRYPTOPP_ARM_NEON_HEADER"
   fi
