@@ -64,3 +64,21 @@ script:
     make -k -j 2
     ./cryptest.exe v
     ./cryptest.exe tv all
+
+# Whitelist branches to avoid testing feature branches twice
+branches:
+  only:
+    - master
+    - /\/ci$/
+
+addons:
+  sonarcloud: false
+
+notifications:
+  email:
+    recipients:
+      - cryptopp-build@googlegroups.com
+    on_success: always # default: change
+    on_failure: always # default: always
+
+
