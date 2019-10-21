@@ -869,7 +869,7 @@ if test "$IS_IA32" = "1" && test "x$enable_asm" != "xno"; then
    CXXFLAGS="-msse2 $WAQ_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports mixed ASM])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([`cat TestPrograms/test_mixed_asm.cxx`])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_asm_mixed.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2126,17 +2126,9 @@ if true; then
    ## This test may need to be changed if the Newlib folks provide directions.
    ## Also see http://www.sourceware.org/ml/newlib/2017/msg01095.html.
 
-   XXX_PROGRAM="#include <string>
-      int main(int argc, char** argv) {
-         #ifndef __NEWLIB__
-         #  error
-         #endif
-         return 0;
-      }"
-
    AC_MSG_CHECKING([whether runtime library is Newlib])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_newlib.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2168,17 +2160,9 @@ if test "$IS_DEBUG" = "1"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   XXX_PROGRAM="#include <string>
-      int main(int argc, char** argv) {
-         #ifndef __GLIBCXX__
-         #  error
-         #endif
-         return 0;
-      }"
-
    AC_MSG_CHECKING([whether runtime library is libstdc++])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_glibc.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2217,14 +2201,9 @@ if true; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   XXX_PROGRAM="#include <forward_list>
-      int main(int argc, char** argv) {
-         return 0;
-      }"
-
    AC_MSG_CHECKING([whether runtime library is C++11])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([$XXX_PROGRAM])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_cxx11.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2649,10 +2628,10 @@ echo ""
 
 if test "$IS_ARM32" != "0" || test "$IS_ARMV8" != "0"; then
   if test x"$CRYPTOPP_ARM_NEON_HEADER" != "x"; then
-   echo "CRYPTOPP_ARM_NEON_HEADER: $CRYPTOPP_ARM_NEON_HEADER"
+    echo "CRYPTOPP_ARM_NEON_HEADER: $CRYPTOPP_ARM_NEON_HEADER"
   fi
   if test x"$CRYPTOPP_ARM_ACLE_HEADER" != "x"; then
-   echo "CRYPTOPP_ARM_ACLE_HEADER: $CRYPTOPP_ARM_ACLE_HEADER"
+    echo "CRYPTOPP_ARM_ACLE_HEADER: $CRYPTOPP_ARM_ACLE_HEADER"
   fi
   echo ""
 fi
