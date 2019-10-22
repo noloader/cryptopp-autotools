@@ -99,7 +99,7 @@ branches:
     - /\/ci$/
 
 addons:
-  sonarcloud: false
+  - sonarcloud: false
 
 notifications:
   email:
