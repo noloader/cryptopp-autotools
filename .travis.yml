@@ -50,12 +50,12 @@ jobs:
       name: Linux, ppc64le, GCC
       arch: ppc64le
       compiler: gcc
-      dist: bionic
+      dist: trusty
     - os: linux
       name: Linux, ppc64le, Clang
       arch: ppc64le
       compiler: clang
-      dist: bionic
+      dist: trusty
     - os: osx
       name: OS X, amd64, GCC
       arch: amd64
