@@ -1980,7 +1980,7 @@ if test "$IS_PPC" != "0"; then
    CXXFLAGS="$ALTIVEC_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_PROGRAM([`cat TestPrograms/test_ppc_altivec.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1992,7 +1992,7 @@ if test "$IS_PPC" != "0"; then
    CXXFLAGS="$POWER7_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_PROGRAM([`cat TestPrograms/test_ppc_power7.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2004,7 +2004,7 @@ if test "$IS_PPC" != "0"; then
    CXXFLAGS="$POWER8_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_PROGRAM([`cat TestPrograms/test_ppc_power8.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2016,7 +2016,7 @@ if test "$IS_PPC" != "0"; then
    CXXFLAGS="$POWER9_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_PROGRAM([`cat TestPrograms/test_ppc_power9.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
