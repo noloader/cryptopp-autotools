@@ -67,6 +67,9 @@ before_script:
     # copy cryptopp-autotools to cryptopp, and then run
     # the test script.
   - |
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A145
+    sudo apt-get install -y autoconf automake libtool
+  - |
     cd ..
     git clone https://github.com/weidai11/cryptopp.git
     cp cryptopp-autotools/*.* cryptopp/
@@ -74,9 +77,8 @@ before_script:
 
 script:
   - |
-    make -k -j 2
-    ./cryptest.exe v
-    ./cryptest.exe tv all
+    cp TestScripts/cryptest-autotools.sh .
+    bash cryptest-autotools.sh
 
 # Whitelist branches to avoid testing feature branches twice
 branches:
