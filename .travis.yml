@@ -27,10 +27,20 @@ jobs:
       compiler: clang
       dist: xenial
     - os: linux
+      name: Linux, amd64, GCC
+      arch: amd64
+      compiler: gcc
+      dist: bionic
+    - os: linux
+      name: Linux, amd64, Clang
+      arch: amd64
+      compiler: clang
+      dist: bionic
+    - os: linux
       name: Linux, arm64, GCC
       arch: arm64
       compiler: gcc
-      dist: xenial
+      dist: bionic
     - os: linux
       name: Linux, arm64, Clang
       arch: arm64
@@ -40,12 +50,12 @@ jobs:
       name: Linux, ppc64le, GCC
       arch: ppc64le
       compiler: gcc
-      dist: xenial
+      dist: bionic
     - os: linux
       name: Linux, ppc64le, Clang
       arch: ppc64le
       compiler: clang
-      dist: xenial
+      dist: bionic
     - os: osx
       name: OS X, amd64, GCC
       arch: amd64
@@ -97,5 +107,3 @@ notifications:
       - cryptopp-build@googlegroups.com
     on_success: always # default: change
     on_failure: always # default: always
-
-
