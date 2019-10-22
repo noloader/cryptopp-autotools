@@ -552,7 +552,7 @@ if true; then
    LDFLAGS="-pthread"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -684,7 +684,7 @@ if test "$OPT_ANY" = "0"; then
    CXXFLAGS="-O2"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -697,7 +697,7 @@ if test "$OPT_ANY" = "0"; then
       CXXFLAGS="-xO2"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -735,7 +735,7 @@ if true; then
    CXXFLAGS="-fdata-sections"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -747,7 +747,7 @@ if true; then
    CXXFLAGS="-ffunction-sections"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -771,7 +771,7 @@ if test "$IS_SUN_OS" != "0"; then
    CXXFLAGS="-Wa,--divide"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -795,7 +795,7 @@ if test "$IS_SUN_OS" != "0"; then
    CXXFLAGS="-template=no%extdef"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -808,7 +808,7 @@ if test "$IS_SUN_OS" != "0"; then
    CXXFLAGS="-xregs=no%appl"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -840,7 +840,7 @@ if test "$IS_GCC_COMPILER" != "0" && test "$IS_PORTS_COMPILER" != "0"; then
       CXXFLAGS="-Wa,-q"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -1826,7 +1826,7 @@ if test "$IS_ARMV8" != "0"; then
    CXXFLAGS="-march=armv8.3-a+rng"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1858,7 +1858,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
       CXXFLAGS="-qrtti"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -1875,7 +1875,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
       CXXFLAGS="-qpic"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -1889,7 +1889,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
    CXXFLAGS="-qmaxmem=-1"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1902,7 +1902,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
    CXXFLAGS="-qthreaded"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1917,7 +1917,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
       CXXFLAGS="-qalias=noansi"
       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -1943,7 +1943,7 @@ if test "$IS_XLC_COMPILER" != "0"; then
    CXXFLAGS="-qxlcompatmacros"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1979,8 +1979,8 @@ if test "$IS_PPC" != "0"; then
 
    CXXFLAGS="$ALTIVEC_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([`cat TestPrograms/test_ppc_altivec.cxx`])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -1991,8 +1991,8 @@ if test "$IS_PPC" != "0"; then
 
    CXXFLAGS="$POWER7_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([`cat TestPrograms/test_ppc_power7.cxx`])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2003,8 +2003,8 @@ if test "$IS_PPC" != "0"; then
 
    CXXFLAGS="$POWER8_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([`cat TestPrograms/test_ppc_power8.cxx`])],
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power8.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2016,7 +2016,7 @@ if test "$IS_PPC" != "0"; then
    CXXFLAGS="$POWER9_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([`cat TestPrograms/test_ppc_power9.cxx`])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power9.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2094,11 +2094,6 @@ if test "$IS_PPC" != "0"; then
       fi
    fi
 
-   echo "*** ALTIVEC_FLAG: $ALTIVEC_FLAG"
-   echo "*** POWER7_FLAG: $POWER7_FLAG"
-   echo "*** POWER8_FLAG: $POWER8_FLAG"
-   echo "*** POWER9_FLAG: $POWER9_FLAG"
-
    # Now set a disable flag
    if test x"$ALTIVEC_FLAG" = "x"; then
       AM_CXXFLAGS="-DCRYPTOPP_DISABLE_ALTIVEC $AM_CXXFLAGS"
@@ -2143,7 +2138,7 @@ if true; then
       CXXFLAGS="-D_XOPEN_SOURCE=600"
       AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -2177,7 +2172,7 @@ if test "$IS_DEBUG" = "1"; then
       CXXFLAGS="-D_GLIBCXX_DEBUG"
       AC_MSG_CHECKING([if runtime library supports $CXXFLAGS])
       XXX_COMPILE_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -2282,7 +2277,7 @@ if test "$MEM_SIZE" -ge "2"; then
    CXXFLAGS="-pipe"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2307,7 +2302,7 @@ if true; then
    LDFLAGS="-Wl,-dead_strip"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2320,7 +2315,7 @@ if true; then
    LDFLAGS="-Wl,--gc-sections"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2334,7 +2329,7 @@ if true; then
    LDFLAGS="-Wl,-z,discard-unused=sections"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2348,7 +2343,7 @@ if true; then
    LDFLAGS="-Wl,-z,discard-unused=dependencies"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2375,7 +2370,7 @@ if test "$IS_SUN_OS" != "0"; then
       LDFLAGS="-Mcryptopp.mapfile"
       AC_MSG_CHECKING([if $LDNAME supports -Mcryptopp.mapfile])
       XXX_LINK_IFELSE(
-        [AC_LANG_PROGRAM([])],
+        [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -2389,7 +2384,7 @@ if test "$IS_SUN_OS" != "0"; then
    LDFLAGS="-lnsl"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2402,7 +2397,7 @@ if test "$IS_SUN_OS" != "0"; then
    LDFLAGS="-lsocket"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2426,7 +2421,7 @@ if true; then
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2448,7 +2443,7 @@ if true; then
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2472,7 +2467,7 @@ if test "$IS_MINGW_OS" = "1"; then
    LDFLAGS="-lws2_32"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2501,7 +2496,7 @@ if true; then
       LDFLAGS="-lgomp"
       AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
       XXX_LINK_IFELSE(
-         [AC_LANG_PROGRAM([])],
+         [AC_LANG_SOURCE([])],
          [AC_MSG_RESULT([yes])],
          [AC_MSG_RESULT([no])]
       )
@@ -2525,7 +2520,7 @@ if test "$enable_shared" = "yes"; then
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2547,7 +2542,7 @@ if true; then
 
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
-      [AC_LANG_PROGRAM([])],
+      [AC_LANG_SOURCE([])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
