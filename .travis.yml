@@ -50,12 +50,12 @@ jobs:
       name: Linux, ppc64le, GCC
       arch: ppc64le
       compiler: gcc
-      dist: trusty
+      dist: bionic
     - os: linux
       name: Linux, ppc64le, Clang
       arch: ppc64le
       compiler: clang
-      dist: trusty
+      dist: bionic
     - os: osx
       name: OS X, amd64, GCC
       arch: amd64
@@ -92,9 +92,6 @@ before_script:
 script:
   - |    
     bash cryptest-autotools.sh
-
-addons:
-  - sonarcloud: false
 
 # Whitelist branches to avoid testing feature branches twice
 branches:
