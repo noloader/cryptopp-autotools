@@ -67,8 +67,10 @@ before_script:
     # copy cryptopp-autotools to cryptopp, and then run
     # the test script.
   - |
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A145
     sudo apt-get install -y autoconf automake libtool
+    fi
   - |
     cd ..
     git clone https://github.com/weidai11/cryptopp.git
