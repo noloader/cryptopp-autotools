@@ -73,14 +73,15 @@ jobs:
       compiler: clang
 
 before_script:
+  - |
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A145
+      sudo apt-get -y install autoconf automake libtool
+    fi
+
     # Let travis clone cryptopp-autotools, clone cryptopp
     # copy cryptopp-autotools to cryptopp, and then run
     # the test script.
-  - |
-    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A145
-    sudo apt-get install -y autoconf automake libtool
-    fi
   - |
     cd ..
     git clone https://github.com/weidai11/cryptopp.git
@@ -92,14 +93,14 @@ script:
   - |    
     bash cryptest-autotools.sh
 
+addons:
+  - sonarcloud: false
+
 # Whitelist branches to avoid testing feature branches twice
 branches:
   only:
     - master
     - /\/ci$/
-
-addons:
-  - sonarcloud: false
 
 notifications:
   email:
