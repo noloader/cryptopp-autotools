@@ -86,10 +86,10 @@ before_script:
     git clone https://github.com/weidai11/cryptopp.git
     cp cryptopp-autotools/*.* cryptopp/
     cd cryptopp
+    cp TestScripts/cryptest-autotools.sh .
 
 script:
-  - |
-    cp TestScripts/cryptest-autotools.sh .
+  - |    
     bash cryptest-autotools.sh
 
 # Whitelist branches to avoid testing feature branches twice
