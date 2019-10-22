@@ -1986,7 +1986,7 @@ if test "$IS_PPC" != "0"; then
    )
 
    if test "$retval" != "0"; then
-       ALTIVEC_FLAG=""
+       AC_SUBST([ALTIVEC_FLAG],[""])
    fi
 
    CXXFLAGS="$POWER7_FLAG"
@@ -1998,7 +1998,7 @@ if test "$IS_PPC" != "0"; then
    )
 
    if test "$retval" != "0"; then
-       POWER7_FLAG=""
+       AC_SUBST([POWER7_FLAG],[""])
    fi
 
    CXXFLAGS="$POWER8_FLAG"
@@ -2010,7 +2010,7 @@ if test "$IS_PPC" != "0"; then
    )
 
    if test "$retval" != "0"; then
-       POWER8_FLAG=""
+       AC_SUBST([POWER8_FLAG],[""])
    fi
 
    CXXFLAGS="$POWER9_FLAG"
@@ -2022,7 +2022,7 @@ if test "$IS_PPC" != "0"; then
    )
 
    if test "$retval" != "0"; then
-       POWER9_FLAG=""
+       AC_SUBST([POWER9_FLAG],[""])
    fi
 
    # Power9 and DARN random number generator
@@ -2094,10 +2094,15 @@ if test "$IS_PPC" != "0"; then
       fi
    fi
 
+   echo "*** ALTIVEC_FLAG: $ALTIVEC_FLAG"
+   echo "*** POWER7_FLAG: $POWER7_FLAG"
+   echo "*** POWER8_FLAG: $POWER8_FLAG"
+   echo "*** POWER9_FLAG: $POWER9_FLAG"
+
    # Now set a disable flag
    if test x"$ALTIVEC_FLAG" = "x"; then
       AM_CXXFLAGS="-DCRYPTOPP_DISABLE_ALTIVEC $AM_CXXFLAGS"
-   elif test x"$POWER7_FLAG" = "x" && test "$POWER8_FLAG" = "x"; then
+   elif test x"$POWER7_FLAG" = "x"; then
       AM_CXXFLAGS="-DCRYPTOPP_DISABLE_POWER7 $AM_CXXFLAGS"
    elif test x"$POWER8_FLAG" = "x"; then
       AM_CXXFLAGS="-DCRYPTOPP_DISABLE_POWER8 $AM_CXXFLAGS"
