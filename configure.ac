@@ -1965,11 +1965,18 @@ if test "$IS_PPC" != "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
+   # The LLVM folks have things messed up. They define __VSX__, but
+   # vector unsigned long long a.k.a uint64x2_p is not available.
    if test "$IS_XLC_COMPILER" = "1"; then
       ALTIVEC_FLAG="-qaltivec"
       POWER7_FLAG="-qarch=pwr7 -qaltivec"
       POWER8_FLAG="-qarch=pwr8 -qaltivec"
       POWER9_FLAG="-qarch=pwr9 -qaltivec"
+   elif test "$IS_LLVM_COMPILER" != "0"; then
+      ALTIVEC_FLAG="-qaltivec"
+      POWER7_FLAG="-mcpu=power7 -mvsx -maltivec"
+      POWER8_FLAG="-mcpu=power8 -mvsx -maltivec"
+      POWER9_FLAG="-mcpu=power9 -mvsx -maltivec"
    else
       ALTIVEC_FLAG="-maltivec"
       POWER7_FLAG="-mcpu=power7 -maltivec"
