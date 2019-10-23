@@ -1,5 +1,8 @@
 ## Crypto++ Autotools
 
+[![Build Status](https://travis-ci.org/noloader/cryptopp-autotools.svg?branch=master)](https://travis-ci.org/noloader/cryptopp-autotools)
+[![Build status](https://ci.appveyor.com/api/projects/status/3de2dlmwv9fxeyp8?svg=true)](https://ci.appveyor.com/project/noloader/cryptopp-autotools)
+
 This repository contains Autotools files for Wei Dai's Crypto++ (https://github.com/weidai11/cryptopp). It supplies `configure.ac`, `makefile.am` and `libcryptopp.pc.in`. Autotools is officialy unsupported, so use it at your own risk.
 
 The purpose of Crypto++ Autotools is three-fold:
