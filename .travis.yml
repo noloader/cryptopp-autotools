@@ -19,6 +19,36 @@ git:
 jobs:
   include:
     - os: linux
+      name: Linux, amd64, GCC
+      arch: amd64
+      compiler: gcc
+      dist: xenial
+    - os: linux
+      name: Linux, amd64, Clang
+      arch: amd64
+      compiler: clang
+      dist: xenial
+    - os: linux
+      name: Linux, amd64, GCC
+      arch: amd64
+      compiler: gcc
+      dist: bionic
+    - os: linux
+      name: Linux, amd64, Clang
+      arch: amd64
+      compiler: clang
+      dist: bionic
+    - os: linux
+      name: Linux, arm64, GCC
+      arch: arm64
+      compiler: gcc
+      dist: bionic
+    - os: linux
+      name: Linux, arm64, Clang
+      arch: arm64
+      compiler: clang
+      dist: bionic
+    - os: linux
       name: Linux, ppc64le, GCC
       arch: ppc64le
       compiler: gcc
@@ -28,6 +58,14 @@ jobs:
       arch: ppc64le
       compiler: clang
       dist: bionic
+    - os: osx
+      name: OS X, amd64, GCC
+      arch: amd64
+      compiler: gcc
+    - os: osx
+      name: OS X, amd64, Clang
+      arch: amd64
+      compiler: clang
 
   allow_failures:
     # Clang 7.1 and below will fail on PPC64 due to
