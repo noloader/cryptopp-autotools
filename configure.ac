@@ -2117,19 +2117,37 @@ if test "$IS_PPC" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [Disable Altivec])
    fi
 
-   # Drop to Power7 if Power8 is not available.
-   if test x"$POWER8_FLAG" = "x"; then
+   # Fixup if Power7 is not available
+   if test x"$CRYPTOPP_BLAKE2S_FLAG" = "x"; then
+      if test x"$ALTIVEC_FLAG" != "x"; then
+         AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$ALTIVEC_FLAG])
+      fi
+   fi
+
+   # Fixup if Power8 is not available
+   if test x"$CRYPTOPP_CHACHA_FLAG" = "x"; then
+      if test x"$ALTIVEC_FLAG" != "x"; then
+         AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$ALTIVEC_FLAG])
+      fi
+   fi
+
+   # Fixup if Power8 is not available
+   if test x"$CRYPTOPP_GCM_FLAG" = "x"; then
       if test x"$POWER7_FLAG" != "x"; then
          AC_SUBST([CRYPTOPP_GCM_FLAG], [$POWER7_FLAG])
       fi
    fi
 
-   # Drop to Altivec if Power7 not available
-   if test x"$POWER7_FLAG" = "x"; then
+   # Fixup if Power7 is not available
+   if test x"$CRYPTOPP_SIMON64_FLAG" = "x"; then
       if test x"$ALTIVEC_FLAG" != "x"; then
-         AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$ALTIVEC_FLAG])
-         AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$ALTIVEC_FLAG])
          AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$ALTIVEC_FLAG])
+      fi
+   fi
+
+   # Fixup if Power7 is not available
+   if test x"$CRYPTOPP_SPECK64_FLAG" = "x"; then
+      if test x"$ALTIVEC_FLAG" != "x"; then
          AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$ALTIVEC_FLAG])
       fi
    fi
