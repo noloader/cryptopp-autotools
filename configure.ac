@@ -1965,24 +1965,23 @@ if test "$IS_PPC" != "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   # The LLVM folks have things messed up. They define __VSX__, but
-   # vector unsigned long long a.k.a uint64x2_p is not available.
    if test "$IS_XLC_COMPILER" = "1"; then
       ALTIVEC_FLAG="-qaltivec"
-      POWER7_FLAG="-qarch=pwr7 -qaltivec"
+      POWER7_VSX_FLAG="-qarch=pwr7 -mvsx -qaltivec"
+      POWER7_PWR_FLAG="-qarch=pwr7 -qaltivec"
+      POWER7_NO_FLAG="-qaltivec"
       POWER8_FLAG="-qarch=pwr8 -qaltivec"
       POWER9_FLAG="-qarch=pwr9 -qaltivec"
-   elif test "$IS_LLVM_COMPILER" != "0"; then
-      ALTIVEC_FLAG="-qaltivec"
-      POWER7_FLAG="-mcpu=power7 -mvsx -maltivec"
-      POWER8_FLAG="-mcpu=power8 -mvsx -maltivec"
-      POWER9_FLAG="-mcpu=power9 -mvsx -maltivec"
    else
       ALTIVEC_FLAG="-maltivec"
-      POWER7_FLAG="-mcpu=power7 -maltivec"
+      POWER7_VSX_FLAG="-mcpu=power7 -mvsx -maltivec"
+      POWER7_PWR_FLAG="-mcpu=power7 -maltivec"
+      POWER7_NO_FLAG="-maltivec"
       POWER8_FLAG="-mcpu=power8 -maltivec"
       POWER9_FLAG="-mcpu=power9 -maltivec"
    fi
+
+   ##### Altivec #####
 
    CXXFLAGS="$ALTIVEC_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -1996,7 +1995,9 @@ if test "$IS_PPC" != "0"; then
        AC_SUBST([ALTIVEC_FLAG],[""])
    fi
 
-   CXXFLAGS="$POWER7_FLAG"
+   ##### Power7 #####
+
+   CXXFLAGS="$POWER7_VSX_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
@@ -2004,9 +2005,38 @@ if test "$IS_PPC" != "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   if test "$retval" != "0"; then
-       AC_SUBST([POWER7_FLAG],[""])
-   fi
+   # Figure out what is needed for Power7
+   if test "$retval" = "0"; then
+     AC_SUBST([POWER7_FLAG],[$POWER7_VSX_FLAG])
+   else
+     CXXFLAGS="$POWER7_PWR_FLAG"
+     AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+     XXX_LINK_IFELSE(
+        [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
+        [AC_MSG_RESULT([yes])],
+        [AC_MSG_RESULT([no])]
+     )
+
+     if test "$retval" = "0"; then
+       AC_SUBST([POWER7_FLAG],[$POWER7_PWR_FLAG])
+     else
+       CXXFLAGS="$POWER7_NO_FLAG"
+       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+       XXX_LINK_IFELSE(
+          [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
+          [AC_MSG_RESULT([yes])],
+          [AC_MSG_RESULT([no])]
+       )
+
+       if test "$retval" = "0"; then
+         AC_SUBST([POWER7_FLAG],[$POWER7_NO_FLAG])
+       else
+           AC_SUBST([POWER7_FLAG],[""])
+       fi  # POWER7_NO_FLAG
+     fi  # POWER7_PWR_FLAG
+   fi  # POWER7_VSX_FLAG
+
+   ##### Power8 #####
 
    CXXFLAGS="$POWER8_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -2019,6 +2049,8 @@ if test "$IS_PPC" != "0"; then
    if test "$retval" != "0"; then
        AC_SUBST([POWER8_FLAG],[""])
    fi
+
+   ##### Power9 #####
 
    CXXFLAGS="$POWER9_FLAG"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -2040,9 +2072,10 @@ if test "$IS_PPC" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_POWER9], [1], [Disable Power9])
    fi
 
+   ##### Fixups #####
+
    ## Power8 and VSX. In-core crypto.
    if test x"$POWER8_FLAG" != "x"; then
-      AC_SUBST([CRYPTOPP_POWER7_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_POWER8_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$POWER8_FLAG])
