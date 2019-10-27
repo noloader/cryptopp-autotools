@@ -1967,6 +1967,9 @@ if test "$IS_PPC" != "0"; then
 
    if test "$IS_XLC_COMPILER" = "1"; then
       ALTIVEC_FLAG="-qaltivec"
+      POWER4_FLAG="-qarch=pwr4 -qaltivec"
+      POWER5_FLAG="-qarch=pwr5 -qaltivec"
+      POWER6_FLAG="-qarch=pwr6 -qaltivec"
       POWER7_VSX_FLAG="-qarch=pwr7 -qvsx -qaltivec"
       POWER7_PWR_FLAG="-qarch=pwr7 -qaltivec"
       POWER7_ALT_FLAG="-qaltivec"
@@ -1984,21 +1987,64 @@ if test "$IS_PPC" != "0"; then
    ##### Altivec #####
 
    CXXFLAGS="$ALTIVEC_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Altivec)])
    XXX_LINK_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
 
+   # Assume success, unset on failure
    if test "$retval" != "0"; then
        AC_SUBST([ALTIVEC_FLAG],[""])
    fi
 
+   # Figure out what is needed for Altivec
+   if test "$IS_XLC_COMPILER" = "1"; then
+
+     CXXFLAGS="$POWER4_FLAG"
+     AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Altivec)])
+     XXX_LINK_IFELSE(
+       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
+       [AC_MSG_RESULT([yes])],
+       [AC_MSG_RESULT([no])]
+     )
+
+     if test "$retval" = "0"; then
+       AC_SUBST([ALTIVEC_FLAG],[$POWER4_FLAG])
+     else
+       CXXFLAGS="$POWER5_FLAG"
+       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Altivec)])
+       XXX_LINK_IFELSE(
+         [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+       )
+
+       if test "$retval" = "0"; then
+         AC_SUBST([ALTIVEC_FLAG],[$POWER5_FLAG])
+       else
+         CXXFLAGS="$POWER6_FLAG"
+         AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Altivec)])
+         XXX_LINK_IFELSE(
+           [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
+           [AC_MSG_RESULT([yes])],
+           [AC_MSG_RESULT([no])]
+         )
+
+         if test "$retval" = "0"; then
+           AC_SUBST([ALTIVEC_FLAG],[$POWER6_FLAG])
+         else
+           AC_SUBST([ALTIVEC_FLAG],[""])
+         fi  # POWER6_FLAG
+       fi  # POWER5_FLAG
+     fi  # POWER4_FLAG
+   fi  # XLC Compiler
+
    ##### Power7 #####
 
    CXXFLAGS="$POWER7_VSX_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power7)])
    XXX_LINK_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
       [AC_MSG_RESULT([yes])],
@@ -2010,7 +2056,7 @@ if test "$IS_PPC" != "0"; then
      AC_SUBST([POWER7_FLAG],[$POWER7_VSX_FLAG])
    else
      CXXFLAGS="$POWER7_PWR_FLAG"
-     AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+     AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power7)])
      XXX_LINK_IFELSE(
         [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
         [AC_MSG_RESULT([yes])],
@@ -2021,7 +2067,7 @@ if test "$IS_PPC" != "0"; then
        AC_SUBST([POWER7_FLAG],[$POWER7_PWR_FLAG])
      else
        CXXFLAGS="$POWER7_ALT_FLAG"
-       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power7)])
        XXX_LINK_IFELSE(
           [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
           [AC_MSG_RESULT([yes])],
@@ -2039,7 +2085,7 @@ if test "$IS_PPC" != "0"; then
    ##### Power8 #####
 
    CXXFLAGS="$POWER8_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power8)])
    XXX_LINK_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power8.cxx`])],
       [AC_MSG_RESULT([yes])],
@@ -2053,7 +2099,7 @@ if test "$IS_PPC" != "0"; then
    ##### Power9 #####
 
    CXXFLAGS="$POWER9_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power9)])
    XXX_COMPILE_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power9.cxx`])],
       [AC_MSG_RESULT([yes])],
@@ -2074,7 +2120,7 @@ if test "$IS_PPC" != "0"; then
 
    ##### Fixups #####
 
-   ## Power8 and VSX. In-core crypto.
+   ## Power8 and in-core crypto.
    if test x"$POWER8_FLAG" != "x"; then
       AC_SUBST([CRYPTOPP_POWER8_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$POWER8_FLAG])
@@ -2095,6 +2141,7 @@ if test "$IS_PPC" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable Power8])
    fi
 
+   # Power7 and VSX
    if test x"$POWER7_FLAG" != "x"; then
       AC_SUBST([CRYPTOPP_POWER7_FLAG], [$POWER7_FLAG])
       AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$POWER7_FLAG])
