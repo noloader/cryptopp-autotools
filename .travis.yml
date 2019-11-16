@@ -58,6 +58,16 @@ jobs:
       arch: ppc64le
       compiler: clang
       dist: bionic
+    - os: linux
+      name: Linux, s390x, GCC
+      arch: s390x
+      compiler: gcc
+      dist: bionic
+    - os: linux
+      name: Linux, s390x, Clang
+      arch: s390x
+      compiler: clang
+      dist: bionic
     - os: osx
       osx_image: xcode11.2
       name: OS X 10.14, XCode 11.2
