@@ -18,79 +18,93 @@ git:
 # Putting them in global invokes the matrix expansion.
 jobs:
   include:
-    - os: linux
-      name: Linux, amd64, GCC
+    - name: Ubuntu Trusty, GCC, amd64
+      os: linux
+      arch: amd64
+      compiler: gcc
+      dist: trusty
+    - name: Ubuntu Trusty, Clang, amd64
+      os: linux
+      arch: amd64
+      compiler: clang
+      dist: trusty
+    - name: Ubuntu Xenial, GCC, amd64
+      os: linux
       arch: amd64
       compiler: gcc
       dist: xenial
-    - os: linux
-      name: Linux, amd64, Clang
+    - name: Ubuntu Xenial, Clang, amd64
+      os: linux
       arch: amd64
       compiler: clang
       dist: xenial
-    - os: linux
-      name: Linux, amd64, GCC
+    - name: Ubuntu Bionic, GCC, amd64
+      os: linux
       arch: amd64
       compiler: gcc
       dist: bionic
-    - os: linux
-      name: Linux, amd64, Clang
+    - name: Ubuntu Bionic, Clang, amd64
+      os: linux
       arch: amd64
       compiler: clang
       dist: bionic
-    - os: linux
-      name: Linux, arm64, GCC
+    - name: Ubuntu Bionic, GCC, arm64
+      os: linux
       arch: arm64
       compiler: gcc
       dist: bionic
-    - os: linux
-      name: Linux, arm64, Clang
+    - Ubuntu Bionic, Clang, arm64
+      os: linux
       arch: arm64
       compiler: clang
       dist: bionic
-    - os: linux
-      name: Linux, ppc64le, GCC
+    - name: Ubuntu Bionic, GCC, ppc64le
+      os: linux
       arch: ppc64le
       compiler: gcc
       dist: bionic
-    - os: linux
-      name: Linux, ppc64le, Clang
+    - name: Ubuntu Bionic, Clang, ppc64le
+      os: linux
       arch: ppc64le
       compiler: clang
       dist: bionic
-    - os: linux
-      name: Linux, s390x, GCC
+      env:
+        - CC=clang-8
+        - CXX=clang++-8
+    - name: Ubuntu Bionic, GCC, s390x
+      os: linux
       arch: s390x
       compiler: gcc
       dist: bionic
-    - os: linux
-      name: Linux, s390x, Clang
+    - name: Ubuntu Bionic, Clang, s390x
+      os: linux
       arch: s390x
       compiler: clang
       dist: bionic
-    - os: osx
+      env:
+        - CC=clang-8
+        - CXX=clang++-8
+    - name: OS X 10.14, XCode 11.2
+      os: osx
       osx_image: xcode11.2
-      name: OS X 10.14, XCode 11.2
       arch: amd64
-    - os: osx
+    - name: OS X 10.13, XCode 9.4
+      os: osx
       osx_image: xcode9.4
-      name: OS X 10.13, XCode 9.4
       arch: amd64
-    - os: osx
+    - name: OS X 10.10, XCode 6.4
+      os: osx
       osx_image: xcode6.4
-      name: OS X 10.10, XCode 6.4
       arch: amd64
 
   allow_failures:
     # Clang 7.0 and below will likely have trouble due to
     # https://bugs.llvm.org/show_bug.cgi?id=39704
-    - os: linux
-      arch: ppc64le
+    - arch: ppc64le
       compiler: clang
     # Clang has a fair amount of trouble
     # on platforms Apple does not support
-    - os: linux
-      arch: s390x
+    - arch: s390x
       compiler: clang
 
 before_script:
@@ -99,6 +113,16 @@ before_script:
       sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A145
       sudo apt-get update
       sudo apt-get -y install autoconf automake libtool
+    fi
+
+  - |
+    # Clang 7 compiler is completely broken on PPC64 and s390x
+    if [[ "$TRAVIS_CPU_ARCH" == "ppc64le" ]] || [[ "$TRAVIS_CPU_ARCH" == "s390x" ]]; then
+      if [[ "$TRAVIS_OS" == "linux" ]] && [[ "$TRAVIS_COMPILER" == "clang" ]]; then
+        # https://github.com/travis-ci/travis-ci/issues/9037
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A145
+        sudo apt-get -qq -y install --no-install-recommends clang-8
+      fi
     fi
 
     # Let travis clone cryptopp-autotools, clone cryptopp
@@ -112,7 +136,7 @@ before_script:
     cp TestScripts/cryptest-autotools.sh .
 
 script:
-  - |    
+  - |
     bash cryptest-autotools.sh
 
 # Whitelist branches to avoid testing feature branches twice
