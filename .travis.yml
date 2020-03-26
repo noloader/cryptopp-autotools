@@ -12,7 +12,7 @@ git:
   depth: 5
 
 # Use jobs rather than matrix since we are precisely
-# specifiying our test cases. Do not move any of the
+# specifying our test cases. Do not move any of the
 # keys (env, os, arch, compiler, etc) into global.
 # Putting them in global invokes the matrix expansion.
 jobs:
@@ -52,7 +52,7 @@ jobs:
       arch: arm64
       compiler: gcc
       dist: bionic
-    - Ubuntu Bionic, Clang, arm64
+    - name: Ubuntu Bionic, Clang, arm64
       os: linux
       arch: arm64
       compiler: clang
@@ -114,8 +114,8 @@ before_script:
       sudo apt-get -y install autoconf automake libtool
     fi
 
-  - |
     # Clang 7 compiler is completely broken on PPC64 and s390x
+  - |
     if [[ "$TRAVIS_CPU_ARCH" == "ppc64le" ]] || [[ "$TRAVIS_CPU_ARCH" == "s390x" ]]; then
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$TRAVIS_COMPILER" == "clang" ]]; then
         # https://github.com/travis-ci/travis-ci/issues/9037
