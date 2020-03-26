@@ -7,10 +7,9 @@
 
 language: cpp
 dist: bionic
-sudo: required
 
 git:
-  depth: 2
+  depth: 5
 
 # Use jobs rather than matrix since we are precisely
 # specifiying our test cases. Do not move any of the
