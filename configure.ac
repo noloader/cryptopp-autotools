@@ -1968,21 +1968,19 @@ if test "$IS_PPC" != "0"; then
 
    if test "$IS_XLC_COMPILER" = "1"; then
       ALTIVEC_FLAG="-qaltivec"
-      POWER4_FLAG="-qarch=pwr4 -qaltivec"
-      POWER5_FLAG="-qarch=pwr5 -qaltivec"
-      POWER6_FLAG="-qarch=pwr6 -qaltivec"
-      POWER7_VSX_FLAG="-qarch=pwr7 -qvsx -qaltivec"
-      POWER7_PWR_FLAG="-qarch=pwr7 -qaltivec"
-      POWER7_ALT_FLAG="-qaltivec"
-      POWER8_FLAG="-qarch=pwr8 -qaltivec"
-      POWER9_FLAG="-qarch=pwr9 -qaltivec"
+      POWER4_FLAG="-qarch=pwr4"
+      POWER5_FLAG="-qarch=pwr5"
+      POWER6_FLAG="-qarch=pwr6"
+      POWER7_VSX_FLAG="-qarch=pwr7 -qvsx"
+      POWER7_PWR_FLAG="-qarch=pwr7"
+      POWER8_FLAG="-qarch=pwr8"
+      POWER9_FLAG="-qarch=pwr9"
    else
       ALTIVEC_FLAG="-maltivec"
-      POWER7_VSX_FLAG="-mcpu=power7 -mvsx -maltivec"
-      POWER7_PWR_FLAG="-mcpu=power7 -maltivec"
-      POWER7_ALT_FLAG="-maltivec"
-      POWER8_FLAG="-mcpu=power8 -maltivec"
-      POWER9_FLAG="-mcpu=power9 -maltivec"
+      POWER7_VSX_FLAG="-mcpu=power7 -mvsx"
+      POWER7_PWR_FLAG="-mcpu=power7"
+      POWER8_FLAG="-mcpu=power8"
+      POWER9_FLAG="-mcpu=power9"
    fi
 
    ##### Altivec #####
@@ -2067,19 +2065,7 @@ if test "$IS_PPC" != "0"; then
      if test "$retval" = "0"; then
        AC_SUBST([POWER7_FLAG],[$POWER7_PWR_FLAG])
      else
-       CXXFLAGS="$POWER7_ALT_FLAG"
-       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power7)])
-       XXX_LINK_IFELSE(
-          [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
-          [AC_MSG_RESULT([yes])],
-          [AC_MSG_RESULT([no])]
-       )
-
-       if test "$retval" = "0"; then
-         AC_SUBST([POWER7_FLAG],[$POWER7_ALT_FLAG])
-       else
-           AC_SUBST([POWER7_FLAG],[""])
-       fi  # POWER7_ALT_FLAG
+       AC_SUBST([POWER7_FLAG],[""])
      fi  # POWER7_PWR_FLAG
    fi  # POWER7_VSX_FLAG
 
