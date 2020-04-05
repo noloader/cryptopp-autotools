@@ -2130,14 +2130,15 @@ if test "$IS_PPC" != "0"; then
    # Power7 and VSX
    if test x"$POWER7_FLAG" != "x"; then
       AC_SUBST([CRYPTOPP_POWER7_FLAG], [$POWER7_FLAG])
-      AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$POWER7_FLAG])
       AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
    fi
 
+   # Plain old Altivec
    if test x"$ALTIVEC_FLAG" != "x"; then
       AC_SUBST([CRYPTOPP_ALTIVEC_FLAG], [$ALTIVEC_FLAG])
+      AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$ALTIVEC_FLAG])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$ALTIVEC_FLAG])
       AC_SUBST([CRYPTOPP_SIMON64_FLAG], [$ALTIVEC_FLAG])
       AC_SUBST([CRYPTOPP_SPECK64_FLAG], [$ALTIVEC_FLAG])
@@ -2148,11 +2149,8 @@ if test "$IS_PPC" != "0"; then
 
    # Drop to Altivec if higher Power is not available
    if test x"$ALTIVEC_FLAG" != "x"; then
-      if test x"$CRYPTOPP_BLAKE2S_FLAG" = "x"; then
-         AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$ALTIVEC_FLAG])
-      fi
       if test x"$CRYPTOPP_GCM_FLAG" = "x"; then
-         AC_SUBST([CRYPTOPP_GCM_FLAG], [$POWER7_FLAG])
+         AC_SUBST([CRYPTOPP_GCM_FLAG], [$ALTIVEC_FLAG])
       fi
    fi
 
