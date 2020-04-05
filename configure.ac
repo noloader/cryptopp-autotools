@@ -1966,15 +1966,16 @@ if test "$IS_PPC" != "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
+   # XLC requires -qaltivec in addition to Arch or CPU option
    if test "$IS_XLC_COMPILER" = "1"; then
       ALTIVEC_FLAG="-qaltivec"
-      POWER4_FLAG="-qarch=pwr4"
-      POWER5_FLAG="-qarch=pwr5"
-      POWER6_FLAG="-qarch=pwr6"
-      POWER7_VSX_FLAG="-qarch=pwr7 -qvsx"
-      POWER7_PWR_FLAG="-qarch=pwr7"
-      POWER8_FLAG="-qarch=pwr8"
-      POWER9_FLAG="-qarch=pwr9"
+      POWER4_FLAG="-qarch=pwr4 -qaltivec"
+      POWER5_FLAG="-qarch=pwr5 -qaltivec"
+      POWER6_FLAG="-qarch=pwr6 -qaltivec"
+      POWER7_VSX_FLAG="-qarch=pwr7 -qvsx -qaltivec"
+      POWER7_PWR_FLAG="-qarch=pwr7 -qaltivec"
+      POWER8_FLAG="-qarch=pwr8 -qaltivec"
+      POWER9_FLAG="-qarch=pwr9 -qaltivec"
    else
       ALTIVEC_FLAG="-maltivec"
       POWER7_VSX_FLAG="-mcpu=power7 -mvsx"
