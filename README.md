@@ -15,6 +15,10 @@ The initial `Makefile.am` and `configure.ac` were shamelessly ripped from Debian
 
 There is a wiki page available that discusses Autotools and the Crypto++ project files in more detail at [Autotools](https://www.cryptopp.com/wiki/Autotools).
 
+## Documentation
+
+The Autotools project files are documented on the [Crypto++ wiki | Autotools](https://www.cryptopp.com/wiki/Autotools). If there is an error or ommission in the wiki article, then please fix it or open a bug report.
+
 ## Testing
 
 The Autotools files are officialy unsupported, so use them at your own risk. With that said, the Autotools source files are tested with Crypto++ on Linux and OS X using [Travis CI](https://github.com/weidai11/cryptopp/blob/master/.travis.yml).
