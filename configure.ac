@@ -122,13 +122,13 @@
 #############################################################################
 
 AC_INIT([Crypto++], [8.3], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
-LT_INIT([pic-only,enable-shared,enable-static])
-AM_INIT_AUTOMAKE
-
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([local.h])
 AC_CONFIG_FILES([Makefile] [libcryptopp.pc])
-AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([m4])
+
+AM_INIT_AUTOMAKE
 
 AM_PROG_AS
 AC_PROG_LIBTOOL
