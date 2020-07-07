@@ -74,10 +74,7 @@ EXTRA_LTLIBRARIES = \
    librijndael_simd.la \
    libsha_simd.la \
    libshacal2_simd.la \
-   libsimeck_simd.la \
-   libsimon64_simd.la \
    libsimon128_simd.la \
-   libspeck64_simd.la \
    libspeck128_simd.la \
    libsm4_simd.la \
    libsse_simd.la
@@ -128,10 +125,7 @@ libcryptopp_la_LIBADD = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
-   $(libsimeck_simd_la_OBJECTS) \
-   $(libsimon64_simd_la_OBJECTS) \
    $(libsimon128_simd_la_OBJECTS) \
-   $(libspeck64_simd_la_OBJECTS) \
    $(libspeck128_simd_la_OBJECTS) \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
@@ -178,10 +172,7 @@ libcryptopp_la_DEPENDENCIES = \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
-   $(libsimeck_simd_la_OBJECTS) \
-   $(libsimon64_simd_la_OBJECTS) \
    $(libsimon128_simd_la_OBJECTS) \
-   $(libspeck64_simd_la_OBJECTS) \
    $(libspeck128_simd_la_OBJECTS) \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
@@ -276,17 +267,8 @@ libsha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 libshacal2_simd_la_SOURCES = shacal2_simd.cpp
 libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
-libsimeck_simd_la_SOURCES = simeck_simd.cpp
-libsimeck_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMECK_FLAG)
-
-libsimon64_simd_la_SOURCES = simon64_simd.cpp
-libsimon64_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON64_FLAG)
-
 libsimon128_simd_la_SOURCES = simon128_simd.cpp
 libsimon128_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON128_FLAG)
-
-libspeck64_simd_la_SOURCES = speck64_simd.cpp
-libspeck64_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK64_FLAG)
 
 libspeck128_simd_la_SOURCES = speck128_simd.cpp
 libspeck128_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK128_FLAG)
@@ -304,10 +286,10 @@ if CRYPTOGAMS_ARM_SOURCES
    libsha1_armv4_la_SOURCES = sha1_armv4.S
    libsha256_armv4_la_SOURCES = sha256_armv4.S
    libsha512_armv4_la_SOURCES = sha512_armv4.S
-   libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV7_THUMB_FLAG)
-   libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV7_FLAG)
-   libsha256_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV7_FLAG)
-   libsha512_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV7_FLAG)
+   libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV4_THUMB_FLAG)
+   libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV4_FLAG)
+   libsha256_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV4_FLAG)
+   libsha512_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARMV4_FLAG)
 endif
 
 ## cpufeatures library on Android
