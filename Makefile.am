@@ -530,7 +530,7 @@ nobase_dist_pkgdata_DATA = \
     $(testdata_FILES) \
     $(testvector_FILES)
 
-nobase_noinst_DATA = \
+nobase_noinst_data_DATA = \
     $(testprogs_FILES)
 
 ## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
@@ -541,7 +541,7 @@ adhoc.cpp:
 	cp adhoc.cpp.proto adhoc.cpp
 	touch adhoc.cpp
 
-## Remove doc directpry if present
+## Remove doc directory if present
 distclean-local:
 	-rm -rf html-docs doxyfile.stamp
 
