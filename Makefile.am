@@ -387,7 +387,7 @@ cryptest_LDADD = $(lib_LTLIBRARIES)
 CLEANFILES = adhoc.cpp
 
 ## Copy the TestVectors/ and TestData/ to ${pkgdatadir}.
-## TestPrograms is included in the tarball but not installed.
+## TestPrograms/ is included in the tarball but not installed.
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
 # Create with 'ls TestVectors/*.dat'. These files get installed.
