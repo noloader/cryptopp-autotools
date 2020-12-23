@@ -545,7 +545,7 @@ nobase_dist_pkgdata_DATA = \
 # https://www.gnu.org/software/automake/manual/html_node/Program-and-Library-Variables.html
 dist-hook:
 	chmod -R u+w $(distdir)
-	cp TestPrograms/ $(distdir)
+	cp -r TestPrograms/ $(distdir)
 
 ## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
 ## C source files and drives link through the C compiler. We provide the empty adhoc.cpp
