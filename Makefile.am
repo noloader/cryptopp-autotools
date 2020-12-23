@@ -546,6 +546,7 @@ nobase_dist_pkgdata_DATA = \
 dist-hook:
 	chmod -R u+w $(distdir)
 	cp -r TestPrograms/ $(distdir)
+	rm -f $(distdir)/TestPrograms/dump2def.cxx
 
 ## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
 ## C source files and drives link through the C compiler. We provide the empty adhoc.cpp
