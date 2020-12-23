@@ -2375,21 +2375,8 @@ if test "$IS_SUN_OS" != "0"; then
       fi
    fi
 
-   # No longer needed
-   LDFLAGS="-lnsl"
-   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([[int main() { return 0; }]])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" = "0"; then
-      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-   fi
-
-   # No longer needed
-   LDFLAGS="-lsocket"
+   # https://www.ibm.com/developerworks/rational/library/overview-toc-aix/index.html
+   LDFLAGS="-bbigtoc"
    AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
    XXX_LINK_IFELSE(
       [AC_LANG_SOURCE([[int main() { return 0; }]])],
