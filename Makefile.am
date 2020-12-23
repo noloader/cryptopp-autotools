@@ -255,8 +255,10 @@ libppc_power7_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER7_FLAG)
 libppc_power8_la_SOURCES = ppc_power8.cpp
 libppc_power8_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER8_FLAG)
 
+# Do not use CRYPTOPP_POWER9_FLAG. See https://github.com/weidai11/cryptopp/issues/986
 libppc_power9_la_SOURCES = ppc_power9.cpp
-libppc_power9_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER9_FLAG)
+# libppc_power9_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER9_FLAG)
+libppc_power9_la_CXXFLAGS = $(AM_CXXFLAGS)
 
 librijndael_simd_la_SOURCES = rijndael_simd.cpp
 librijndael_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_AES_FLAG)
