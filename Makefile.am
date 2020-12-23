@@ -545,7 +545,7 @@ nobase_dist_pkgdata_DATA = \
 # https://www.gnu.org/software/automake/manual/html_node/Program-and-Library-Variables.html
 #nobase_noinst_data_DATA = \
 #    $(testprogs_FILES)
-	
+
 # Workaround Automake bug. We can't seem to include the TestProgram/ data
 # in the tarball without installation using their Uniform Naming Scheme
 # https://www.gnu.org/software/automake/manual/html_node/Uniform.html and
