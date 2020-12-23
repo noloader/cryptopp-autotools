@@ -381,9 +381,11 @@ cryptest_LDADD = $(lib_LTLIBRARIES)
 
 CLEANFILES = adhoc.cpp
 
-## Copy the TestVectors/ and TestData/ to ${pkgdatadir}
+## Copy the TestVectors/ and TestData/ to ${pkgdatadir}.
+## TestPrograms is included in the tarball but not installed.
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
+# Create with 'ls TestVectors/*.dat'. These files get installed.
 testdata_FILES = \
     TestData/3desval.dat     TestData/fhmqv160.dat  TestData/rc2val.dat \
     TestData/3wayval.dat     TestData/fhmqv256.dat  TestData/rc5val.dat \
@@ -411,6 +413,7 @@ testdata_FILES = \
     TestData/esig1536.dat    TestData/rabi1024.dat  TestData/xtrdh171.dat \
     TestData/esig2046.dat    TestData/rabi2048.dat  TestData/xtrdh342.dat
 
+# Create with 'ls TestVectors/*.txt'. These files get installed.
 testvector_FILES = \
     TestVectors/aead.txt              TestVectors/rsa_pss.txt \
     TestVectors/aes.txt               TestVectors/rw.txt \
@@ -452,9 +455,81 @@ testvector_FILES = \
     TestVectors/rsa_oaep.txt          TestVectors/xts.txt \
     TestVectors/rsa_pkcs1_1_5.txt
 
+# Create with 'ls TestPrograms/test_*.cxx'. These files do not get installed.
+# They exist so the feature tests can be run from the configure directory.
+testprogs_FILES= \
+	TestPrograms/test_32bit.cxx
+	TestPrograms/test_64bit.cxx
+	TestPrograms/test_arm_acle_header.cxx
+	TestPrograms/test_arm_aes.cxx
+	TestPrograms/test_arm_asimd.cxx
+	TestPrograms/test_arm_crc.cxx
+	TestPrograms/test_arm_neon.cxx
+	TestPrograms/test_arm_neon_header.cxx
+	TestPrograms/test_arm_pmull.cxx
+	TestPrograms/test_arm_sha1.cxx
+	TestPrograms/test_arm_sha256.cxx
+	TestPrograms/test_arm_sha3.cxx
+	TestPrograms/test_arm_sha512.cxx
+	TestPrograms/test_arm_sm3.cxx
+	TestPrograms/test_arm_sm4.cxx
+	TestPrograms/test_asm_mixed.cxx
+	TestPrograms/test_cxx11_alignas.cxx
+	TestPrograms/test_cxx11_alignof.cxx
+	TestPrograms/test_cxx11_assert.cxx
+	TestPrograms/test_cxx11_atomic.cxx
+	TestPrograms/test_cxx11_auto.cxx
+	TestPrograms/test_cxx11_constexpr.cxx
+	TestPrograms/test_cxx11.cxx
+	TestPrograms/test_cxx11_deletefn.cxx
+	TestPrograms/test_cxx11_enumtype.cxx
+	TestPrograms/test_cxx11_initializer.cxx
+	TestPrograms/test_cxx11_lambda.cxx
+	TestPrograms/test_cxx11_noexcept.cxx
+	TestPrograms/test_cxx11_nullptr.cxx
+	TestPrograms/test_cxx11_staticinit.cxx
+	TestPrograms/test_cxx11_sync.cxx
+	TestPrograms/test_cxx11_vartemplates.cxx
+	TestPrograms/test_cxx14.cxx
+	TestPrograms/test_cxx17_assert.cxx
+	TestPrograms/test_cxx17.cxx
+	TestPrograms/test_cxx17_exceptions.cxx
+	TestPrograms/test_cxx98_exception.cxx
+	TestPrograms/test_cxx.cxx
+	TestPrograms/test_glibc.cxx
+	TestPrograms/test_newlib.cxx
+	TestPrograms/test_ppc_aes.cxx
+	TestPrograms/test_ppc_altivec.cxx
+	TestPrograms/test_ppc_power7.cxx
+	TestPrograms/test_ppc_power8.cxx
+	TestPrograms/test_ppc_power9.cxx
+	TestPrograms/test_ppc_sha.cxx
+	TestPrograms/test_ppc_vmull.cxx
+	TestPrograms/test_pthreads.cxx
+	TestPrograms/test_x86_aes.cxx
+	TestPrograms/test_x86_avx2.cxx
+	TestPrograms/test_x86_avx512.cxx
+	TestPrograms/test_x86_avx.cxx
+	TestPrograms/test_x86_clmul.cxx
+	TestPrograms/test_x86_cpuid.cxx
+	TestPrograms/test_x86_rdrand.cxx
+	TestPrograms/test_x86_rdseed.cxx
+	TestPrograms/test_x86_sha.cxx
+	TestPrograms/test_x86_sse2.cxx
+	TestPrograms/test_x86_sse3.cxx
+	TestPrograms/test_x86_sse41.cxx
+	TestPrograms/test_x86_sse42.cxx
+	TestPrograms/test_x86_ssse3.cxx
+	TestPrograms/test_x86_via_aes.cxx
+	TestPrograms/test_x86_via_rng.cxx
+	TestPrograms/test_x86_via_sha.cxx
+
 nobase_dist_pkgdata_DATA = \
     $(testdata_FILES) \
     $(testvector_FILES)
+
+nodist_testprogs_FILES = \
+    $(testprogs_FILES)
 
 ## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
 ## C source files and drives link through the C compiler. We provide the empty adhoc.cpp
