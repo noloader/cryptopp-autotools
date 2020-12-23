@@ -1964,7 +1964,7 @@ if test "$IS_PPC" != "0"; then
       POWER7_VSX_FLAG="-mcpu=power7 -mvsx"
       POWER7_PWR_FLAG="-mcpu=power7"
       POWER8_FLAG="-mcpu=power8"
-      POWER9_FLAG="-mcpu=POWER9"
+      POWER9_FLAG="-mcpu=power9"
    fi
 
    ##### Altivec #####
