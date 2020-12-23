@@ -823,6 +823,31 @@ if test "$IS_SUN_OS" != "0"; then
 fi
 
 #############################################################################
+## AIXand -qpic=large or -bbigtoc
+
+if test "$IS_AIX" != "0"; then
+
+   ## Save LDFLAGS
+   SAVED_LDFLAGS="$LDFLAGS"
+
+   # https://www.ibm.com/developerworks/rational/library/overview-toc-aix/index.html
+   LDFLAGS="-bbigtoc"
+   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
+   XXX_LINK_IFELSE(
+      [AC_LANG_SOURCE([[int main() { return 0; }]])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
+   fi
+
+   ## Restore LDFLAGS
+   LDFLAGS="$SAVED_LDFLAGS"
+fi
+
+#############################################################################
 ## MacPorts GCC using Clang integrated assembler
 
 ## Modern GCC must use Clang as the assembler. The old Apple
