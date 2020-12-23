@@ -1964,7 +1964,7 @@ if test "$IS_PPC" != "0"; then
       POWER7_VSX_FLAG="-mcpu=power7 -mvsx"
       POWER7_PWR_FLAG="-mcpu=power7"
       POWER8_FLAG="-mcpu=power8"
-      POWER9_FLAG="-mcpu=power9"
+      POWER9_FLAG="-mcpu=POWER9"
    fi
 
    ##### Altivec #####
@@ -1982,22 +1982,22 @@ if test "$IS_PPC" != "0"; then
        AC_SUBST([ALTIVEC_FLAG],[""])
    fi
 
-   ##### Power7 #####
+   ##### POWER7 #####
 
    CXXFLAGS="$POWER7_VSX_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power7)])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
 
-   # Figure out what is needed for Power7
+   # Figure out what is needed for POWER7
    if test "$retval" = "0"; then
      AC_SUBST([POWER7_FLAG],[$POWER7_VSX_FLAG])
    else
      CXXFLAGS="$POWER7_PWR_FLAG"
-     AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power7)])
+     AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
      XXX_LINK_IFELSE(
         [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power7.cxx`])],
         [AC_MSG_RESULT([yes])],
@@ -2011,10 +2011,10 @@ if test "$IS_PPC" != "0"; then
      fi  # POWER7_PWR_FLAG
    fi  # POWER7_VSX_FLAG
 
-   ##### Power8 #####
+   ##### POWER8 #####
 
    CXXFLAGS="$POWER8_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power8)])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power8.cxx`])],
       [AC_MSG_RESULT([yes])],
@@ -2025,12 +2025,12 @@ if test "$IS_PPC" != "0"; then
        AC_SUBST([POWER8_FLAG],[""])
    fi
 
-   ##### Power9 #####
+   ##### POWER9 #####
 
    CXXFLAGS="$POWER9_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Power9)])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_power9.cxx`])],
+      [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_POWER9.cxx`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
@@ -2039,17 +2039,18 @@ if test "$IS_PPC" != "0"; then
        AC_SUBST([POWER9_FLAG],[""])
    fi
 
-   # Power9 and DARN random number generator
-   if test x"$POWER9_FLAG" != "x"; then
-      AC_SUBST([CRYPTOPP_POWER9_FLAG], [$POWER9_FLAG])
-      AC_SUBST([CRYPTOPP_DARN_FLAG], [$POWER9_FLAG])
-   else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER9], [1], [Disable Power9])
-   fi
+   # POWER9 and DARN random number generator. Disabled due to
+   # https://github.com/weidai11/cryptopp/issues/986
+   #if test x"$POWER9_FLAG" != "x"; then
+   #   AC_SUBST([CRYPTOPP_POWER9_FLAG], [$POWER9_FLAG])
+   #   AC_SUBST([CRYPTOPP_DARN_FLAG], [$POWER9_FLAG])
+   #else
+   #   AC_DEFINE([CRYPTOPP_DISABLE_POWER9], [1], [Disable POWER9])
+   #fi
 
    ##### Fixups #####
 
-   ## Power8 and in-core crypto.
+   ## POWER8 and in-core crypto.
    if test x"$POWER8_FLAG" != "x"; then
       AC_SUBST([CRYPTOPP_POWER8_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$POWER8_FLAG])
@@ -2060,20 +2061,20 @@ if test "$IS_PPC" != "0"; then
       AC_SUBST([CRYPTOPP_SHA_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SIMON128_FLAG], [$POWER8_FLAG])
       AC_SUBST([CRYPTOPP_SPECK128_FLAG], [$POWER8_FLAG])
-      AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1], [Enable Power8 CRC])
-      AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1], [Enable Power8 AES])
-      AC_DEFINE([CRYPTOPP_POWER8_PMULL_AVAILABLE], [1], [Enable Power8 PMULL])
-      AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1], [Enable Power8 SHA])
+      AC_DEFINE([CRYPTOPP_POWER8_CRC_AVAILABLE], [1], [Enable POWER8 CRC])
+      AC_DEFINE([CRYPTOPP_POWER8_AES_AVAILABLE], [1], [Enable POWER8 AES])
+      AC_DEFINE([CRYPTOPP_POWER8_PMULL_AVAILABLE], [1], [Enable POWER8 PMULL])
+      AC_DEFINE([CRYPTOPP_POWER8_SHA_AVAILABLE], [1], [Enable POWER8 SHA])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable Power8])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [Disable POWER8])
    fi
 
-   # Power7 and VSX
+   # POWER7 and VSX
    if test x"$POWER7_FLAG" != "x"; then
       AC_SUBST([CRYPTOPP_POWER7_FLAG], [$POWER7_FLAG])
-      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable Power7])
+      AC_DEFINE([CRYPTOPP_POWER7_AVAILABLE], [1], [Enable POWER7])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable Power7])
+      AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [Disable POWER7])
    fi
 
    # Plain old Altivec
@@ -2645,9 +2646,9 @@ fi
 if test x"$CRYPTOPP_POWER8_FLAG" != "x"; then
    echo "CRYPTOPP_POWER8_FLAG: $CRYPTOPP_POWER8_FLAG"
 fi
-if test x"$CRYPTOPP_POWER9_FLAG" != "x"; then
-   echo "CRYPTOPP_POWER9_FLAG: $CRYPTOPP_POWER9_FLAG"
-fi
+#if test x"$CRYPTOPP_POWER9_FLAG" != "x"; then
+#   echo "CRYPTOPP_POWER9_FLAG: $CRYPTOPP_POWER9_FLAG"
+#fi
 if test x"$CRYPTOPP_ARIA_FLAG" != "x"; then
    echo "CRYPTOPP_ARIA_FLAG: $CRYPTOPP_ARIA_FLAG"
 fi
