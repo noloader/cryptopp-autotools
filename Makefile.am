@@ -530,7 +530,7 @@ nobase_dist_pkgdata_DATA = \
     $(testdata_FILES) \
     $(testvector_FILES)
 
-nobase_noinst_pkgdata_DATA = \
+nobase_noinst_DATA = \
     $(testprogs_FILES)
 
 ## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
