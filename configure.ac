@@ -1954,10 +1954,7 @@ if test "$IS_PPC" != "0"; then
 
    # XLC requires -qaltivec in addition to Arch or CPU option
    if test "$IS_XLC_COMPILER" = "1"; then
-      ALTIVEC_FLAG="-qaltivec"
-      POWER4_FLAG="-qarch=pwr4 -qaltivec"
-      POWER5_FLAG="-qarch=pwr5 -qaltivec"
-      POWER6_FLAG="-qarch=pwr6 -qaltivec"
+      ALTIVEC_FLAG="-qarch=auto -qaltivec"
       POWER7_VSX_FLAG="-qarch=pwr7 -qvsx -qaltivec"
       POWER7_PWR_FLAG="-qarch=pwr7 -qaltivec"
       POWER8_FLAG="-qarch=pwr8 -qaltivec"
@@ -1973,7 +1970,7 @@ if test "$IS_PPC" != "0"; then
    ##### Altivec #####
 
    CXXFLAGS="$ALTIVEC_FLAG"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Altivec)])
+   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_LINK_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
       [AC_MSG_RESULT([yes])],
@@ -1984,48 +1981,6 @@ if test "$IS_PPC" != "0"; then
    if test "$retval" != "0"; then
        AC_SUBST([ALTIVEC_FLAG],[""])
    fi
-
-   # Figure out what is needed for Altivec
-   if test "$IS_XLC_COMPILER" = "1"; then
-
-     CXXFLAGS="$POWER4_FLAG"
-     AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Altivec)])
-     XXX_LINK_IFELSE(
-       [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
-       [AC_MSG_RESULT([yes])],
-       [AC_MSG_RESULT([no])]
-     )
-
-     if test "$retval" = "0"; then
-       AC_SUBST([ALTIVEC_FLAG],[$POWER4_FLAG])
-     else
-       CXXFLAGS="$POWER5_FLAG"
-       AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Altivec)])
-       XXX_LINK_IFELSE(
-         [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
-         [AC_MSG_RESULT([yes])],
-         [AC_MSG_RESULT([no])]
-       )
-
-       if test "$retval" = "0"; then
-         AC_SUBST([ALTIVEC_FLAG],[$POWER5_FLAG])
-       else
-         CXXFLAGS="$POWER6_FLAG"
-         AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS (Altivec)])
-         XXX_LINK_IFELSE(
-           [AC_LANG_SOURCE([`cat TestPrograms/test_ppc_altivec.cxx`])],
-           [AC_MSG_RESULT([yes])],
-           [AC_MSG_RESULT([no])]
-         )
-
-         if test "$retval" = "0"; then
-           AC_SUBST([ALTIVEC_FLAG],[$POWER6_FLAG])
-         else
-           AC_SUBST([ALTIVEC_FLAG],[""])
-         fi  # POWER6_FLAG
-       fi  # POWER5_FLAG
-     fi  # POWER4_FLAG
-   fi  # XLC Compiler
 
    ##### Power7 #####
 
