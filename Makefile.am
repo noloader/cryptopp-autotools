@@ -34,6 +34,9 @@
 
 ## TODO:
 ##
+##  - Figure out how to include TestPrograms/ in the dist tarball
+##    TestPrograms/ is unique because it is included in dist tarball but not installed
+##
 ##  - Figure out what's going on with DragonFly and dependencies
 ##
 
@@ -532,6 +535,14 @@ nobase_dist_pkgdata_DATA = \
 
 nobase_noinst_data_DATA = \
     $(testprogs_FILES)
+	
+# Workaround Automake bug. We can't seem to include the TestProgram/ data
+# in the tarball without installation using their Uniform Naming Scheme
+# https://www.gnu.org/software/automake/manual/html_node/Uniform.html and
+# https://www.gnu.org/software/automake/manual/html_node/Program-and-Library-Variables.html
+dist-hook:
+	chmod -R u+w $(distdir)
+	cp TestPrograms/ $(distdir)
 
 ## Automake bug workaround. If libcryptopp_la_SOURCES is an empty list, Automake assumes
 ## C source files and drives link through the C compiler. We provide the empty adhoc.cpp
