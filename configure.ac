@@ -42,6 +42,11 @@
 ##   LT_INIT bug. There is no Uniform Name like bin_LTPROGRAMS to signal PIC/PIE
 ##   should be used. Autoconf is guessing wrong and not using PIC/PIE.
 ##
+## - Fix Autotools 'make dist' failures. If you run 'make dist' on x86_64, then
+##   the release tarball only works on x86_64. It is like it is pre-configured
+##   for only the x86_64 platofrm, and all other platform code paths have been
+##   thrown away. WTF???
+##
 ## - Fix Autoconf ignoring our config.h.in. This one looks like it is a problem
 ##   without a solution. Also see https://stackoverflow.com/q/48436715/608639.
 ##   (Gave up after https://github.com/weidai11/cryptopp/commit/c51f0ecbfd21.
