@@ -44,7 +44,7 @@
 ##
 ## - Fix Autotools 'make dist' failures. If you run 'make dist' on x86_64, then
 ##   the release tarball only works on x86_64. It is like it is pre-configured
-##   for only the x86_64 platofrm, and all other platform code paths have been
+##   for only the x86_64 platform, and other platform code paths have been
 ##   thrown away. WTF???
 ##
 ## - Fix Autoconf ignoring our config.h.in. This one looks like it is a problem
