@@ -366,7 +366,7 @@ pkginclude_HEADERS = \
 	smartptr.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h tea.h \
 	threefish.h tiger.h trap.h trunhash.h ttmac.h tweetnacl.h twofish.h \
 	vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h xtrcrypt.h xts.h \
-	zdeflate.h zinflate.h zlib.h \
+	zdeflate.h zinflate.h zlib.h
 
 noinst_HEADERS = \
     local.h \
