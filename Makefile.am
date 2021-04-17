@@ -342,10 +342,10 @@ libothers_la_SOURCES = \
 
 # To build this list, see the head notes.
 pkginclude_HEADERS = \
-	3way.h adler32.h adv_simd.h aes.h aes_armv4.h algebra.h algparam.h \
-	allocate.h arc4.h argnames.h aria.h arm_simd.h asn.h authenc.h base32.h \
-	base64.h basecode.h blake2.h blowfish.h blumshub.h camellia.h cast.h \
-	cbcmac.h ccm.h chacha.h chachapoly.h cham.h channels.h cmac.h config.h \
+	3way.h adler32.h adv_simd.h aes.h algebra.h algparam.h allocate.h \
+	arc4.h argnames.h aria.h arm_simd.h asn.h authenc.h base32.h base64.h \
+	basecode.h blake2.h blowfish.h blumshub.h camellia.h cast.h cbcmac.h \
+	ccm.h chacha.h chachapoly.h cham.h channels.h cmac.h config.h \
 	config_align.h config_asm.h config_cpu.h config_cxx.h config_dll.h \
 	config_int.h config_misc.h config_ns.h config_os.h config_ver.h cpu.h \
 	crc.h cryptlib.h darn.h default.h des.h dh.h dh2.h dll.h dmac.h donna.h \
@@ -361,12 +361,11 @@ pkginclude_HEADERS = \
 	queue.h rabbit.h rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h \
 	rijndael.h ripemd.h rng.h rsa.h rw.h safer.h salsa.h scrypt.h seal.h \
 	secblock.h secblockfwd.h seckey.h seed.h serpent.h serpentp.h sha.h \
-	sha1_armv4.h sha256_armv4.h sha3.h sha512_armv4.h shacal2.h shake.h \
-	shark.h simeck.h simon.h simple.h siphash.h skipjack.h sm3.h sm4.h \
-	smartptr.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h tea.h \
-	threefish.h tiger.h trap.h trunhash.h ttmac.h tweetnacl.h twofish.h \
-	vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h xtrcrypt.h xts.h \
-	zdeflate.h zinflate.h zlib.h
+	sha3.h shacal2.h shake.h shark.h simeck.h simon.h simple.h siphash.h \
+	skipjack.h sm3.h sm4.h smartptr.h sosemanuk.h speck.h square.h stdcpp.h \
+	strciphr.h tea.h threefish.h tiger.h trap.h trunhash.h ttmac.h \
+	tweetnacl.h twofish.h vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h \
+	xtrcrypt.h xts.h zdeflate.h zinflate.h zlib.h
 
 noinst_HEADERS = \
     local.h \
