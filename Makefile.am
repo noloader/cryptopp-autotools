@@ -354,19 +354,19 @@ pkginclude_HEADERS = \
 	filters.h fips140.h fltrimpl.h gcm.h gf256.h gf2_32.h gf2n.h gfpcrypt.h \
 	gost.h gzip.h hashfwd.h hc128.h hc256.h hex.h hight.h hkdf.h hmac.h \
 	hmqv.h hrtimer.h ida.h idea.h integer.h iterhash.h kalyna.h keccak.h \
-	keywrap.h lea.h lsh.h lubyrack.h luc.h mars.h md2.h md4.h md5.h mdc.h \
-	mersenne.h misc.h modarith.h modes.h modexppc.h mqueue.h mqv.h \
-	naclite.h nbtheory.h nr.h oaep.h oids.h osrng.h ossig.h padlkrng.h \
-	panama.h pch.h pkcspad.h poly1305.h polynomi.h ppc_simd.h pssr.h \
-	pubkey.h pwdbased.h queue.h rabbit.h rabin.h randpool.h rc2.h rc5.h \
-	rc6.h rdrand.h rijndael.h ripemd.h rng.h rsa.h rw.h safer.h salsa.h \
-	scrypt.h seal.h secblock.h secblockfwd.h seckey.h seed.h serpent.h \
-	serpentp.h sha.h sha1_armv4.h sha256_armv4.h sha3.h sha512_armv4.h \
-	shacal2.h shake.h shark.h simeck.h simon.h simple.h siphash.h \
-	skipjack.h sm3.h sm4.h smartptr.h sosemanuk.h speck.h square.h stdcpp.h \
-	strciphr.h tea.h threefish.h tiger.h trap.h trunhash.h ttmac.h \
-	tweetnacl.h twofish.h vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h \
-	xtrcrypt.h xts.h zdeflate.h zinflate.h zlib.h
+	lea.h lsh.h lubyrack.h luc.h mars.h md2.h md4.h md5.h mdc.h mersenne.h \
+	misc.h modarith.h modes.h modexppc.h mqueue.h mqv.h naclite.h \
+	nbtheory.h nr.h oaep.h oids.h osrng.h ossig.h padlkrng.h panama.h pch.h \
+	pkcspad.h poly1305.h polynomi.h ppc_simd.h pssr.h pubkey.h pwdbased.h \
+	queue.h rabbit.h rabin.h randpool.h rc2.h rc5.h rc6.h rdrand.h \
+	rijndael.h ripemd.h rng.h rsa.h rw.h safer.h salsa.h scrypt.h seal.h \
+	secblock.h secblockfwd.h seckey.h seed.h serpent.h serpentp.h sha.h \
+	sha1_armv4.h sha256_armv4.h sha3.h sha512_armv4.h shacal2.h shake.h \
+	shark.h simeck.h simon.h simple.h siphash.h skipjack.h sm3.h sm4.h \
+	smartptr.h sosemanuk.h speck.h square.h stdcpp.h strciphr.h tea.h \
+	threefish.h tiger.h trap.h trunhash.h ttmac.h tweetnacl.h twofish.h \
+	vmac.h wake.h whrlpool.h words.h xed25519.h xtr.h xtrcrypt.h xts.h \
+	zdeflate.h zinflate.h zlib.h \
 
 noinst_HEADERS = \
     local.h \
