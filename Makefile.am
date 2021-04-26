@@ -75,6 +75,10 @@ EXTRA_LTLIBRARIES = \
    libgf2n_simd.la \
    libkeccak_simd.la \
    liblea_simd.la \
+   liblsh256_sse.la \
+   liblsh256_avx.la \
+   liblsh512_sse.la \
+   liblsh512_avx.la \
    libneon_simd.la \
    libppc_simd.la \
    libppc_power7.la \
@@ -126,6 +130,10 @@ libcryptopp_la_LIBADD = \
    $(libgf2n_simd_la_OBJECTS) \
    $(libkeccak_simd_la_OBJECTS) \
    $(liblea_simd_la_OBJECTS) \
+   $(liblsh256_sse_la_OBJECTS) \
+   $(liblsh256_avx_la_OBJECTS) \
+   $(liblsh512_sse_la_OBJECTS) \
+   $(liblsh512_avx_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
    $(libppc_power7_la_OBJECTS) \
@@ -169,10 +177,14 @@ libcryptopp_la_DEPENDENCIES = \
    $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
    $(libdonna_sse_la_OBJECTS) \
-   $(libkeccak_simd_la_OBJECTS) \
-   $(liblea_simd_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
    $(libgf2n_simd_la_OBJECTS) \
+   $(libkeccak_simd_la_OBJECTS) \
+   $(liblea_simd_la_OBJECTS) \
+   $(liblsh256_sse_la_OBJECTS) \
+   $(liblsh256_avx_la_OBJECTS) \
+   $(liblsh512_sse_la_OBJECTS) \
+   $(liblsh512_avx_la_OBJECTS) \
    $(libneon_simd_la_OBJECTS) \
    $(libppc_simd_la_OBJECTS) \
    $(libppc_power7_la_OBJECTS) \
@@ -251,6 +263,18 @@ libkeccak_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_KECCAK_FLAG)
 
 liblea_simd_la_SOURCES = lea_simd.cpp
 liblea_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LEA_FLAG)
+
+liblsh256_sse_la_SOURCES = lsh256_sse.cpp
+liblsh256_sse_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LSH256_FLAG)
+
+liblsh256_avx_la_SOURCES = lsh256_avx.cpp
+liblsh256_avx_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LSH256_AVX2_FLAG)
+
+liblsh512_sse_la_SOURCES = lsh512_sse.cpp
+liblsh512_sse_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LSH512_FLAG)
+
+liblsh512_avx_la_SOURCES = lsh512_avx.cpp
+liblsh512_avx_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LSH512_AVX2_FLAG)
 
 libneon_simd_la_SOURCES = neon_simd.cpp
 libneon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_NEON_FLAG)
