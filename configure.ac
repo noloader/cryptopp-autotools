@@ -1607,8 +1607,8 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 
    if test "$retval" = "0"; then
       AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
-      AC_SUBST([CRYPTOPGAMS_ARMV4_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPGAMS_ARMV4_THUMB_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPGAMS_ARM_FLAG], [$CXXFLAGS])
+      AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
    fi
 
    # For Clang, aes_armv4.S needs -mthumb
@@ -1623,7 +1623,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
       )
 
       if test "$retval" = "0"; then
-         AC_SUBST([CRYPTOPGAMS_ARMV4_THUMB_FLAG], [$CXXFLAGS])
+         AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
       fi
    fi
 
@@ -2723,8 +2723,8 @@ fi
 if test x"$CRYPTOPP_SM4_FLAG" != "x"; then
    echo "CRYPTOPP_SM4_FLAG: $CRYPTOPP_SM4_FLAG"
 fi
-if test x"$CRYPTOPGAMS_ARMV4_FLAG" != "x"; then
-   echo "CRYPTOPGAMS_ARMV4_FLAG: $CRYPTOPGAMS_ARMV4_FLAG"
+if test x"$CRYPTOPGAMS_ARM_FLAG" != "x"; then
+   echo "CRYPTOPGAMS_ARM_FLAG: $CRYPTOPGAMS_ARM_FLAG"
 fi
 
 echo ""
