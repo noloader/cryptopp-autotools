@@ -1679,8 +1679,10 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
-else
-   # Required for other platforms
+fi
+
+# Default case
+if test "x$CRYPTOGAMS_ARM_SOURCES" = "x"; then
    AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [false])
 fi
 
