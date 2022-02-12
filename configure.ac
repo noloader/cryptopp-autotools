@@ -2812,12 +2812,14 @@ fi
 echo ""
 echo "Automake flags (can be overridden by user flags):"
 echo "AM_CXXFLAGS: $AM_CXXFLAGS"
-echo "AM_LDFLAGS: $AM_LDFLAGS"
+echo " AM_ASFLAGS: $AM_ASFLAGS"
+echo " AM_LDFLAGS: $AM_LDFLAGS"
 
 echo ""
 echo "User flags (overrides Automake flags on conflict):"
 echo "CXXFLAGS: $CXXFLAGS"
-echo "LDFLAGS: $LDFLAGS"
+echo " ASFLAGS: $ASFLAGS"
+echo " LDFLAGS: $LDFLAGS"
 
 OPT_NDEBUG=`echo $CPPFLAGS $CXXFLAGS | $EGREP -c '\-DNDEBUG'`
 if test "$OPT_NDEBUG" = "0"; then
