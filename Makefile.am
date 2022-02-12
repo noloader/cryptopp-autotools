@@ -496,70 +496,70 @@ testvector_FILES = \
 # Create with 'ls TestPrograms/test_*.cpp'. These files do not get installed.
 # They exist so the feature tests can be run from the configure directory.
 testprogs_FILES= \
-	TestPrograms/test_32bit.cpp
-	TestPrograms/test_64bit.cpp
-	TestPrograms/test_arm_acle_header.cpp
-	TestPrograms/test_arm_aes.cpp
-	TestPrograms/test_arm_asimd.cpp
-	TestPrograms/test_arm_crc.cpp
-	TestPrograms/test_arm_neon.cpp
-	TestPrograms/test_arm_neon_header.cpp
-	TestPrograms/test_arm_pmull.cpp
-	TestPrograms/test_arm_sha1.cpp
-	TestPrograms/test_arm_sha256.cpp
-	TestPrograms/test_arm_sha3.cpp
-	TestPrograms/test_arm_sha512.cpp
-	TestPrograms/test_arm_sm3.cpp
-	TestPrograms/test_arm_sm4.cpp
-	TestPrograms/test_asm_mixed.cpp
-	TestPrograms/test_cxx11_alignas.cpp
-	TestPrograms/test_cxx11_alignof.cpp
-	TestPrograms/test_cxx11_assert.cpp
-	TestPrograms/test_cxx11_atomic.cpp
-	TestPrograms/test_cxx11_auto.cpp
-	TestPrograms/test_cxx11_constexpr.cpp
-	TestPrograms/test_cxx11.cpp
-	TestPrograms/test_cxx11_deletefn.cpp
-	TestPrograms/test_cxx11_enumtype.cpp
-	TestPrograms/test_cxx11_initializer.cpp
-	TestPrograms/test_cxx11_lambda.cpp
-	TestPrograms/test_cxx11_noexcept.cpp
-	TestPrograms/test_cxx11_nullptr.cpp
-	TestPrograms/test_cxx11_staticinit.cpp
-	TestPrograms/test_cxx11_sync.cpp
-	TestPrograms/test_cxx11_vartemplates.cpp
-	TestPrograms/test_cxx14.cpp
-	TestPrograms/test_cxx17_assert.cpp
-	TestPrograms/test_cxx17.cpp
-	TestPrograms/test_cxx17_exceptions.cpp
-	TestPrograms/test_cxx98_exception.cpp
-	TestPrograms/test_cxx.cpp
-	TestPrograms/test_glibc.cpp
-	TestPrograms/test_newlib.cpp
-	TestPrograms/test_ppc_aes.cpp
-	TestPrograms/test_ppc_altivec.cpp
-	TestPrograms/test_ppc_power7.cpp
-	TestPrograms/test_ppc_power8.cpp
-	TestPrograms/test_ppc_power9.cpp
-	TestPrograms/test_ppc_sha.cpp
-	TestPrograms/test_ppc_vmull.cpp
-	TestPrograms/test_pthreads.cpp
-	TestPrograms/test_x86_aes.cpp
-	TestPrograms/test_x86_avx2.cpp
-	TestPrograms/test_x86_avx512.cpp
-	TestPrograms/test_x86_avx.cpp
-	TestPrograms/test_x86_clmul.cpp
-	TestPrograms/test_x86_cpuid.cpp
-	TestPrograms/test_x86_rdrand.cpp
-	TestPrograms/test_x86_rdseed.cpp
-	TestPrograms/test_x86_sha.cpp
-	TestPrograms/test_x86_sse2.cpp
-	TestPrograms/test_x86_sse3.cpp
-	TestPrograms/test_x86_sse41.cpp
-	TestPrograms/test_x86_sse42.cpp
-	TestPrograms/test_x86_ssse3.cpp
-	TestPrograms/test_x86_via_aes.cpp
-	TestPrograms/test_x86_via_rng.cpp
+	TestPrograms/test_32bit.cpp \
+	TestPrograms/test_64bit.cpp \
+	TestPrograms/test_arm_acle_header.cpp \
+	TestPrograms/test_arm_aes.cpp \
+	TestPrograms/test_arm_asimd.cpp \
+	TestPrograms/test_arm_crc.cpp \
+	TestPrograms/test_arm_neon.cpp \
+	TestPrograms/test_arm_neon_header.cpp \
+	TestPrograms/test_arm_pmull.cpp \
+	TestPrograms/test_arm_sha1.cpp \
+	TestPrograms/test_arm_sha256.cpp \
+	TestPrograms/test_arm_sha3.cpp \
+	TestPrograms/test_arm_sha512.cpp \
+	TestPrograms/test_arm_sm3.cpp \
+	TestPrograms/test_arm_sm4.cpp \
+	TestPrograms/test_asm_mixed.cpp \
+	TestPrograms/test_cxx11_alignas.cpp \
+	TestPrograms/test_cxx11_alignof.cpp \
+	TestPrograms/test_cxx11_assert.cpp \
+	TestPrograms/test_cxx11_atomic.cpp \
+	TestPrograms/test_cxx11_auto.cpp \
+	TestPrograms/test_cxx11_constexpr.cpp \
+	TestPrograms/test_cxx11.cpp \
+	TestPrograms/test_cxx11_deletefn.cpp \
+	TestPrograms/test_cxx11_enumtype.cpp \
+	TestPrograms/test_cxx11_initializer.cpp \
+	TestPrograms/test_cxx11_lambda.cpp \
+	TestPrograms/test_cxx11_noexcept.cpp \
+	TestPrograms/test_cxx11_nullptr.cpp \
+	TestPrograms/test_cxx11_staticinit.cpp \
+	TestPrograms/test_cxx11_sync.cpp \
+	TestPrograms/test_cxx11_vartemplates.cpp \
+	TestPrograms/test_cxx14.cpp \
+	TestPrograms/test_cxx17_assert.cpp \
+	TestPrograms/test_cxx17.cpp \
+	TestPrograms/test_cxx17_exceptions.cpp \
+	TestPrograms/test_cxx98_exception.cpp \
+	TestPrograms/test_cxx.cpp \
+	TestPrograms/test_glibc.cpp \
+	TestPrograms/test_newlib.cpp \
+	TestPrograms/test_ppc_aes.cpp \
+	TestPrograms/test_ppc_altivec.cpp \
+	TestPrograms/test_ppc_power7.cpp \
+	TestPrograms/test_ppc_power8.cpp \
+	TestPrograms/test_ppc_power9.cpp \
+	TestPrograms/test_ppc_sha.cpp \
+	TestPrograms/test_ppc_vmull.cpp \
+	TestPrograms/test_pthreads.cpp \
+	TestPrograms/test_x86_aes.cpp \
+	TestPrograms/test_x86_avx2.cpp \
+	TestPrograms/test_x86_avx512.cpp \
+	TestPrograms/test_x86_avx.cpp \
+	TestPrograms/test_x86_clmul.cpp \
+	TestPrograms/test_x86_cpuid.cpp \
+	TestPrograms/test_x86_rdrand.cpp \
+	TestPrograms/test_x86_rdseed.cpp \
+	TestPrograms/test_x86_sha.cpp \
+	TestPrograms/test_x86_sse2.cpp \
+	TestPrograms/test_x86_sse3.cpp \
+	TestPrograms/test_x86_sse41.cpp \
+	TestPrograms/test_x86_sse42.cpp \
+	TestPrograms/test_x86_ssse3.cpp \
+	TestPrograms/test_x86_via_aes.cpp \
+	TestPrograms/test_x86_via_rng.cpp \
 	TestPrograms/test_x86_via_sha.cpp
 
 nobase_dist_pkgdata_DATA = \
