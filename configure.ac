@@ -1649,7 +1649,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
      CXXFLAGS="-march=armv7-a"
      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
      XXX_COMPILE_IFELSE(
-        [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cpp`])],
+        [AC_LANG_SOURCE([`cat TestPrograms/test_arm_armv7.cpp`])],
         [AC_MSG_RESULT([yes])],
         [AC_MSG_RESULT([no])]
      )
@@ -1666,7 +1666,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
         CXXFLAGS="-march=armv7-a -mthumb"
         AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
         XXX_COMPILE_IFELSE(
-           [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cpp`])],
+           [AC_LANG_SOURCE([`cat TestPrograms/test_arm_armv7.cpp`])],
            [AC_MSG_RESULT([yes])],
            [AC_MSG_RESULT([no])]
         )
