@@ -1558,8 +1558,8 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
       AC_SUBST([CRYPTOPP_SPECK128_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1], [Enable NEON])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disbale NEON])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_NEON], [1], [Disbale NEON])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_NEON"
    fi
 
    ## Restore CXXFLAGS
@@ -1599,8 +1599,8 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
       AC_SUBST([CRYPTOPP_SPECK128_FLAG], [$CXXFLAGS])
       AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1], [Enable NEON])
    else
-      AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disbale NEON])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+      AC_DEFINE([CRYPTOPP_DISABLE_ARM_NEON], [1], [Disbale NEON])
+      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_NEON"
    fi
 
    ## Restore CXXFLAGS
@@ -1611,41 +1611,65 @@ fi
 #############################################################################
 ## ARM A-32 and aes_armv4.S
 
-# Used by Makefile.am to compile aes_armv4.S and sha1_armv4.S.
+# Used by Makefile.am to compile aes_armv4.S, sha1_armv4.S,
+# sha256_armv4.S and sha512_armv4.S.
 # Only valid on Linux because ASM is written for GNU AS (GAS).
 if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
+   found_flag=false
 
-   CXXFLAGS="-march=armv7-a -Wa,--noexecstack"
-   AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-   XXX_COMPILE_IFELSE(
-      [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cpp`])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
+   if test found_flag = false; then
 
-   if test "$retval" = "0"; then
-      AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
-      AC_SUBST([CRYPTOPGAMS_ARM_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+     # First try no flags. This is for https://github.com/weidai11/cryptopp/issues/1094
+     CXXFLAGS=""
+     AC_MSG_CHECKING([if $CXXNAME supports armv7-a>])
+     XXX_COMPILE_IFELSE(
+        [AC_LANG_SOURCE([`cat TestPrograms/test_arm_armv7.cpp`])],
+        [AC_MSG_RESULT([yes])],
+        [AC_MSG_RESULT([no])]
+     )
+
+     if test "$retval" = "0"; then
+        AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
+        AC_SUBST([CRYPTOPGAMS_ARM_FLAG], [$CXXFLAGS])
+        AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+        found_flag=true
+     fi
    fi
 
-   # For Clang, aes_armv4.S needs -mthumb
-   if test "$IS_LLVM_COMPILER" != "0"; then
+   if test found_flag = false; then
 
-      CXXFLAGS="-march=armv7-a -mthumb -Wa,--noexecstack"
-      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
-      XXX_COMPILE_IFELSE(
-         [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cpp`])],
-         [AC_MSG_RESULT([yes])],
-         [AC_MSG_RESULT([no])]
-      )
+     CXXFLAGS="-march=armv7-a"
+     AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+     XXX_COMPILE_IFELSE(
+        [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cpp`])],
+        [AC_MSG_RESULT([yes])],
+        [AC_MSG_RESULT([no])]
+     )
 
-      if test "$retval" = "0"; then
-         AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
-      fi
+     if test "$retval" = "0"; then
+        AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
+        AC_SUBST([CRYPTOPGAMS_ARM_FLAG], [$CXXFLAGS])
+        AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+     fi
+
+     # For Clang, aes_armv4.S needs -mthumb
+     if test "$IS_LLVM_COMPILER" != "0"; then
+
+        CXXFLAGS="-march=armv7-a -mthumb"
+        AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+        XXX_COMPILE_IFELSE(
+           [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cpp`])],
+           [AC_MSG_RESULT([yes])],
+           [AC_MSG_RESULT([no])]
+        )
+
+        if test "$retval" = "0"; then
+           AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+        fi
+     fi
    fi
 
    ## Restore CXXFLAGS
@@ -2341,6 +2365,31 @@ if test "$MEM_SIZE" -ge "2"; then
 
    ## Restore CXXFLAGS
    CXXFLAGS="$SAVED_CXXFLAGS"
+fi
+
+#############################################################################
+## NX-stacks for the assembler
+
+if true; then
+
+   ## Save ASFLAGS
+   SAVED_ASFLAGS="$ASFLAGS"
+
+   ASFLAGS="-Wa,--noexecstack"
+   AC_MSG_CHECKING([$AS supports $ASFLAGS])
+   XXX_COMPILE_IFELSE(
+      [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cpp`])],
+      [AC_MSG_RESULT([yes])],
+      [AC_MSG_RESULT([no])]
+   )
+
+   if test "$retval" = "0"; then
+      AM_ASFLAGS="$AM_ASFLAGS $ASFLAGS"
+   fi
+
+   ## Restore ASFLAGS
+   ASFLAGS="$SAVED_ASFLAGS"
+
 fi
 
 #############################################################################

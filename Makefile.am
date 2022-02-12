@@ -500,6 +500,7 @@ testprogs_FILES= \
 	TestPrograms/test_64bit.cpp \
 	TestPrograms/test_arm_acle_header.cpp \
 	TestPrograms/test_arm_aes.cpp \
+	TestPrograms/test_arm_armv7.cpp \
 	TestPrograms/test_arm_asimd.cpp \
 	TestPrograms/test_arm_crc.cpp \
 	TestPrograms/test_arm_neon.cpp \
