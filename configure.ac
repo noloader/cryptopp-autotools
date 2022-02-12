@@ -274,7 +274,7 @@ else
    IS_GNUC_COMPILER=0
 fi
 
-if [ -z $AS ]; then
+if test "x$AS" = "x"; then
    AS=`command -v gas`
 fi
 
@@ -2352,7 +2352,7 @@ if test "$IS_AIX_OS" != "0"; then
 fi
 
 # Sane default
-if [ -z $MEM_SIZE ]; then
+if test "x$MEM_SIZE" = "x"; then
    MEM_SIZE=0
 fi
 
