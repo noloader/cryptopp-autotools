@@ -274,7 +274,12 @@ else
    IS_GNUC_COMPILER=0
 fi
 
+if [ -z $AS ]; then
+   AS=`command -v gas`
+fi
+
 ## Friendly names for reporting
+ASNAME=`basename "$AS"`
 CXXNAME=`basename "$CXX"`
 LDNAME=`basename "$LD"`
 
@@ -2346,6 +2351,11 @@ if test "$IS_AIX_OS" != "0"; then
    MEM_SIZE=`prtconf -m 2>/dev/null | $GREP "MB" | $AWK '{print int($3/1024); exit;}'`
 fi
 
+# Sane default
+if [ -z $MEM_SIZE ]; then
+   MEM_SIZE=0
+fi
+
 if test "$MEM_SIZE" -ge "2"; then
 
    ## Save CXXFLAGS
@@ -2376,7 +2386,7 @@ if true; then
    SAVED_ASFLAGS="$ASFLAGS"
 
    ASFLAGS="-Wa,--noexecstack"
-   AC_MSG_CHECKING([$AS supports $ASFLAGS])
+   AC_MSG_CHECKING([if $ASNAME supports $ASFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_cxx.cpp`])],
       [AC_MSG_RESULT([yes])],
