@@ -50,12 +50,32 @@ fi
 # For some reason build-aux is now missing. Autotools really sucks.
 mkdir -p m4 build-aux
 
-echo "Bootstrapping Autotools"
-if ! aclocal && autoupdate && \
-    automake --gnu --add-missing && \
-	autoreconf --force --install; then
-    echo "Bootstrap failed"
-    exit 1
+echo "Running aclocal"
+if ! aclocal &>/dev/null; then
+	echo "aclocal failed."
+	exit 1
+fi
+
+echo "Running autoupdate"
+if ! autoupdate &>/dev/null; then
+	echo "autoupdate failed."
+	exit 1
+fi
+
+# Run autoreconf twice on failure. Also see
+# https://github.com/tracebox/tracebox/issues/57
+echo "Running autoreconf"
+if ! autoreconf --force --install &>/dev/null; then
+	echo "autoreconf failed, running again."
+	if ! autoreconf --force --install; then
+		echo "autoreconf failed, again."
+		exit 1
+	fi
+fi
+
+if ! ./autoconf; then
+	echo "configure failed."
+	exit 1
 fi
 
 #############################################################################
