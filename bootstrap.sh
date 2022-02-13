@@ -74,7 +74,7 @@ if ! autoreconf --force --install &>/dev/null; then
 	fi
 fi
 
-if ! ./autoconf; then
+if ! autoconf; then
 	echo "configure failed."
 	exit 1
 fi
