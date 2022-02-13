@@ -120,6 +120,10 @@
 ##   6. Misc feature and options
 ##
 
+# Print this early
+echo "Host is $host"
+echo "Build is $build"
+
 #############################################################################
 ##   PART 1   PART 1   PART 1   PART 1   PART 1   PART 1   PART 1   PART 1
 ## ==========================================================================
@@ -197,10 +201,6 @@ AC_DEFUN([XXX_LINK_IFELSE],
 ## test selection process. It also avoids failed configurations by
 ## avoiding some tests that fail but Autotools reports as success.
 
-echo "Host is $host"
-echo "Build is $build"
-
-
 IS_AIX_OS=`echo $host | $GREP -i -c 'aix'`
 IS_SUN_OS=`uname -s | $GREP -i -c 'SunOS'`
 IS_LINUX_OS=`echo "$host" | $GREP -i -c 'linux'`
@@ -210,8 +210,8 @@ IS_CYGWIN_OS=`echo $host | $GREP -i -c 'cygwin'`
 IS_MINGW_OS=`echo $host | $GREP -i -c 'mingw'`
 
 IS_IA32=`echo $host | $EGREP -i -c 'i.86|x86_64|amd64'`
-IS_ARM32=`echo $host | $EGREP -i -c 'arm|armhf|arm7l|eabihf'`
-IS_ARMV8=`echo $host | $EGREP -i -c 'aarch32|aarch64'`
+IS_ARM32=`echo $host | $EGREP -i -c 'arm|armhf|arm7l|armeabi|armel'`
+IS_ARMV8=`echo $host | $EGREP -i -c 'aarch32|aarch64|armv8'`
 IS_PPC=`echo $host | $EGREP -i -c 'ppc|powerpc|powermac'`
 IS_SPARC=`echo $host | $EGREP -i -c 'sparc|sparcv8|sparcv9|sparc64'`
 
