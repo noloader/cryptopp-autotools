@@ -11,6 +11,10 @@ if ! command -v automake &>/dev/null; then
     echo "automake not found. Bootstrap will probably fail"
 fi
 
+if ! command -v autoreconf &>/dev/null; then
+    echo "autoreconf not found. Bootstrap will probably fail"
+fi
+
 if ! command -v autoconf &>/dev/null; then
     echo "autoconf not found. Bootstrap will probably fail"
 fi
