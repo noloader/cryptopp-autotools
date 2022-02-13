@@ -7,11 +7,11 @@ if ! command -v aclocal 2>/dev/null; then
 fi
 
 if ! command -v automake 2>/dev/null; then
-    echo "aclocal not found. Bootstrap will probably fail"
+    echo "automake not found. Bootstrap will probably fail"
 fi
 
 if ! command -v autoconf 2>/dev/null; then
-    echo "aclocal not found. Bootstrap will probably fail"
+    echo "autoconf not found. Bootstrap will probably fail"
 fi
 
 if ! command -v curl 2>/dev/null; then
