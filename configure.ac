@@ -117,7 +117,9 @@
 ##
 ##   5. C++ feature tests, like C++11, alignof and alignas
 ##
-##   6. Misc feature and options
+##   6. miscellaneous feature and options
+##
+##   7. final setup and output
 ##
 
 # Print this early. Build is the machine where the compiler
@@ -2693,6 +2695,12 @@ if test "x$ANDROID_CPUFEATURES_SOURCES_SET" = "x"; then
 fi
 
 #############################################################################
+##   PART 7   PART 7   PART 7   PART 7   PART 7   PART 7   PART 7   PART 7
+## ==========================================================================
+## final setup and output
+#############################################################################
+
+#############################################################################
 ## Standard Makefile variables
 
 if test "$IS_X86" -ne 0; then
@@ -2723,7 +2731,7 @@ fi
 # were set earlier in configure.ac
 
 #############################################################################
-## Miscellaneous items
+## final substitutions
 
 ## Fix CCAS and CCASFLAGS
 ## Also see https://stackoverflow.com/q/51575580/608639
