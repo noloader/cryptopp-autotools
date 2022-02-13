@@ -1634,7 +1634,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   if test "x$CRYPTOGAMS_ARM_FLAG" = "x"; then
+   if test "x$CRYPTOGAMS_ARM_SOURCES_SET" = "x"; then
 
      # First try no flags. This is for https://github.com/weidai11/cryptopp/issues/1094
      CXXFLAGS=""
@@ -1646,14 +1646,16 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
      )
 
      if test "$retval" = "0"; then
-        AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
         AC_SUBST([CRYPTOGAMS_ARM_FLAG], [$CXXFLAGS])
         AC_SUBST([CRYPTOGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
-        found_flag=true
+
+        # We can't test for CRYPTOGAMS_ARM_SOURCES
+        AC_SUBST([CRYPTOGAMS_ARM_SOURCES_SET], [yes])
+        AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
      fi
    fi
 
-   if test "x$CRYPTOGAMS_ARM_FLAG" = "x"; then
+   if test "x$CRYPTOGAMS_ARM_SOURCES_SET" = "x"; then
 
      CXXFLAGS="-march=armv7-a"
      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -1664,9 +1666,12 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
      )
 
      if test "$retval" = "0"; then
-        AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
         AC_SUBST([CRYPTOGAMS_ARM_FLAG], [$CXXFLAGS])
         AC_SUBST([CRYPTOGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+
+        # We can't test for CRYPTOGAMS_ARM_SOURCES
+        AC_SUBST([CRYPTOGAMS_ARM_SOURCES_SET], [yes])
+        AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
      fi
 
      # For Clang, aes_armv4.S needs -mthumb
@@ -1683,6 +1688,10 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
         if test "$retval" = "0"; then
            AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
            AC_SUBST([CRYPTOGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+
+           # We can't test for CRYPTOGAMS_ARM_SOURCES
+           AC_SUBST([CRYPTOGAMS_ARM_SOURCES_SET], [yes])
+           AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
         fi
      fi
    fi
@@ -1691,8 +1700,8 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
    CXXFLAGS="$SAVED_CXXFLAGS"
 fi
 
-# Default case
-if test "x$CRYPTOGAMS_ARM_FLAG" = "x"; then
+# Default value
+if test "x$CRYPTOGAMS_ARM_SOURCES_SET" = "x"; then
    AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [false])
 fi
 
@@ -2672,12 +2681,14 @@ if test "$IS_ANDROID_OS" != "0"; then
    # And set the flag so Makefile adds the recipes
    THIS_FILE="./cpu-features.c"
    if test -f "$THIS_FILE"; then
+      # We can't test for CRYPTOGAMS_ARM_SOURCES
+      AC_SUBST([ANDROID_CPUFEATURES_SOURCES_SET], [yes])
       AM_CONDITIONAL([ANDROID_CPUFEATURES_SOURCES], [true])
    fi
 fi
 
 # Default value
-if test "x$ANDROID_CPUFEATURES_SOURCES" = "x"; then
+if test "x$ANDROID_CPUFEATURES_SOURCES_SET" = "x"; then
    AM_CONDITIONAL([ANDROID_CPUFEATURES_SOURCES], [false])
 fi
 
@@ -2728,19 +2739,6 @@ echo ""
 echo "Static library: $enable_static"
 echo "Shared library: $enable_shared"
 echo ""
-
-if test "$IS_ARM32" != "0" || test "$IS_ARMV8" != "0"; then
-  if test x"$CRYPTOPP_ARM_NEON_HEADER" != "x"; then
-    echo "CRYPTOPP_ARM_NEON_HEADER: $CRYPTOPP_ARM_NEON_HEADER"
-  fi
-  if test x"$CRYPTOPP_ARM_ACLE_HEADER" != "x"; then
-    echo "CRYPTOPP_ARM_ACLE_HEADER: $CRYPTOPP_ARM_ACLE_HEADER"
-  fi
-  if test x"$CRYPTOGAMS_ARM_SOURCES" != "x"; then
-    echo "CRYPTOGAMS_ARM_SOURCES: $CRYPTOGAMS_ARM_SOURCES"
-  fi
-  echo ""
-fi
 
 if test x"$CRYPTOPP_SSE2_FLAG" != "x"; then
    echo "CRYPTOPP_SSE2_FLAG: $CRYPTOPP_SSE2_FLAG"
