@@ -67,23 +67,12 @@ EXTRA_LTLIBRARIES = \
    libblake2s_simd.la \
    libblake2b_simd.la \
    libchacha_simd.la \
-   libchacha_avx.la \
    libcham_simd.la \
    libcrc_simd.la \
-   libdonna_sse.la \
    libgcm_simd.la \
    libgf2n_simd.la \
    libkeccak_simd.la \
    liblea_simd.la \
-   liblsh256_sse.la \
-   liblsh256_avx.la \
-   liblsh512_sse.la \
-   liblsh512_avx.la \
-   libneon_simd.la \
-   libppc_simd.la \
-   libppc_power7.la \
-   libppc_power8.la \
-   libppc_power9.la \
    librijndael_simd.la \
    libsha_simd.la \
    libshacal2_simd.la \
@@ -91,6 +80,30 @@ EXTRA_LTLIBRARIES = \
    libspeck128_simd.la \
    libsm4_simd.la \
    libsse_simd.la
+
+if CRYPTOPP_X86_SOURCES
+   EXTRA_LTLIBRARIES += libchacha_avx.la
+   EXTRA_LTLIBRARIES += libdonna_sse.la
+   EXTRA_LTLIBRARIES += liblsh256_sse.la
+   EXTRA_LTLIBRARIES += liblsh256_avx.la
+   EXTRA_LTLIBRARIES += liblsh512_sse.la
+   EXTRA_LTLIBRARIES += liblsh512_avx.la
+endif
+
+if CRYPTOPP_ARM32_SOURCES
+   EXTRA_LTLIBRARIES += libneon_simd.la
+endif
+
+if CRYPTOPP_ARMV8_SOURCES
+   EXTRA_LTLIBRARIES += libneon_simd.la
+endif
+
+if CRYPTOPP_PPC_SOURCES
+   EXTRA_LTLIBRARIES += libppc_simd.la
+   EXTRA_LTLIBRARIES += libppc_power7.la
+   EXTRA_LTLIBRARIES += libppc_power8.la
+   EXTRA_LTLIBRARIES += libppc_power9.la
+endif
 
 ## ARMv7-a AES and SHA by Andy Polyakov
 if CRYPTOGAMS_ARM_SOURCES
@@ -122,23 +135,12 @@ libcryptopp_la_LIBADD = \
    $(libblake2s_simd_la_OBJECTS) \
    $(libblake2b_simd_la_OBJECTS) \
    $(libchacha_simd_la_OBJECTS) \
-   $(libchacha_avx_la_OBJECTS) \
    $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
-   $(libdonna_sse_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
    $(libgf2n_simd_la_OBJECTS) \
    $(libkeccak_simd_la_OBJECTS) \
    $(liblea_simd_la_OBJECTS) \
-   $(liblsh256_sse_la_OBJECTS) \
-   $(liblsh256_avx_la_OBJECTS) \
-   $(liblsh512_sse_la_OBJECTS) \
-   $(liblsh512_avx_la_OBJECTS) \
-   $(libneon_simd_la_OBJECTS) \
-   $(libppc_simd_la_OBJECTS) \
-   $(libppc_power7_la_OBJECTS) \
-   $(libppc_power8_la_OBJECTS) \
-   $(libppc_power9_la_OBJECTS) \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
@@ -146,6 +148,30 @@ libcryptopp_la_LIBADD = \
    $(libspeck128_simd_la_OBJECTS) \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
+
+if CRYPTOPP_X86_SOURCES
+   libcryptopp_la_LIBADD += $(libchacha_avx_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libdonna_sse_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(liblsh256_sse_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(liblsh256_avx_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(liblsh512_sse_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(liblsh512_avx_la_OBJECTS)
+endif
+
+if CRYPTOPP_ARM32_SOURCES
+   libcryptopp_la_LIBADD += $(libneon_simd_la_OBJECTS)
+endif
+
+if CRYPTOPP_ARMV8_SOURCES
+   libcryptopp_la_LIBADD += $(libneon_simd_la_OBJECTS)
+endif
+
+if CRYPTOPP_PPC_SOURCES
+   libcryptopp_la_LIBADD += $(libppc_simd_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libppc_power7_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libppc_power8_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libppc_power9_la_OBJECTS)
+endif
 
 ## ARMv7-a AES and SHA by Andy Polyakov
 if CRYPTOGAMS_ARM_SOURCES
@@ -173,23 +199,12 @@ libcryptopp_la_DEPENDENCIES = \
    $(libblake2s_simd_la_OBJECTS) \
    $(libblake2b_simd_la_OBJECTS) \
    $(libchacha_simd_la_OBJECTS) \
-   $(libchacha_avx_la_OBJECTS) \
    $(libcham_simd_la_OBJECTS) \
    $(libcrc_simd_la_OBJECTS) \
-   $(libdonna_sse_la_OBJECTS) \
    $(libgcm_simd_la_OBJECTS) \
    $(libgf2n_simd_la_OBJECTS) \
    $(libkeccak_simd_la_OBJECTS) \
    $(liblea_simd_la_OBJECTS) \
-   $(liblsh256_sse_la_OBJECTS) \
-   $(liblsh256_avx_la_OBJECTS) \
-   $(liblsh512_sse_la_OBJECTS) \
-   $(liblsh512_avx_la_OBJECTS) \
-   $(libneon_simd_la_OBJECTS) \
-   $(libppc_simd_la_OBJECTS) \
-   $(libppc_power7_la_OBJECTS) \
-   $(libppc_power8_la_OBJECTS) \
-   $(libppc_power9_la_OBJECTS) \
    $(librijndael_simd_la_OBJECTS) \
    $(libsha_simd_la_OBJECTS) \
    $(libshacal2_simd_la_OBJECTS) \
@@ -197,6 +212,30 @@ libcryptopp_la_DEPENDENCIES = \
    $(libspeck128_simd_la_OBJECTS) \
    $(libsm4_simd_la_OBJECTS) \
    $(libsse_simd_la_OBJECTS)
+
+if CRYPTOPP_X86_SOURCES
+   libcryptopp_la_DEPENDENCIES += $(libchacha_avx_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libdonna_sse_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(liblsh256_sse_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(liblsh512_sse_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(liblsh256_avx_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(liblsh512_avx_la_OBJECTS)
+endif
+
+if CRYPTOPP_ARM32_SOURCES
+   libcryptopp_la_DEPENDENCIES += $(libneon_simd_la_OBJECTS)
+endif
+
+if CRYPTOPP_ARMV8_SOURCES
+   libcryptopp_la_DEPENDENCIES += $(libneon_simd_la_OBJECTS)
+endif
+
+if CRYPTOPP_PPC_SOURCES
+   libcryptopp_la_DEPENDENCIES += $(libppc_simd_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libppc_power7_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libppc_power8_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libppc_power9_la_OBJECTS)
+endif
 
 ## ARMv7-a AES and SHA by Andy Polyakov
 if CRYPTOGAMS_ARM_SOURCES

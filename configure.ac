@@ -2693,6 +2693,36 @@ if test "x$ANDROID_CPUFEATURES_SOURCES_SET" = "x"; then
 fi
 
 #############################################################################
+## Standard Makefile variables
+
+if test "$IS_X86" -ne 0; then
+   AM_CONDITIONAL([CRYPTOPP_X86_SOURCES], [true])
+else
+   AM_CONDITIONAL([CRYPTOPP_X86_SOURCES], [false])
+fi
+
+if test "$IS_ARM32" -ne 0; then
+   AM_CONDITIONAL([CRYPTOPP_ARM32_SOURCES], [true])
+else
+   AM_CONDITIONAL([CRYPTOPP_ARM32_SOURCES], [false])
+fi
+
+if test "$IS_ARMV8" -ne 0; then
+   AM_CONDITIONAL([CRYPTOPP_ARMV8_SOURCES], [true])
+else
+   AM_CONDITIONAL([CRYPTOPP_ARMV8_SOURCES], [false])
+fi
+
+if test "$IS_PPC" -ne 0; then
+   AM_CONDITIONAL([CRYPTOPP_PPC_SOURCES], [true])
+else
+   AM_CONDITIONAL([CRYPTOPP_PPC_SOURCES], [false])
+fi
+
+# CRYPTOGAMS_ARM_SOURCES and ANDROID_CPUFEATURES_SOURCES
+# were set earlier in configure.ac
+
+#############################################################################
 ## Miscellaneous items
 
 ## Fix CCAS and CCASFLAGS
