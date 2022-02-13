@@ -197,19 +197,19 @@ AC_DEFUN([XXX_LINK_IFELSE],
 ## test selection process. It also avoids failed configurations by
 ## avoiding some tests that fail but Autotools reports as success.
 
-IS_AIX_OS=`echo $build | $GREP -i -c 'aix'`
+IS_AIX_OS=`echo $host | $GREP -i -c 'aix'`
 IS_SUN_OS=`uname -s | $GREP -i -c 'SunOS'`
-IS_LINUX_OS=`echo "$build" | $GREP -i -c 'linux'`
-IS_APPLE_OS=`echo "$build" | $EGREP -i -c 'apple|darwin'`
-IS_ANDROID_OS=`echo $build | $GREP -i -c 'android'`
-IS_CYGWIN_OS=`echo $build | $GREP -i -c 'cygwin'`
-IS_MINGW_OS=`echo $build | $GREP -i -c 'mingw'`
+IS_LINUX_OS=`echo "$host" | $GREP -i -c 'linux'`
+IS_APPLE_OS=`echo "$host" | $EGREP -i -c 'apple|darwin'`
+IS_ANDROID_OS=`echo $host | $GREP -i -c 'android'`
+IS_CYGWIN_OS=`echo $host | $GREP -i -c 'cygwin'`
+IS_MINGW_OS=`echo $host | $GREP -i -c 'mingw'`
 
-IS_IA32=`echo $build | $EGREP -i -c 'i.86|x86_64|amd64'`
-IS_ARM32=`echo $build | $EGREP -i -c 'arm|armhf|arm7l|eabihf'`
-IS_ARMV8=`echo $build | $EGREP -i -c 'aarch32|aarch64'`
-IS_PPC=`echo $build | $EGREP -i -c 'ppc|powerpc|powermac'`
-IS_SPARC=`echo $build | $EGREP -i -c 'sparc|sparcv8|sparcv9|sparc64'`
+IS_IA32=`echo $host | $EGREP -i -c 'i.86|x86_64|amd64'`
+IS_ARM32=`echo $host | $EGREP -i -c 'arm|armhf|arm7l|eabihf'`
+IS_ARMV8=`echo $host | $EGREP -i -c 'aarch32|aarch64'`
+IS_PPC=`echo $host | $EGREP -i -c 'ppc|powerpc|powermac'`
+IS_SPARC=`echo $host | $EGREP -i -c 'sparc|sparcv8|sparcv9|sparc64'`
 
 ## Debug builds add more goodies to help break things. I like breaking things.
 IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $GREP -i -c '\-DDEBUG'`
