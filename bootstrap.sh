@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Written and placed in public domain by Jeffrey Walton
+# Autotools sucks. My condolences you have to work with it.
 
 if ! command -v aclocal &>/dev/null; then
     echo "aclocal not found. Bootstrap will probably fail"
