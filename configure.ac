@@ -209,7 +209,7 @@ IS_ANDROID_OS=`echo $host | $GREP -i -c 'android'`
 IS_CYGWIN_OS=`echo $host | $GREP -i -c 'cygwin'`
 IS_MINGW_OS=`echo $host | $GREP -i -c 'mingw'`
 
-IS_IA32=`echo $host | $EGREP -i -c 'i.86|x86_64|amd64'`
+IS_X86=`echo $host | $EGREP -i -c 'i.86|x86_64|amd64'`
 IS_ARM32=`echo $host | $EGREP -i -c 'arm|armhf|arm7l|armeabi|armel'`
 IS_ARMV8=`echo $host | $EGREP -i -c 'aarch32|aarch64|armv8'`
 IS_PPC=`echo $host | $EGREP -i -c 'ppc|powerpc|powermac'`
@@ -217,6 +217,11 @@ IS_SPARC=`echo $host | $EGREP -i -c 'sparc|sparcv8|sparcv9|sparc64'`
 
 ## Debug builds add more goodies to help break things. I like breaking things.
 IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $GREP -i -c '\-DDEBUG'`
+
+## Fixup
+if test "$IS_ARMV8" -ne "0"; then
+   IS_ARM32=0
+fi
 
 #############################################################################
 
@@ -922,7 +927,7 @@ fi
 ## Clang integrated assembler and SunCC.
 
 ## Also see https://bugs.llvm.org/show_bug.cgi?id=39895.
-if test "$IS_IA32" = "1" && test "x$enable_asm" != "xno"; then
+if test "$IS_X86" = "1" && test "x$enable_asm" != "xno"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -949,7 +954,7 @@ fi
 
 ## This block handles GCC and friends, including -Wa,-q if needed.
 ## i86pc and SunCC is handled after this block.
-if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
+if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -1248,7 +1253,7 @@ if test "$IS_IA32" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 fi
 
 ## This block handles i86pc and SunCC. GCC and friends were handled before this block
-if test "$IS_IA32" != "0" && test "$IS_SUN_COMPILER" != "0"; then
+if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
@@ -2484,7 +2489,7 @@ if test "$IS_SUN_OS" != "0"; then
 
    ## IA-32 gets a Mapfile for capabilities. Due to libtool stripping
    ## -M arguments, we need to escape it with -XCClinker in AM_LDFLAGS.
-   if test "$IS_IA32" != "0"; then
+   if test "$IS_X86" != "0"; then
       LDFLAGS="-Mcryptopp.mapfile"
       AC_MSG_CHECKING([if $LDNAME supports -Mcryptopp.mapfile])
       XXX_LINK_IFELSE(
@@ -2654,21 +2659,20 @@ if test "$IS_ANDROID_OS" != "0"; then
    # ac_srcdir does not work. Autotools blows...
 
    THIS_FILE="$ANDROID_NDK_ROOT/sources/android/cpufeatures/cpu-features.h"
-   AC_CHECK_FILE([$THIS_FILE],
-      [cp "$THIS_FILE" "./"]
-   )
+   if test -f "$THIS_FILE"; then
+      cp "$THIS_FILE" "./"
+   fi
 
    THIS_FILE="$ANDROID_NDK_ROOT/sources/android/cpufeatures/cpu-features.c"
-   AC_CHECK_FILE([$THIS_FILE],
-      [cp "$THIS_FILE" "./"]
-   )
+   if test -f "$THIS_FILE"; then
+      cp "$THIS_FILE" "./"
+   fi
 
    # And set the flag so Makefile adds the recipes
    THIS_FILE="./cpu-features.c"
-   AC_CHECK_FILE([$THIS_FILE],
-      [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])],
-      [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])]
-   )
+   if test -f "$THIS_FILE"; then
+      AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])
+   fi
 fi
 
 # Default value
