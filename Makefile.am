@@ -156,7 +156,7 @@ if CRYPTOGAMS_ARM_SOURCES
 endif
 
 ## cpufeatures library on Android
-if ANDROID_CPU_FEATURES
+if ANDROID_CPUFEATURES_SOURCES
    libcryptopp_la_LIBADD += $(libcpu_features_la_OBJECTS)
 endif
 
@@ -207,7 +207,7 @@ if CRYPTOGAMS_ARM_SOURCES
 endif
 
 ## cpufeatures library on Android
-if ANDROID_CPU_FEATURES
+if ANDROID_CPUFEATURES_SOURCES
    libcryptopp_la_DEPENDENCIES += $(libcpu_features_la_OBJECTS)
 endif
 
@@ -328,7 +328,7 @@ if CRYPTOGAMS_ARM_SOURCES
 endif
 
 ## cpufeatures library on Android
-if ANDROID_CPU_FEATURES
+if ANDROID_CPUFEATURES_SOURCES
    libcpu_features_la_SOURCES = cpu-features.c
 endif
 

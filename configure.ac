@@ -2672,13 +2672,13 @@ if test "$IS_ANDROID_OS" != "0"; then
    # And set the flag so Makefile adds the recipes
    THIS_FILE="./cpu-features.c"
    if test -f "$THIS_FILE"; then
-      AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])
+      AM_CONDITIONAL([ANDROID_CPUFEATURES_SOURCES], [true])
    fi
 fi
 
 # Default value
-if test "x$ANDROID_CPU_FEATURES" = "x"; then
-   AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])
+if test "x$ANDROID_CPUFEATURES_SOURCES" = "x"; then
+   AM_CONDITIONAL([ANDROID_CPUFEATURES_SOURCES], [false])
 fi
 
 #############################################################################
