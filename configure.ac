@@ -2826,6 +2826,9 @@ fi
 if test x"$CRYPTOGAMS_ARM_FLAG" != "x"; then
    echo "CRYPTOGAMS_ARM_FLAG: $CRYPTOGAMS_ARM_FLAG"
 fi
+if test x"$CRYPTOGAMS_ARM_THUMB_FLAG" != "x"; then
+   echo "CRYPTOGAMS_ARM_THUMB_FLAG: $CRYPTOGAMS_ARM_THUMB_FLAG"
+fi
 
 echo ""
 echo "Automake flags (can be overridden by user flags):"
