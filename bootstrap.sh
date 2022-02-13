@@ -19,8 +19,10 @@ if ! command -v autoconf &>/dev/null; then
     echo "autoconf not found. Bootstrap will probably fail"
 fi
 
-if ! command -v curl &>/dev/null; then
-    echo "curl not found. Updates will probably fail"
+if ! command -v wget &>/dev/null; then
+    if ! command -v curl &>/dev/null; then
+        echo "wget and curl not found. Updates will probably fail"
+    fi
 fi
 
 #############################################################################
@@ -79,6 +81,7 @@ if ! autoreconf --force --install &>/dev/null; then
 	fi
 fi
 
+# Create the configure script
 if ! autoconf; then
 	echo "autoconf failed."
 	exit 1
@@ -88,8 +91,18 @@ fi
 
 # Update config.sub config.guess. GNU recommends using the latest for all projects.
 # https://www.gnu.org/software/gettext/manual/html_node/config_002eguess.html
+
+FETCH_CMD=
+if command -v wget &>/dev/null; then
+    FETCH_CMD="wget -q -O"
+elif command -v curl &>/dev/null; then
+    FETCH_CMD="curl -L -s -o"
+else
+    FETCH_CMD="foobar"
+fi
+
 echo "Updating config.sub"
-curl -L -s -o config.sub.new 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub'
+${FETCH_CMD} config.sub.new 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub'
 
 # Solaris removes +w, can't overwrite
 chmod +w build-aux/config.sub
@@ -102,7 +115,7 @@ if [[ "$IS_DARWIN" -ne 0 ]] && [[ -n $(command -v xattr 2>/dev/null) ]]; then
 fi
 
 echo "Updating config.guess"
-curl -L -s -o config.guess.new 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess'
+${FETCH_CMD} config.guess.new 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess'
 
 # Solaris removes +w, can't overwrite
 chmod +w build-aux/config.guess
