@@ -275,7 +275,7 @@ else
 fi
 
 if test "x$AS" = "x"; then
-   AS=`command -v gas`
+   AS=`command -v as`
 fi
 
 ## Friendly names for reporting
@@ -2665,7 +2665,10 @@ if test "$IS_ANDROID_OS" != "0"; then
       [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [true])],
       [AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])]
    )
-else
+fi
+
+# Default value
+if test "x$ANDROID_CPU_FEATURES" = "x"; then
    AM_CONDITIONAL([ANDROID_CPU_FEATURES], [false])
 fi
 
@@ -2811,12 +2814,14 @@ fi
 
 echo ""
 echo "Automake flags (can be overridden by user flags):"
+echo "AM_CPPFLAGS: AM_CPPFLAGS"
 echo "AM_CXXFLAGS: $AM_CXXFLAGS"
 echo " AM_ASFLAGS: $AM_ASFLAGS"
 echo " AM_LDFLAGS: $AM_LDFLAGS"
 
 echo ""
 echo "User flags (overrides Automake flags on conflict):"
+echo "CPPFLAGS: $CPPFLAGS"
 echo "CXXFLAGS: $CXXFLAGS"
 echo " ASFLAGS: $ASFLAGS"
 echo " LDFLAGS: $LDFLAGS"
