@@ -2,19 +2,19 @@
 
 # Written and placed in public domain by Jeffrey Walton
 
-if ! command -v aclocal 2>/dev/null; then
+if ! command -v aclocal &>/dev/null; then
     echo "aclocal not found. Bootstrap will probably fail"
 fi
 
-if ! command -v automake 2>/dev/null; then
+if ! command -v automake &>/dev/null; then
     echo "automake not found. Bootstrap will probably fail"
 fi
 
-if ! command -v autoconf 2>/dev/null; then
+if ! command -v autoconf &>/dev/null; then
     echo "autoconf not found. Bootstrap will probably fail"
 fi
 
-if ! command -v curl 2>/dev/null; then
+if ! command -v curl &>/dev/null; then
     echo "curl not found. Updates will probably fail"
 fi
 
@@ -51,9 +51,8 @@ fi
 mkdir -p m4 build-aux
 
 echo "Bootstrapping Autotools"
-if ! aclocal && \
-	automake --gnu --add-missing && \
-	autoconf; then
+if ! aclocal && automake --gnu --add-missing && \
+	autoconf && autoreconf --force --install; then
     echo "Bootstrap failed"
     exit 1
 fi
