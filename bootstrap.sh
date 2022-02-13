@@ -43,6 +43,14 @@ elif [[ -d /usr/bin/posix ]]; then
 	GREP=/usr/bin/posix/grep
 fi
 
+if command -v wget &>/dev/null; then
+    FETCH_CMD="wget -q -O"
+elif command -v curl &>/dev/null; then
+    FETCH_CMD="curl -L -s -o"
+else
+    FETCH_CMD="foobar"
+fi
+
 # Fixup for sed and "illegal byte sequence"
 IS_DARWIN=$(uname -s 2>/dev/null | "$GREP" -i -c darwin)
 if [[ "$IS_DARWIN" -ne 0 ]]; then
@@ -91,15 +99,6 @@ fi
 
 # Update config.sub config.guess. GNU recommends using the latest for all projects.
 # https://www.gnu.org/software/gettext/manual/html_node/config_002eguess.html
-
-FETCH_CMD=
-if command -v wget &>/dev/null; then
-    FETCH_CMD="wget -q -O"
-elif command -v curl &>/dev/null; then
-    FETCH_CMD="curl -L -s -o"
-else
-    FETCH_CMD="foobar"
-fi
 
 echo "Updating config.sub"
 ${FETCH_CMD} config.sub.new 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub'
