@@ -120,7 +120,8 @@
 ##   6. Misc feature and options
 ##
 
-# Print this early
+# Print this early. Build is the machine where the compiler
+# is running. Host is the machine the software will run.
 echo "Host is $host"
 echo "Build is $build"
 
@@ -1632,9 +1633,8 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
-   found_flag=false
 
-   if test found_flag = false; then
+   if test "x$CRYPTOGAMS_ARM_SOURCES" != "xtrue"; then
 
      # First try no flags. This is for https://github.com/weidai11/cryptopp/issues/1094
      CXXFLAGS=""
@@ -1653,7 +1653,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
      fi
    fi
 
-   if test found_flag = false; then
+   if test "x$CRYPTOGAMS_ARM_SOURCES" != "xtrue"; then
 
      CXXFLAGS="-march=armv7-a"
      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -1681,6 +1681,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
         )
 
         if test "$retval" = "0"; then
+           AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
            AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
         fi
      fi
@@ -2718,7 +2719,8 @@ echo "something looks wrong then please modify config.h and please report"
 echo "it at http://github.com/noloader/cryptopp-autotools."
 echo ""
 
-echo "   Build triplet: $build"
+# Host is where the software will run
+echo "    Host triplet: $host"
 echo " Compiler target: $COMPILER_TARGET"
 echo "Compiler version: $COMPILER_VERSION"
 echo ""
