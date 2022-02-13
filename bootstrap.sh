@@ -51,8 +51,9 @@ fi
 mkdir -p m4 build-aux
 
 echo "Bootstrapping Autotools"
-if ! aclocal && automake --gnu --add-missing && \
-	autoconf && autoreconf --force --install; then
+if ! aclocal && autoupdate && \
+    automake --gnu --add-missing && \
+	autoreconf --force --install && autoconf; then
     echo "Bootstrap failed"
     exit 1
 fi
