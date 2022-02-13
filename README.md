@@ -38,17 +38,16 @@ The general workflow is clone Wei Dai's Crypto++, fetch the Autotools files, and
     git clone https://github.com/weidai11/cryptopp.git
     cd cryptopp
 
+    wget -O configure.ac https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/bootstrap.sh
     wget -O configure.ac https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/configure.ac
     wget -O Makefile.am https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/Makefile.am
     wget -O libcryptopp.pc.in https://raw.githubusercontent.com/noloader/cryptopp-autotools/master/libcryptopp.pc.in
 
     mkdir -p "$PWD/m4/"
 
-Once you have the files you can run `autoreconf` and friends. Our testing showed `autoupdate` produced bad results on some versions of Autotools, so it is hit or miss whether it should be run.
+Once you have the files you can run `bootstrap.sh`. `bootstrap.sh` performs the necessary preamble and also runs `autoupdate`. Our testing showed `autoupdate` produced bad results on some versions of Autotools, so it is hit or miss whether it should be run.
 
-    autoupdate
-    libtoolize --force --install
-    autoreconf --force --install
+    ./bootstrap.sh
 
     ./configure <options>
 
@@ -58,7 +57,7 @@ Once you have the files you can run `autoreconf` and friends. Our testing showed
 
 Best performance is obtained with `-O3` because GCC (and other compiler) apply vectorization optimizations. If you are not forced to `-O2` by policy (like Debian or Fedora), then you should configure with a higher optimization enabled:
 
-    CXXFLAGS="-DNDEBUG -g2 -O3" ./configure <other options>
+    CPPFLAGS="-DNDEBUG" CXXFLAGS="-g2 -O3" ./configure <other options>
 
 Despite our efforts we have not been able to add the submodule to Crypto++ for seamless integration. If anyone knows how to add a submodule directly to the Crypto++ directory, then please provide the instructions.
 
@@ -73,7 +72,7 @@ If you mix and match Master with a release zip file then things may not work as 
 Before running the Autotools project please ensure you have the following installed:
 
 1. autoupdate
-2. autoconf
+2. autoconf and autoreconf
 3. automake
 4. libtool
 
@@ -88,28 +87,7 @@ The library's `GNUmakefile` and `GNUmakefile-cross` were modified to clean the a
 
 ## Cross-compiles
 
-Cross-compiles are mostly broken due to Autotools. The biggest problem seems to be Autotools inability to honor a C++ project settings. Using Android as an example:
-
-* `configure.ac` sets `AC_PROG_CXX`
-* `configure.ac` sets `AC_LANG([C++])`
-* User sets `CXX=/opt/android-ndk-r19c/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++`
-* User sets `LD=/opt/android-ndk-r19c/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++`
-* User sets `CXXFLAGS="-target armv7-none-linux-androideabi21 ...`
-* User sets `LDFLAGS="-Wl,-target=armv7-none-linux-androideabi21 ...`
-* User invokes `./configure --host=$(config.guess) --build=armv7-none-linux-androideabi21`
-
-Autotools will perform a test using the host's gcc and fail with:
-
-```
-configure:3481: checking whether the C compiler works
-configure:3503: gcc -Wl,-target=armv7-none-linux-androideabi21 ... conftest.c  >&5
-/usr/bin/ld: unrecognised emulation mode: thumb
-Supported emulations: elf_x86_64 elf32_x86_64 elf_i386 elf_iamcu i386linux elf_l1om
-                      elf_k1om i386pep i386pe
-collect2: error: ld returned 1 exit status
-```
-
-Autotools absolutely sucks. The maintainers have had 30 years to get it right and their shit is still broken.
+Cross-compiles may work. The biggest problem seems to be libtool and shared object naming. Autotools fails to produce a shared object on platforms like Android.
 
 ## Collaboration
 We would like all distro maintainers to be collaborators on this repo. If you are a distro maintainer then please contact us so we can send you an invite.
