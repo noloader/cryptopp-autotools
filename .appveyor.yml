@@ -1,0 +1,33 @@
+# Written and placed in public domain by Jeffrey Walton
+
+# TODO: figure out how to specify each job individually, and not via a matrix
+# https://www.appveyor.com/docs/getting-started-with-appveyor-for-linux/ and
+# https://www.appveyor.com/docs/build-configuration/#specializing-matrix-job-configuration
+
+# branches:
+#  only:
+#  - master
+
+image: Ubuntu
+
+install:
+- sh: sudo apt-get update && sudo apt-get install --yes gcc g++ make autoconf automake libtool git || true
+
+before_build:
+- sh: |-
+    git clone https://github.com/weidai11/cryptopp.git
+    cp -p bootstrap.sh configure.ac libcryptopp.pc.in Makefile.am cryptopp/
+    cd cryptopp
+
+build_script:
+- sh: |-
+    ./bootstrap.sh
+    ./configure
+    make -j 4
+
+test_script:
+- sh: |-
+    ./cryptest v
+    ./cryptest tv all
+
+# build: off
