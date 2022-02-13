@@ -46,6 +46,7 @@ fi
 
 # https://www.gnu.org/software/automake/faq/autotools-faq.html#What-does-_002e_002fbootstrap-or-_002e_002fautogen_002esh-do_003f and
 # http://www.fifi.org/doc/autobook/html/autobook_43.html
+# This recipe does not work: aclocal && automake --gnu --add-missing && autoconf
 
 # For some reason build-aux is now missing. Autotools really sucks.
 mkdir -p m4 build-aux
