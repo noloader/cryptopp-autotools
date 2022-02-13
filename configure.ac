@@ -1549,13 +1549,24 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
       [AC_MSG_RESULT([no])]
    )
 
-   CXXFLAGS="-march=armv7-a -mfpu=neon"
+   # Auto is a GCC 11 option
+   CXXFLAGS="-march=armv7-a -mfpu=auto"
    AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
    XXX_COMPILE_IFELSE(
       [AC_LANG_SOURCE([`cat TestPrograms/test_arm_neon.cpp`])],
       [AC_MSG_RESULT([yes])],
       [AC_MSG_RESULT([no])]
    )
+
+   if test "$retval" != "0"; then
+      CXXFLAGS="-march=armv7-a -mfpu=neon"
+      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
+      XXX_COMPILE_IFELSE(
+         [AC_LANG_SOURCE([`cat TestPrograms/test_arm_neon.cpp`])],
+         [AC_MSG_RESULT([yes])],
+         [AC_MSG_RESULT([no])]
+      )
+   fi
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
