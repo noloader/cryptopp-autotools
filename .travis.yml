@@ -1,3 +1,5 @@
+# Written and placed in public domain by Jeffrey Walton
+
 # DO NOT create top level (global) keys like env, arch, os, compiler.
 # The top level/global keys invoke [unwanted] matrix expansion. Also
 # see https://stackoverflow.com/q/58473000/608639 and
