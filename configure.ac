@@ -197,6 +197,10 @@ AC_DEFUN([XXX_LINK_IFELSE],
 ## test selection process. It also avoids failed configurations by
 ## avoiding some tests that fail but Autotools reports as success.
 
+echo "Host is $host"
+echo "Build is $build"
+
+
 IS_AIX_OS=`echo $host | $GREP -i -c 'aix'`
 IS_SUN_OS=`uname -s | $GREP -i -c 'SunOS'`
 IS_LINUX_OS=`echo "$host" | $GREP -i -c 'linux'`
