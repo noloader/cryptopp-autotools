@@ -220,7 +220,7 @@ IS_SPARC=`echo $host | $EGREP -i -c 'sparc|sparcv8|sparcv9|sparc64'`
 IS_DEBUG=`echo $CPPFLAGS $CXXFLAGS | $GREP -i -c '\-DDEBUG'`
 
 ## Fixup
-if test "$IS_ARMV8" -ne "0"; then
+if test "$IS_ARMV8" != "0"; then
    IS_ARM32=0
 fi
 
@@ -1634,7 +1634,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
    ## Save CXXFLAGS
    SAVED_CXXFLAGS="$CXXFLAGS"
 
-   if test "x$CRYPTOGAMS_ARM_SOURCES" != "xtrue"; then
+   if test "x$CRYPTOGAMS_ARM_FLAG" = "x"; then
 
      # First try no flags. This is for https://github.com/weidai11/cryptopp/issues/1094
      CXXFLAGS=""
@@ -1647,13 +1647,13 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 
      if test "$retval" = "0"; then
         AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
-        AC_SUBST([CRYPTOPGAMS_ARM_FLAG], [$CXXFLAGS])
-        AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+        AC_SUBST([CRYPTOGAMS_ARM_FLAG], [$CXXFLAGS])
+        AC_SUBST([CRYPTOGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
         found_flag=true
      fi
    fi
 
-   if test "x$CRYPTOGAMS_ARM_SOURCES" != "xtrue"; then
+   if test "x$CRYPTOGAMS_ARM_FLAG" = "x"; then
 
      CXXFLAGS="-march=armv7-a"
      AC_MSG_CHECKING([if $CXXNAME supports $CXXFLAGS])
@@ -1665,8 +1665,8 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 
      if test "$retval" = "0"; then
         AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
-        AC_SUBST([CRYPTOPGAMS_ARM_FLAG], [$CXXFLAGS])
-        AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+        AC_SUBST([CRYPTOGAMS_ARM_FLAG], [$CXXFLAGS])
+        AC_SUBST([CRYPTOGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
      fi
 
      # For Clang, aes_armv4.S needs -mthumb
@@ -1682,7 +1682,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 
         if test "$retval" = "0"; then
            AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [true])
-           AC_SUBST([CRYPTOPGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
+           AC_SUBST([CRYPTOGAMS_ARM_THUMB_FLAG], [$CXXFLAGS])
         fi
      fi
    fi
@@ -1692,7 +1692,7 @@ if test "$IS_ARM32" != "0" && test "$IS_LINUX_OS" != "0"; then
 fi
 
 # Default case
-if test "x$CRYPTOGAMS_ARM_SOURCES" = "x"; then
+if test "x$CRYPTOGAMS_ARM_FLAG" = "x"; then
    AM_CONDITIONAL([CRYPTOGAMS_ARM_SOURCES], [false])
 fi
 
@@ -2823,8 +2823,8 @@ fi
 if test x"$CRYPTOPP_SM4_FLAG" != "x"; then
    echo "CRYPTOPP_SM4_FLAG: $CRYPTOPP_SM4_FLAG"
 fi
-if test x"$CRYPTOPGAMS_ARM_FLAG" != "x"; then
-   echo "CRYPTOPGAMS_ARM_FLAG: $CRYPTOPGAMS_ARM_FLAG"
+if test x"$CRYPTOGAMS_ARM_FLAG" != "x"; then
+   echo "CRYPTOGAMS_ARM_FLAG: $CRYPTOGAMS_ARM_FLAG"
 fi
 
 echo ""
