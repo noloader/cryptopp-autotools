@@ -2736,6 +2736,9 @@ if test "$IS_ARM32" != "0" || test "$IS_ARMV8" != "0"; then
   if test x"$CRYPTOPP_ARM_ACLE_HEADER" != "x"; then
     echo "CRYPTOPP_ARM_ACLE_HEADER: $CRYPTOPP_ARM_ACLE_HEADER"
   fi
+  if test x"$CRYPTOGAMS_ARM_SOURCES" != "x"; then
+    echo "CRYPTOGAMS_ARM_SOURCES: $CRYPTOGAMS_ARM_SOURCES"
+  fi
   echo ""
 fi
 
