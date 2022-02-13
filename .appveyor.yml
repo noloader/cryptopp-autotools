@@ -11,7 +11,7 @@
 image: Ubuntu
 
 install:
-- sh: sudo apt-get update && sudo apt-get install --yes --without-recommends gcc g++ make autoconf automake libtool git || true
+- sh: sudo apt-get update && sudo apt-get install --yes --no-install-recommends gcc g++ make autoconf automake libtool git || true
 
 before_build:
 - sh: |-
