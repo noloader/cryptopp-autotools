@@ -2725,7 +2725,7 @@ AC_CONFIG_COMMANDS_POST([cp adhoc.cpp.proto adhoc.cpp])
 echo ""
 echo "***********************************************************************"
 
-echo "Auto-configuration complete. A summary of options are below. If"
+echo "Auto-configuration is complete. A summary of options are below. If"
 echo "something looks wrong then please modify config.h and please report"
 echo "it at http://github.com/noloader/cryptopp-autotools."
 echo ""
