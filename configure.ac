@@ -315,7 +315,7 @@ AC_ARG_ENABLE([asm],
    AS_HELP_STRING([--disable-asm], [disable all ASM and intrinsics]))
 AS_IF([test "x$enable_asm" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [disable all ASM and intrinsics])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ASM"
 ])
 
 # X86 defines
@@ -323,63 +323,63 @@ AC_ARG_ENABLE([sse2],
    AS_HELP_STRING([--disable-sse2], [disable x86 SSE2 instructions]))
 AS_IF([test "x$enable_sse2" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SSE2], [1], [disable x86 SSE2 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE2"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE2"
 ])
 
 AC_ARG_ENABLE([sse3],
    AS_HELP_STRING([--disable-sse3], [disable x86 SSE3 instructions]))
 AS_IF([test "x$enable_sse3" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [disable x86 SSE3 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE3"
 ])
 
 AC_ARG_ENABLE([ssse3],
    AS_HELP_STRING([--disable-ssse3], [disable x86 SSSE3 instructions]))
 AS_IF([test "x$enable_ssse3" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [disable x86 SSSE3 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSSE3"
 ])
 
 AC_ARG_ENABLE([sse4],
    AS_HELP_STRING([--disable-sse4], [disable x86 SSE4.1 and SSE4.2 instructions]))
 AS_IF([test "x$enable_sse4" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [disable x86 SSE4.1 and SSE4.2 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE4"
 ])
 
 AC_ARG_ENABLE([clmul],
    AS_HELP_STRING([--disable-clmul], [disable x86 CLMUL instructions]))
 AS_IF([test "x$enable_clmul" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], [disable x86 CLMUL instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_CLMUL"
 ])
 
 AC_ARG_ENABLE([aes],
    AS_HELP_STRING([--disable-aes], [disable x86 AES instructions]))
 AS_IF([test "x$enable_aes" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_AES], [1], [disable x86 AES instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AES"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AES"
 ])
 
 AC_ARG_ENABLE([sha],
    AS_HELP_STRING([--disable-sha], [disable x86 SHA instructions]))
 AS_IF([test "x$enable_sha" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_SHA], [1], [disable x86 SHA instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHA"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SHA"
 ])
 
 AC_ARG_ENABLE([avx],
    AS_HELP_STRING([--disable-avx], [disable x86 AVX instructions]))
 AS_IF([test "x$enable_avx" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_AVX], [1], [disable x86 AVX instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AVX"
 ])
 
 AC_ARG_ENABLE([avx2],
    AS_HELP_STRING([--disable-avx2], [disable x86 AVX2 instructions]))
 AS_IF([test "x$enable_avx2" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_AVX2], [1], [disable x86 AVX2 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX2"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AVX2"
 ])
 
 # ARM-32 defines
@@ -387,14 +387,14 @@ AC_ARG_ENABLE([armv7],
    AS_HELP_STRING([--disable-armv7], [disable ARM ARMv7 instructions]))
 AS_IF([test "x$enable_armv7" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_ARMV7], [1], [disable ARM ARMv7 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_ARMV7"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_ARMV7"
 ])
 
 AC_ARG_ENABLE([neon],
    AS_HELP_STRING([--disable-neon], [disable ARM NEON instructions]))
 AS_IF([test "x$enable_neon" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_NEON], [1], [disable ARM NEON instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_NEON"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_NEON"
 ])
 
 # ARMv8 defines
@@ -402,70 +402,70 @@ AC_ARG_ENABLE([asimd],
    AS_HELP_STRING([--disable-asimd], [disable ARMv8 ASIMD instructions]))
 AS_IF([test "x$enable_asimd" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_ASIMD], [1], [disable ARMv8 ASIMD instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_ASIMD"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_ASIMD"
 ])
 
 AC_ARG_ENABLE([crc32],
    AS_HELP_STRING([--disable-crc32], [disable ARMv8 CRC32 instructions]))
 AS_IF([test "x$enable_crc32" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_CRC32], [1], [disable ARMv8 CRC32 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_CRC32"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_CRC32"
 ])
 
 AC_ARG_ENABLE([pmull],
    AS_HELP_STRING([--disable-pmull], [disable ARMv8 PMULL instructions]))
 AS_IF([test "x$enable_pmull" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_PMULL], [1], [disable ARMv8 PMULL instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
 ])
 
 AC_ARG_ENABLE([aes],
    AS_HELP_STRING([--disable-aes], [disable ARMv8 AES instructions]))
 AS_IF([test "x$enable_aes" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_AES], [1], [disable ARMv8 AES instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_AES"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_AES"
 ])
 
 AC_ARG_ENABLE([sha1],
    AS_HELP_STRING([--disable-sha1], [disable ARMv8 SHA1 instructions]))
 AS_IF([test "x$enable_sha1" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA1], [1], [disable ARMv8 SHA1 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA1"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SHA1"
 ])
 
 AC_ARG_ENABLE([sha256],
    AS_HELP_STRING([--disable-sha256], [disable ARMv8 SHA256 instructions]))
 AS_IF([test "x$enable_sha256" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA256], [1], [disable ARMv8 SHA256 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA256"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SHA256"
 ])
 
 AC_ARG_ENABLE([sha512],
    AS_HELP_STRING([--disable-sha512], [disable ARMv8 SHA512 instructions]))
 AS_IF([test "x$enable_sha512" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA512], [1], [disable ARMv8 SHA512 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA512"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SHA512"
 ])
 
 AC_ARG_ENABLE([sha3],
    AS_HELP_STRING([--disable-sha3], [disable ARMv8 SHA3 instructions]))
 AS_IF([test "x$enable_sha3" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA3], [1], [disable ARMv8 SHA3 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA3"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SHA3"
 ])
 
 AC_ARG_ENABLE([sm3],
    AS_HELP_STRING([--disable-sm3], [disable ARMv8 SM3 instructions]))
 AS_IF([test "x$enable_sm3" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM3], [1], [disable ARMv8 SM3 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM3"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SM3"
 ])
 
 AC_ARG_ENABLE([sm4],
    AS_HELP_STRING([--disable-sm4], [disable ARMv8 SM4 instructions]))
 AS_IF([test "x$enable_sm4" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM4], [1], [disable ARMv8 SM4 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM4"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SM4"
 ])
 
 # PPC defines
@@ -473,56 +473,56 @@ AC_ARG_ENABLE([altivec],
    AS_HELP_STRING([--disable-altivec], [disable PPC Altivec instructions]))
 AS_IF([test "x$enable_altivec" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_ALTIVEC], [1], [disable PPC Altivec instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ALTIVEC"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ALTIVEC"
 ])
 
 AC_ARG_ENABLE([power7],
    AS_HELP_STRING([--disable-power7], [disable POWER7 instructions]))
 AS_IF([test "x$enable_altivec" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_POWER7], [1], [disable POWER7 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER7"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_POWER7"
 ])
 
 AC_ARG_ENABLE([power8],
    AS_HELP_STRING([--disable-power8], [disable POWER8 instructions]))
 AS_IF([test "x$enable_altivec" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_POWER8], [1], [disable POWER8 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_POWER8"
 ])
 
 AC_ARG_ENABLE([power9],
    AS_HELP_STRING([--disable-power9], [disable POWER9 instructions]))
 AS_IF([test "x$enable_altivec" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_POWER9], [1], [disable POWER9 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER9"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_POWER9"
 ])
 
 AC_ARG_ENABLE([aes],
    AS_HELP_STRING([--disable-aes], [disable PPC AES instructions]))
 AS_IF([test "x$enable_aes" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_POWER8_AES], [1], [disable PPC AES instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_AES"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_POWER8_AES"
 ])
 
 AC_ARG_ENABLE([vmull],
    AS_HELP_STRING([--disable-vmull], [disable PPC VMULL instructions]))
 AS_IF([test "x$enable_vmull" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_POWER8_VMULL], [1], [disable PPC VMULL instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_VMULL"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_POWER8_VMULL"
 ])
 
 AC_ARG_ENABLE([sha256],
    AS_HELP_STRING([--disable-sha256], [disable PPC SHA256 instructions]))
 AS_IF([test "x$enable_sha256" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA256], [1], [disable PPC SHA256 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA256"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA256"
 ])
 
 AC_ARG_ENABLE([sha512],
    AS_HELP_STRING([--disable-sha512], [disable PPC SHA512 instructions]))
 AS_IF([test "x$enable_sha512" = "xno"], [
    AC_DEFINE([CRYPTOPP_DISABLE_POWER8_SHA512], [1], [disable PPC SHA512 instructions])
-   AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA512"
+   AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_POWER8_SHA512"
 ])
 
 #############################################################################
@@ -942,7 +942,7 @@ if test "$IS_X86" = "1" && test "x$enable_asm" != "xno"; then
 
    if test "$retval" != "0"; then
       AC_DEFINE([CRYPTOPP_DISABLE_MIXED_ASM], [1], [Disable mixed asm])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_MIXED_ASM"
    fi
 
    ## Restore CXXFLAGS
@@ -981,7 +981,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_SSE2_AVAILABLE], [1], [Enable SSE2])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disable SSE2])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
    ##### SSE3 #####
@@ -1003,7 +1003,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_SSE3_AVAILABLE], [1], [Enable SSE3])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [Disable SSE3])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE3"
    fi
 
    ##### SSSE3 #####
@@ -1034,7 +1034,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_SSSE3_AVAILABLE], [1], [Enable SSSE3])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [Disable SSSE3])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
    ##### SSE4.1 #####
@@ -1060,7 +1060,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_SSE41_AVAILABLE], [1], [Enable SSE4.1])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.1])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
    ##### SSE4.2 #####
@@ -1085,7 +1085,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_SSE42_AVAILABLE], [1], [Enable SSE4.2])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.2])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
    ##### PCLMUL #####
@@ -1172,7 +1172,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_AESNI_AVAILABLE], [1], [Enable AESNI])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], [Disable AESNI])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
    ##### AVX #####
@@ -1195,7 +1195,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_AVX_AVAILABLE], [1], [Enable AVX])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_AVX], [1], [Disable AVX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AVX"
    fi
 
    ##### AVX2 #####
@@ -1221,7 +1221,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_AVX2_AVAILABLE], [1], [Enable AVX2])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_AVX2], [1], [Disable AVX2])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX2"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AVX2"
    fi
 
    ##### SHA #####
@@ -1245,7 +1245,7 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
       AC_DEFINE([CRYPTOPP_SHANI_AVAILABLE], [1], [Enable SHANI])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1], [Disable SHANI])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SHANI"
    fi
 
    ## Restore CXXFLAGS
@@ -1281,7 +1281,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Disable SSE2])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
    ##### SSE3 #####
@@ -1302,7 +1302,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE3], [1], [Disable SSE3])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE3"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE3"
    fi
 
    ##### SSSE3 #####
@@ -1331,7 +1331,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSSE3], [1], [Disable SSSE3])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSSE3"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSSE3"
    fi
 
    ##### SSE4.1 #####
@@ -1351,7 +1351,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.1])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
    ##### SSE4.2 #####
@@ -1374,7 +1374,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SSE4], [1], [Disable SSE4.2])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SSE4"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SSE4"
    fi
 
    ##### CLMUL #####
@@ -1395,7 +1395,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_CLMUL], [1], "Disable CLMUL")
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_CLMUL"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_CLMUL"
    fi
 
    ##### AES #####
@@ -1416,7 +1416,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_AESNI], [1], "Disable AESNI")
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AESNI"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AESNI"
    fi
 
    ##### AVX #####
@@ -1435,7 +1435,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_AVX], [1], [Disable AVX])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AVX"
    fi
 
    ##### AVX2 #####
@@ -1457,7 +1457,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_AVX2], [1], [Disable AVX2])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_AVX2"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_AVX2"
    fi
 
    ##### RDRAND #####
@@ -1513,7 +1513,7 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
       AM_LDFLAGS="$AM_LDFLAGS $CXXFLAGS"
    else
       AC_DEFINE([CRYPTOPP_DISABLE_SHANI], [1], "Disable SHANI")
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_SHANI"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_SHANI"
    fi
 
    ## Restore CXXFLAGS
@@ -1573,7 +1573,7 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
       AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1], [Enable NEON])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_NEON], [1], [Disbale NEON])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_NEON"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_NEON"
    fi
 
    ## Restore CXXFLAGS
@@ -1614,7 +1614,7 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_NEON_AVAILABLE], [1], [Enable NEON])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_NEON], [1], [Disbale NEON])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_NEON"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_NEON"
    fi
 
    ## Restore CXXFLAGS
@@ -1736,7 +1736,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_SUBST([CRYPTOPP_SPECK128_FLAG], [$CXXFLAGS])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ASM], [1], [Enable NEON])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ASM"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ASM"
    fi
 
    CXXFLAGS="-mfix-cortex-a53-835769"
@@ -1776,7 +1776,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_CRC32_AVAILABLE], [1], [Enable ARMv8 CRC32])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_CRC32], [1], [Disable ARMv8 CRC32])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_CRC32"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_CRC32"
    fi
 
    CXXFLAGS="-march=armv8-a+crypto"
@@ -1792,7 +1792,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_AES_AVAILABLE], [1], [Enable ARMv8 AES])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_AES], [1], [Disable ARMv8 AES])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_AES"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_AES"
    fi
 
    CXXFLAGS="-march=armv8-a+crypto"
@@ -1809,7 +1809,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_PMULL_AVAILABLE], [1], [Enable ARMv8 PMULL])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_PMULL], [1], [Disable ARMv8 PMULL])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_PMULL"
    fi
 
    CXXFLAGS="-march=armv8-a+crypto"
@@ -1825,7 +1825,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_SHA1_AVAILABLE], [1], [Enable ARMv8 SHA1])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA], [1], [Disable ARMv8 SHA1])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
    fi
 
    CXXFLAGS="-march=armv8-a+crypto"
@@ -1841,7 +1841,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_SHA256_AVAILABLE], [256], [Enable ARMv8 SHA256])
    else
       AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA], [256], [Disable ARMv8 SHA256])
-      AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
+      AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SHA"
    fi
 
    CXXFLAGS="-march=armv8.3-a+sha3"
@@ -1857,7 +1857,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_SHA512_AVAILABLE], [1], [Enable ARMv8 SHA512])
    #else
       #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA512], [1], [Disable ARMv8 SHA512])
-      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA512"
+      #AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SHA512"
    fi
 
    CXXFLAGS="-march=armv8.3-a+sha3"
@@ -1873,7 +1873,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_SHA3_AVAILABLE], [1], [Enable ARMv8 SHA3])
    #else
       #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SHA3], [1], [Disable ARMv8 SHA3])
-      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SHA3"
+      #AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SHA3"
    fi
 
    CXXFLAGS="-march=armv8.3-a+sm4"
@@ -1889,7 +1889,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_SM3_AVAILABLE], [1], [Enable ARMv8 SM3])
    #else
       #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM3], [1], [Disable ARMv8 SM3])
-      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM3"
+      #AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SM3"
    fi
 
    CXXFLAGS="-march=armv8.3-a+sm4"
@@ -1905,7 +1905,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_SM4_AVAILABLE], [1], [Enable ARMv8 SM4])
    #else
       #AC_DEFINE([CRYPTOPP_DISABLE_ARM_SM4], [1], [Disable ARMv8 SM4])
-      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_SM4"
+      #AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_SM4"
    fi
 
    CXXFLAGS="-march=armv8.3-a+rng"
@@ -1921,7 +1921,7 @@ if test "$IS_ARMV8" != "0"; then
       AC_DEFINE([CRYPTOPP_ARM_RNG_AVAILABLE], [1], [Enable ARMv8 RNG])
    #else
       #AC_DEFINE([CRYPTOPP_DISABLE_ARM_RNG], [1], [Disable ARMv8 RNG])
-      #AM_CXXFLAGS="$AM_CXXFLAGS -DCRYPTOPP_DISABLE_ARM_RNG"
+      #AM_CPPFLAGS="$AM_CPPFLAGS -DCRYPTOPP_DISABLE_ARM_RNG"
    fi
 
    ## Restore CXXFLAGS
@@ -2194,13 +2194,13 @@ if test "$IS_PPC" != "0"; then
 
    # Now set a disable flag
    if test x"$ALTIVEC_FLAG" = "x"; then
-      AM_CXXFLAGS="-DCRYPTOPP_DISABLE_ALTIVEC $AM_CXXFLAGS"
+      AM_CPPFLAGS="-DCRYPTOPP_DISABLE_ALTIVEC $AM_CPPFLAGS"
    elif test x"$POWER7_FLAG" = "x"; then
-      AM_CXXFLAGS="-DCRYPTOPP_DISABLE_POWER7 $AM_CXXFLAGS"
+      AM_CPPFLAGS="-DCRYPTOPP_DISABLE_POWER7 $AM_CPPFLAGS"
    elif test x"$POWER8_FLAG" = "x"; then
-      AM_CXXFLAGS="-DCRYPTOPP_DISABLE_POWER8 $AM_CXXFLAGS"
+      AM_CPPFLAGS="-DCRYPTOPP_DISABLE_POWER8 $AM_CPPFLAGS"
    elif test x"$POWER9_FLAG" = "x"; then
-      AM_CXXFLAGS="-DCRYPTOPP_DISABLE_POWER9 $AM_CXXFLAGS"
+      AM_CPPFLAGS="-DCRYPTOPP_DISABLE_POWER9 $AM_CPPFLAGS"
    fi
 
    ## Restore CXXFLAGS
@@ -2243,7 +2243,7 @@ if true; then
 
       if test "$retval" = "0"; then
          AC_DEFINE([_XOPEN_SOURCE], [600], [Enable _XOPEN_SOURCE])
-         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+         AM_CPPFLAGS="$AM_CPPFLAGS $CXXFLAGS"
       fi
    fi
 
@@ -2276,7 +2276,7 @@ if test "$IS_DEBUG" = "1"; then
       )
 
       if test "$retval" = "0"; then
-         AM_CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
+         AM_CPPFLAGS="$AM_CPPFLAGS $CXXFLAGS"
       fi
    fi
 
@@ -2693,7 +2693,9 @@ AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile 2>/dev/null])
 AC_CONFIG_COMMANDS_PRE([rm -f GNUmakefile-cross 2>/dev/null])
 
 ## Write the Automake flags we set
+AC_SUBST([AM_CPPFLAGS])
 AC_SUBST([AM_CXXFLAGS])
+AC_SUBST([AM_ASFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
 ## Write the output artifacts
@@ -2822,7 +2824,7 @@ fi
 
 echo ""
 echo "Automake flags (can be overridden by user flags):"
-echo "AM_CPPFLAGS: AM_CPPFLAGS"
+echo "AM_CPPFLAGS: $AM_CPPFLAGS"
 echo "AM_CXXFLAGS: $AM_CXXFLAGS"
 echo " AM_ASFLAGS: $AM_ASFLAGS"
 echo " AM_LDFLAGS: $AM_LDFLAGS"

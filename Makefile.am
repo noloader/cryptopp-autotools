@@ -220,99 +220,99 @@ libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -release 8.7.0 -version-info 8:7
 
 ## Source files with special needs
 libcryptlib_la_SOURCES = cryptlib.cpp
-libcryptlib_la_CXXFLAGS = $(AM_CXXFLAGS)
+libcryptlib_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS)
 
 libcpu_la_SOURCES = cpu.cpp
-libcpu_la_CXXFLAGS = $(AM_CXXFLAGS)
+libcpu_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS)
 
 libinteger_la_SOURCES = integer.cpp
-libinteger_la_CXXFLAGS = $(AM_CXXFLAGS)
+libinteger_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS)
 
 libaria_simd_la_SOURCES = aria_simd.cpp
-libaria_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_ARIA_FLAG)
+libaria_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_ARIA_FLAG)
 
 libblake2s_simd_la_SOURCES = blake2s_simd.cpp
-libblake2s_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2S_FLAG)
+libblake2s_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2S_FLAG)
 
 libblake2b_simd_la_SOURCES = blake2b_simd.cpp
-libblake2b_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2B_FLAG)
+libblake2b_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_BLAKE2B_FLAG)
 
 libchacha_simd_la_SOURCES = chacha_simd.cpp
-libchacha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHACHA_FLAG)
+libchacha_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_CHACHA_FLAG)
 
 libchacha_avx_la_SOURCES = chacha_avx.cpp
-libchacha_avx_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHACHA_AVX2_FLAG)
+libchacha_avx_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_CHACHA_AVX2_FLAG)
 
 libcham_simd_la_SOURCES = cham_simd.cpp
-libcham_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CHAM_FLAG)
+libcham_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_CHAM_FLAG)
 
 libcrc_simd_la_SOURCES = crc_simd.cpp
-libcrc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_CRC_FLAG)
+libcrc_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_CRC_FLAG)
 
 libdonna_sse_la_SOURCES = donna_sse.cpp
-libdonna_sse_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_DONNA_FLAG)
+libdonna_sse_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_DONNA_FLAG)
 
 libgcm_simd_la_SOURCES = gcm_simd.cpp
-libgcm_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GCM_FLAG)
+libgcm_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_GCM_FLAG)
 
 libgf2n_simd_la_SOURCES = gf2n_simd.cpp
-libgf2n_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_GF2N_FLAG)
+libgf2n_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_GF2N_FLAG)
 
 libkeccak_simd_la_SOURCES = keccak_simd.cpp
-libkeccak_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_KECCAK_FLAG)
+libkeccak_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_KECCAK_FLAG)
 
 liblea_simd_la_SOURCES = lea_simd.cpp
-liblea_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LEA_FLAG)
+liblea_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_LEA_FLAG)
 
 liblsh256_sse_la_SOURCES = lsh256_sse.cpp
-liblsh256_sse_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LSH256_FLAG)
+liblsh256_sse_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_LSH256_FLAG)
 
 liblsh256_avx_la_SOURCES = lsh256_avx.cpp
-liblsh256_avx_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LSH256_AVX2_FLAG)
+liblsh256_avx_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_LSH256_AVX2_FLAG)
 
 liblsh512_sse_la_SOURCES = lsh512_sse.cpp
-liblsh512_sse_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LSH512_FLAG)
+liblsh512_sse_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_LSH512_FLAG)
 
 liblsh512_avx_la_SOURCES = lsh512_avx.cpp
-liblsh512_avx_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_LSH512_AVX2_FLAG)
+liblsh512_avx_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_LSH512_AVX2_FLAG)
 
 libneon_simd_la_SOURCES = neon_simd.cpp
-libneon_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_NEON_FLAG)
+libneon_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_NEON_FLAG)
 
 libppc_simd_la_SOURCES = ppc_simd.cpp
-libppc_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_ALTIVEC_FLAG)
+libppc_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_ALTIVEC_FLAG)
 
 libppc_power7_la_SOURCES = ppc_power7.cpp
-libppc_power7_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER7_FLAG)
+libppc_power7_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_POWER7_FLAG)
 
 libppc_power8_la_SOURCES = ppc_power8.cpp
-libppc_power8_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER8_FLAG)
+libppc_power8_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_POWER8_FLAG)
 
 # Do not use CRYPTOPP_POWER9_FLAG. See https://github.com/weidai11/cryptopp/issues/986
 libppc_power9_la_SOURCES = ppc_power9.cpp
-# libppc_power9_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_POWER9_FLAG)
-libppc_power9_la_CXXFLAGS = $(AM_CXXFLAGS)
+# libppc_power9_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_POWER9_FLAG)
+libppc_power9_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS)
 
 librijndael_simd_la_SOURCES = rijndael_simd.cpp
-librijndael_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_AES_FLAG)
+librijndael_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_AES_FLAG)
 
 libsha_simd_la_SOURCES = sha_simd.cpp
-libsha_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
+libsha_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
 libshacal2_simd_la_SOURCES = shacal2_simd.cpp
-libshacal2_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
+libshacal2_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_SHA_FLAG)
 
 libsimon128_simd_la_SOURCES = simon128_simd.cpp
-libsimon128_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SIMON128_FLAG)
+libsimon128_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_SIMON128_FLAG)
 
 libspeck128_simd_la_SOURCES = speck128_simd.cpp
-libspeck128_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SPECK128_FLAG)
+libspeck128_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_SPECK128_FLAG)
 
 libsm4_simd_la_SOURCES = sm4_simd.cpp
-libsm4_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SM4_FLAG)
+libsm4_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_SM4_FLAG)
 
 libsse_simd_la_SOURCES = sse_simd.cpp
-libsse_simd_la_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTOPP_SSE2_FLAG)
+libsse_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_SSE2_FLAG)
 
 ## ARMv7-a AES and SHA by Andy Polyakov
 ## Also see https://stackoverflow.com/q/51575580/608639
@@ -321,10 +321,10 @@ if CRYPTOGAMS_ARM_SOURCES
    libsha1_armv4_la_SOURCES = sha1_armv4.S
    libsha256_armv4_la_SOURCES = sha256_armv4.S
    libsha512_armv4_la_SOURCES = sha512_armv4.S
-   libaes_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARM_THUMB_FLAG)
-   libsha1_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARM_FLAG)
-   libsha256_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARM_FLAG)
-   libsha512_armv4_la_CCASFLAGS = $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARM_FLAG)
+   libaes_armv4_la_CCASFLAGS = $(AM_CPPFLAGS) $(AM_ASFLAGS) $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARM_THUMB_FLAG)
+   libsha1_armv4_la_CCASFLAGS = $(AM_CPPFLAGS) $(AM_ASFLAGS) $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARM_FLAG)
+   libsha256_armv4_la_CCASFLAGS = $(AM_CPPFLAGS) $(AM_ASFLAGS) $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARM_FLAG)
+   libsha512_armv4_la_CCASFLAGS = $(AM_CPPFLAGS) $(AM_ASFLAGS) $(AM_CXXFLAGS) $(CRYPTOPGAMS_ARM_FLAG)
 endif
 
 ## cpufeatures library on Android
@@ -404,7 +404,7 @@ noinst_HEADERS = \
 
 bin_PROGRAMS = cryptest$(EXEEXT)
 
-cryptest_CXXFLAGS = $(AM_CXXFLAGS) $(CRYPTEST_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"${pkgdatadir}/"'
+cryptest_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTEST_CXXFLAGS) -DCRYPTOPP_DATA_DIR='"${pkgdatadir}/"'
 cryptest_SOURCES = \
     test.cpp bench1.cpp bench2.cpp bench3.cpp datatest.cpp \
     dlltest.cpp fipsalgt.cpp validat0.cpp validat1.cpp validat2.cpp \
