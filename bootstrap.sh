@@ -15,12 +15,16 @@ if ! command -v autoupdate &>/dev/null; then
     echo "autoupdate not found. Bootstrap will probably fail"
 fi
 
+if ! command -v autoconf &>/dev/null; then
+    echo "autoconf not found. Bootstrap will probably fail"
+fi
+
 if ! command -v autoreconf &>/dev/null; then
     echo "autoreconf not found. Bootstrap will probably fail"
 fi
 
-if ! command -v autoconf &>/dev/null; then
-    echo "autoconf not found. Bootstrap will probably fail"
+if ! command -v file &>/dev/null; then
+    echo "file not found. Bootstrap will probably fail"
 fi
 
 if ! command -v wget &>/dev/null; then
