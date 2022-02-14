@@ -2576,31 +2576,6 @@ if true; then
 fi
 
 #############################################################################
-## MinGW libraries
-## Automake does not follow Make conventions and use AM_LDLIBS. Instead
-## it stuffs libraries in the flags which messes up pkg-config *.pc files.
-
-if test "$IS_MINGW_OS" = "1"; then
-
-   SAVED_LDFLAGS="$LDFLAGS"
-
-   LDFLAGS="-lws2_32"
-   AC_MSG_CHECKING([if $LDNAME supports $LDFLAGS])
-   XXX_LINK_IFELSE(
-      [AC_LANG_SOURCE([[int main() { return 0; }]])],
-      [AC_MSG_RESULT([yes])],
-      [AC_MSG_RESULT([no])]
-   )
-
-   if test "$retval" = "0"; then
-      AM_LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-   fi
-
-   ## Restore LDFLAGS
-   LDFLAGS="$SAVED_LDFLAGS"
-fi
-
-#############################################################################
 ## OpenMP libraries
 ## Automake does not follow Make conventions and use AM_LDLIBS. Instead
 ## it stuffs libraries in the flags which messes up pkg-config *.pc files.
