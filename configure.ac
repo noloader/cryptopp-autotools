@@ -119,7 +119,7 @@
 ##
 ##   6. miscellaneous feature and options
 ##
-##   7. final setup and output
+##   7. final setup, output artifacts and summary
 ##
 
 # Print this early. Build is the machine where the compiler
@@ -2708,7 +2708,7 @@ fi
 #############################################################################
 ##   PART 7   PART 7   PART 7   PART 7   PART 7   PART 7   PART 7   PART 7
 ## ==========================================================================
-## final setup and output
+## final setup, output artifacts and summary
 #############################################################################
 
 #############################################################################
