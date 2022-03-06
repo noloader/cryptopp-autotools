@@ -489,6 +489,7 @@ testdata_FILES = \
 	TestData/fhmqv256.dat    TestData/rc5val.dat
 
 # Create with 'ls TestVectors/*.txt'. These files get installed.
+# OCB mode is not part of the release tarball, so manually remove it.
 testvector_FILES = \
 	TestVectors/aead.txt              TestVectors/rsa_oaep.txt \
 	TestVectors/aes.txt               TestVectors/rsa_pkcs1_1_5.txt \
@@ -525,7 +526,7 @@ testvector_FILES = \
 	TestVectors/lsh.txt               TestVectors/tea.txt \
 	TestVectors/mars.txt              TestVectors/threefish.txt \
 	TestVectors/nr.txt                TestVectors/ttmac.txt \
-	TestVectors/ocb.txt               TestVectors/vmac.txt \
+	                                  TestVectors/vmac.txt \
 	TestVectors/panama.txt            TestVectors/wake.txt \
 	TestVectors/poly1305aes.txt       TestVectors/whrlpool.txt \
 	TestVectors/poly1305_tls.txt      TestVectors/xchacha.txt \
