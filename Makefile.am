@@ -100,9 +100,9 @@ endif
 
 if CRYPTOPP_PPC_SOURCES
    EXTRA_LTLIBRARIES += libppc_simd.la
-   EXTRA_LTLIBRARIES += libppc_power7.la
-   EXTRA_LTLIBRARIES += libppc_power8.la
-   EXTRA_LTLIBRARIES += libppc_power9.la
+   EXTRA_LTLIBRARIES += libpower7_ppc.la
+   EXTRA_LTLIBRARIES += libpower8_ppc.la
+   EXTRA_LTLIBRARIES += libpower9_ppc.la
 endif
 
 ## ARMv7-a AES and SHA by Andy Polyakov
@@ -168,9 +168,9 @@ endif
 
 if CRYPTOPP_PPC_SOURCES
    libcryptopp_la_LIBADD += $(libppc_simd_la_OBJECTS)
-   libcryptopp_la_LIBADD += $(libppc_power7_la_OBJECTS)
-   libcryptopp_la_LIBADD += $(libppc_power8_la_OBJECTS)
-   libcryptopp_la_LIBADD += $(libppc_power9_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libpower7_ppc_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libpower8_ppc_la_OBJECTS)
+   libcryptopp_la_LIBADD += $(libpower9_ppc_la_OBJECTS)
 endif
 
 ## ARMv7-a AES and SHA by Andy Polyakov
@@ -232,9 +232,9 @@ endif
 
 if CRYPTOPP_PPC_SOURCES
    libcryptopp_la_DEPENDENCIES += $(libppc_simd_la_OBJECTS)
-   libcryptopp_la_DEPENDENCIES += $(libppc_power7_la_OBJECTS)
-   libcryptopp_la_DEPENDENCIES += $(libppc_power8_la_OBJECTS)
-   libcryptopp_la_DEPENDENCIES += $(libppc_power9_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libpower7_ppc_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libpower8_ppc_la_OBJECTS)
+   libcryptopp_la_DEPENDENCIES += $(libpower9_ppc_la_OBJECTS)
 endif
 
 ## ARMv7-a AES and SHA by Andy Polyakov
@@ -320,17 +320,6 @@ libneon_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_NEON_FLAG)
 
 libppc_simd_la_SOURCES = ppc_simd.cpp
 libppc_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_ALTIVEC_FLAG)
-
-libppc_power7_la_SOURCES = ppc_power7.cpp
-libppc_power7_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_POWER7_FLAG)
-
-libppc_power8_la_SOURCES = ppc_power8.cpp
-libppc_power8_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_POWER8_FLAG)
-
-# Do not use CRYPTOPP_POWER9_FLAG. See https://github.com/weidai11/cryptopp/issues/986
-libppc_power9_la_SOURCES = ppc_power9.cpp
-# libppc_power9_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_POWER9_FLAG)
-libppc_power9_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS)
 
 librijndael_simd_la_SOURCES = rijndael_simd.cpp
 librijndael_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_AES_FLAG)
