@@ -321,6 +321,15 @@ libneon_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_NEON_FLAG)
 libppc_simd_la_SOURCES = ppc_simd.cpp
 libppc_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_ALTIVEC_FLAG)
 
+libpower7_ppc_la_SOURCES = power7_ppc.cpp
+libpower7_ppc_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_ALTIVEC_FLAG)
+
+libpower8_ppc_la_SOURCES = power8_ppc.cpp
+libpower8_ppc_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_ALTIVEC_FLAG)
+
+libpower9_ppc_la_SOURCES = power9_ppc.cpp
+libpower9_ppc_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_ALTIVEC_FLAG)
+
 librijndael_simd_la_SOURCES = rijndael_simd.cpp
 librijndael_simd_la_CXXFLAGS = $(AM_CPPFLAGS) $(AM_CXXFLAGS) $(CRYPTOPP_AES_FLAG)
 
