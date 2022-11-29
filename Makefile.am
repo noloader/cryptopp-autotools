@@ -12,7 +12,7 @@
 ##           sed -e 's|[[:alnum:]]*_sse.cpp ||g' | \
 ##           sed -e 's|[[:alnum:]]*_avx.cpp ||g' | \
 ##           sed -e 's|[[:alnum:]]*_armv4.cpp ||g' | \
-##           sed -e 's|ppc_power[[:alnum:]]*.cpp ||g' | \
+##           sed -e 's|[[:alnum:]]*_ppc.cpp ||g' | \
 ##           fold -s -w 72
 ##
 ##    The command `make sources | sed ... | fold` will create the source file
