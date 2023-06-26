@@ -133,7 +133,7 @@ echo "Build is $build"
 ## configure.ac preamble
 #############################################################################
 
-AC_INIT([Crypto++], [8.7], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
+AC_INIT([Crypto++], [8.8], [http://www.cryptopp.com/wiki/Bug_Report], [cryptopp], [http://www.cryptopp.com])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([local.h])
 AC_CONFIG_FILES([Makefile] [libcryptopp.pc])

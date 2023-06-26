@@ -255,7 +255,7 @@ libcryptopp_la_DEPENDENCIES += $(libothers_la_OBJECTS)
 
 ## Man, did Autotools fuck this up royally...
 ## https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -release 8.7.0 -version-info 8:7
+libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -release 8.8.0 -version-info 8:8
 
 ## Source files with special needs
 libcryptlib_la_SOURCES = cryptlib.cpp
@@ -575,6 +575,7 @@ testprogs_FILES= \
 	TestPrograms/test_cxx.cpp \
 	TestPrograms/test_glibc.cpp \
 	TestPrograms/test_newlib.cpp \
+	TestPrograms/test_nodevirtualize.cpp \
 	TestPrograms/test_ppc_aes.cpp \
 	TestPrograms/test_ppc_altivec.cpp \
 	TestPrograms/test_ppc_power7.cpp \
