@@ -1026,7 +1026,6 @@ if test "$IS_X86" = "1" && test "$IS_GNUC_COMPILER" = "1"; then
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_KECCAK_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_LEA_FLAG], [$CXXFLAGS])
@@ -1321,7 +1320,6 @@ if test "$IS_X86" != "0" && test "$IS_SUN_COMPILER" != "0"; then
    if test "$retval" = "0"; then
       CXXFLAGSX="$CXXFLAGS -D__SSSE3__=1"
       AC_SUBST([CRYPTOPP_SSSE3_FLAG], [$CXXFLAGSX])
-      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGSX])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGSX])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGSX])
       AC_SUBST([CRYPTOPP_KECCAK_FLAG], [$CXXFLAGSX])
@@ -1570,7 +1568,6 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" = "0"; then
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGS])
@@ -1612,7 +1609,6 @@ if test "$IS_ARM32" != "0" && test "$IS_ANDROID_OS" != "0"; then
 
    if test "$retval" = "0"; then
       AC_SUBST([CRYPTOPP_AES_FLAG], [$CXXFLAGS])
-      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2B_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGS])
@@ -1748,7 +1744,6 @@ if test "$IS_ARMV8" != "0"; then
    )
 
    if test "$retval" = "0"; then
-      AC_SUBST([CRYPTOPP_ARIA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHACHA_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_CHAM_FLAG], [$CXXFLAGS])
       AC_SUBST([CRYPTOPP_BLAKE2S_FLAG], [$CXXFLAGS])
@@ -2782,9 +2777,6 @@ fi
 #if test x"$CRYPTOPP_POWER9_FLAG" != "x"; then
 #   echo "CRYPTOPP_POWER9_FLAG: $CRYPTOPP_POWER9_FLAG"
 #fi
-if test x"$CRYPTOPP_ARIA_FLAG" != "x"; then
-   echo "CRYPTOPP_ARIA_FLAG: $CRYPTOPP_ARIA_FLAG"
-fi
 if test x"$CRYPTOPP_BLAKE2S_FLAG" != "x"; then
    echo "CRYPTOPP_BLAKE2S_FLAG: $CRYPTOPP_BLAKE2S_FLAG"
 fi
